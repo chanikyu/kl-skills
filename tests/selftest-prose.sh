@@ -122,6 +122,38 @@ case "$good" in
   *)            bad "잘 쓴 글에 경고가 났다: $good" ;;
 esac
 
+# --- 2026-11-11 오탐: 인용 표시·참고문헌 줄·용어집 줄을 "뜻 없는 용어" 로 잡았다
+cat > "$TMP/cite.md" <<'EOF'
+# 인용이 든 글
+
+- pks+ 대장균 = colibactin(DNA를 끊는 독소)을 만드는 유전자 묶음 pks를 가진 대장균.
+
+항생제만 쓴 군은 13명 중 4명이 나았다 [van Nood 2013].
+
+[1] [Winter 2023, PNAS](https://example.org/a) · [2] [Xu 2021, Gut](https://example.org/b)
+
+- [van Nood 2013] 재발성 장염 대변 이식 시험. NEJM. <https://doi.org/10.1/x>
+EOF
+cite="$("$PY" "$CHECK" "$TMP/cite.md" 2>&1)"
+for word in "'van'" "PNAS" "NEJM" "'pks'"; do
+  case "$cite" in
+    *"$word"*) bad "인용·참고문헌·용어집 줄의 $word 를 뜻 없는 용어로 잡았다" ;;
+    *)         ok "인용·참고문헌·용어집 줄의 $word 는 잡지 않는다" ;;
+  esac
+done
+# " = " 가 들어 있을 뿐인 보통 문장은 용어집 줄이 아니다 (리뷰에서 재현된 회귀)
+printf '# 본문\n\nAUC 가 0.9 라서 기준 = 0.5 를 넘었다.\n' > "$TMP/eq-prose.md"
+case "$("$PY" "$CHECK" "$TMP/eq-prose.md" 2>&1)" in
+  *"AUC"*) ok "등호가 든 보통 문장의 약어는 여전히 잡는다" ;;
+  *)       bad "등호가 든 문장을 용어집 줄로 보고 약어를 놓쳤다" ;;
+esac
+# 같은 약어도 본문 문장에 그냥 쓰면 여전히 잡는다 — 건너뛰는 범위가 너무 넓지 않은지
+printf '# 본문\n\n이 결과는 PNAS 에 실렸다.\n' > "$TMP/cite-prose.md"
+case "$("$PY" "$CHECK" "$TMP/cite-prose.md" 2>&1)" in
+  *"PNAS"*) ok "본문 문장 속 약어는 여전히 잡는다" ;;
+  *)        bad "본문 문장 속 약어까지 놓쳤다" ;;
+esac
+
 # --- 종료 코드: 경고가 있으면 1, --exit-zero 면 0 (훅은 세션을 깨면 안 된다)
 "$PY" "$CHECK" "$TMP/bad.md" >/dev/null 2>&1 && bad "경고가 있는데 0으로 끝났다" \
   || ok "경고가 있으면 1로 끝난다"

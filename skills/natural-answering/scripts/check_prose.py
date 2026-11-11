@@ -42,6 +42,13 @@ CODE_SPAN = re.compile(r"`[^`]*`")
 QUOTED = re.compile(r"[\"“][^\"”\n]{2,}[\"”]")
 # [[링크]] 안은 가리키는 페이지의 이름이다. 뜻을 붙일 용어가 아니라 주소다.
 WIKILINK = re.compile(r"\[\[[^\]\n]*\]\]")
+# 인용은 글이 아니라 출처 표시다. 안에 든 저자 이름(van Nood)·학술지 이름(PNAS)은 뜻을 붙일
+# 용어가 아니다 — 2026-11-11 에 이것들이 "뜻 없는 용어" 로 잡혀 답변이 여러 번 막혔다.
+MARKDOWN_LINK = re.compile(r"\[[^\]\n]*\]\([^)\n]*\)")
+CITATION = re.compile(r"\[[^\]\n]*\b(?:1[89]|20)\d{2}[a-z]?\b[^\]\n]*\]")
+# 참고문헌 목록의 한 줄: "[저자 연도] 설명. 학술지. <주소>" 또는 "[1] ...". 주소가 있어야 한다.
+MAX_GLOSSARY_TERM_WORDS = 3   # "dysbiosis(장내 미생물 불균형)" 처럼 괄호를 빼면 이름은 길어야 세 낱말
+SOURCE_ENTRY = re.compile(r"^\[(?:\d+|[^\]\n]*\b(?:1[89]|20)\d{2}[a-z]?\b[^\]\n]*)\]")
 URL = re.compile(r"(?:https?://|file://|www\.)\S+")
 PATHLIKE = re.compile(r"[~./]?[\w.-]*[/\\][\w./\\-]+|\b[\w-]+\.(?:py|sh|md|json|tsv|txt|toml|html|rs|ps1|yml|yaml|csv)\b")
 IDENT = re.compile(r"\b\w*(?:_|[a-z][A-Z])\w*\b")  # snake_case, camelCase, PascalCase
@@ -86,8 +93,16 @@ def is_glossed(body, tok):
       용어(= 뜻)        — 용어 뒤에 괄호
       뜻(= 용어)        — 괄호 안에 용어. 한국어 글에서 더 자연스러운 쪽이다
       뜻(용어)          — 등호 없이 괄호만
+      용어 ... = 뜻      — 용어집 줄. "pks+ 대장균 = ..." 처럼 등호 앞에 용어가 있다
     """
     t = re.escape(tok)
+    # 용어집 줄은 등호 앞이 이름 하나다("pks+ 대장균", "HUNT(...)"). 괄호 밖 낱말이 이보다 많으면
+    # "AUC 가 0.9 라서 기준 = 0.5" 같은 보통 문장이다 — 그런 줄까지 정의로 보면 약어를 놓친다.
+    term_side = body.split(" = ", 1)[0] if " = " in body else ""
+    words_outside_brackets = re.sub(r"[(（][^)）]*[)）]", " ", term_side).split()
+    if (len(words_outside_brackets) <= MAX_GLOSSARY_TERM_WORDS
+            and re.search(r"(?<![A-Za-z])" + t + r"(?![A-Za-z])", term_side)):
+        return True
     return bool(
         re.search(t + r"\s*[(（=:—–-]", body)
         or re.search(r"[(（]\s*=?\s*[^)）]*" + t, body)
@@ -96,7 +111,7 @@ def is_glossed(body, tok):
 
 def mask(line):
     """글이 아닌 부분을 지운다. 길이는 유지하지 않는다 — 줄 번호만 쓰기 때문."""
-    for rx in (CODE_SPAN, QUOTED, WIKILINK, URL, PATHLIKE, IDENT):
+    for rx in (CODE_SPAN, QUOTED, WIKILINK, MARKDOWN_LINK, CITATION, URL, PATHLIKE, IDENT):
         line = rx.sub(" ", line)
     return line
 
@@ -205,6 +220,10 @@ def check(path, text, cfg, patterns, acronyms, terms, baseline):
         for rx, sev, msg, fix in patterns:
             if rx.search(masked):
                 add(lineno, sev, "pattern", msg, fix)
+
+        # 참고문헌 줄의 학술지 약어(NEJM)는 이름이지 용어가 아니다. 본문 문장은 그대로 검사한다.
+        if SOURCE_ENTRY.match(body) and URL.search(body):
+            continue
 
         for tok in ACRONYM.findall(masked):
             if tok in acronyms or tok.lower() in terms or tok in seen_acronym:

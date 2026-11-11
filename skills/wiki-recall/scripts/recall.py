@@ -24,6 +24,7 @@
 
 import argparse
 import collections
+import functools
 import json
 import math
 import os
@@ -78,12 +79,25 @@ def query_words(query, stop_tokens, particles):
     return {word for word in words if word not in stop_tokens and word not in filler}
 
 
+@functools.lru_cache(maxsize=None)
+def standalone_letter(letter):
+    """한 글자 낱말이 홀로 선 자리만 찾는 정규식. 뒤에 조사가 붙는 것까지는 같은 낱말로 본다.
+
+    글에서 그냥 찾으면 '손' 이 "뇌 손상" 에서, '위' 가 "무작위" 에서 걸린다. 그런 글자는 다른
+    페이지에 드물어서 무게가 커지고, 관련 없는 페이지가 "질문을 60% 덮음" 으로 붙었다
+    (2026-11-11, hook-replay 로 세션 전체에서 3번 재현).
+    """
+    endings = "|".join(re.escape(ending) for ending in
+                       sorted(load_word_list("particles.txt"), key=len, reverse=True))
+    return re.compile(r"(?<![가-힣])" + re.escape(letter) + r"(?:" + endings + r")?(?![가-힣])")
+
+
 def page_has_word(token_set, lowered_body, word):
-    """페이지에 그 낱말이 있는가. 한국어 한 글자는 조각으로 못 맞추므로 글에서 바로 찾는다."""
+    """페이지에 그 낱말이 있는가. 한국어 한 글자는 조각으로 못 맞추므로 글에서 홀로 선 자리를 찾는다."""
     if not HANGUL_RUN.fullmatch(word):
         return word in token_set
     if len(word) == 1:
-        return word in lowered_body
+        return bool(standalone_letter(word).search(lowered_body))
     return all(word[index:index + 2] in token_set for index in range(len(word) - 1))
 
 

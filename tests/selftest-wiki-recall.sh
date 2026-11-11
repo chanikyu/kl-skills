@@ -81,6 +81,25 @@ out="$(prompt_hook '{"prompt":"오늘 저녁 메뉴는 무엇으로 할지 고�
 [ -z "$out" ] && ok "위키와 무관한 메시지에는 조용하다" || bad "무관한 메시지에 붙였다: $out"
 out="$(prompt_hook '{"prompt":"/clear 하고 다시 시작"}')"
 [ -z "$out" ] && ok "/ 명령에는 조용하다" || bad "명령에 붙였다: $out"
+# --- 2026-11-11 오탐: 한 글자 낱말('손', '위')을 다른 낱말 속("손상", "무작위")에서 찾아
+#     관련 없는 페이지를 "질문을 60% 덮음" 으로 붙였다. hook-replay 로 세션 전체에서 3번 재현됐다.
+mkdir -p "$TMP/biology/wiki"
+cat > "$TMP/biology/wiki/dysbiosis.md" <<'PAGE'
+# 장내 미생물
+
+세균이 다시 뇌 손상을 키웠다. 무작위 시험을 같이 봐야 한다. 세균이 하나도 없는 쥐다. 아직 몇 개뿐인 것이다.
+PAGE
+out="$(prompt_hook '{"prompt":"위 3개 스킬 진행하고 먼저 손 봐야 하는 것도 진행해줘."}')"
+[ -z "$out" ] && ok "한 글자 낱말을 다른 낱말 속에서 찾지 않는다" || bad "낱말 속 글자로 무관한 페이지를 붙였다: $out"
+"$PY" - "$RECALL" <<'PYCHECK' && ok "홀로 선 한 글자 낱말(조사가 붙어도)은 찾는다" || bad "홀로 선 한 글자 낱말을 못 찾는다"
+import importlib.util, sys
+spec = importlib.util.spec_from_file_location("recall", sys.argv[1])
+recall = importlib.util.module_from_spec(spec); spec.loader.exec_module(recall)
+assert recall.page_has_word(set(), "손을 자주 씻는다", "손")
+assert recall.page_has_word(set(), "훅 하나가 돈다", "훅")
+assert not recall.page_has_word(set(), "뇌 손상을 키웠다", "손")
+assert not recall.page_has_word(set(), "무작위 시험", "위")
+PYCHECK
 printf 'not json' | sh "$REPO/hooks/run.sh" wiki-recall >/dev/null 2>&1 \
   && ok "깨진 입력에도 0으로 끝난다" || bad "깨진 입력에 터졌다"
 

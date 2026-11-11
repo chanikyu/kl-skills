@@ -26,17 +26,19 @@ KL-SKILLS GATES v<버전> — loaded, N rules enforced
 `claude plugin update` 는 `plugin.json` 의 `version` 을 보고 판단한다. 버전이 그대로면
 내용을 아무리 고쳐도 `already at the latest version` 이라며 **아무것도 갱신하지 않는다.**
 
-그래서 내용을 바꿀 때마다:
+그래서 내용을 바꿀 때마다 `plugin-release` 스킬의 순서를 따른다. 손으로 하면 순서를 건너뛰게
+된다 — CI 가 끝나기 전에 설치해서 옛 바이너리가 굳은 일이 실제로 있었다.
 
-1. `.claude-plugin/plugin.json` 의 `version` 을 올린다
-2. `crates/kl-gate/Cargo.toml` 의 `version` 도 같은 값으로 올린다 —
-   배너가 찍는 버전이 설치본 버전과 어긋나면, 배너로 "어느 버전이 깔렸나"를 확인할 수 없다
-3. 푸시하고, CI가 끝난 뒤:
-   ```sh
-   claude plugin marketplace update kl-skills   # 리포를 다시 clone
-   claude plugin update kl-skills               # 설치본 교체
-   ```
-4. `claude plugin details kl-skills` 로 스킬·훅 개수가 맞는지 확인한다
+```sh
+python3 skills/plugin-release/scripts/release.py bump X.Y.Z   # plugin.json + version-files.txt 의 파일
+# 테스트 → 커밋 → 푸시
+python3 skills/plugin-release/scripts/release.py ship         # CI 통과를 확인한 뒤에만 설치하고, 설치본을 확인
+# 세션을 다시 시작한 뒤
+python3 skills/plugin-release/scripts/release.py verify
+```
+
+`crates/kl-gate/Cargo.toml` 이 `version-files.txt` 에 있는 이유: 배너가 찍는 버전이 설치본
+버전과 어긋나면, 배너로 "어느 버전이 깔렸나"를 확인할 수 없다.
 
 문서만 고쳤다면 올리지 않아도 된다 — 설치본은 README를 읽지 않는다.
 
@@ -91,6 +93,14 @@ skills/              스킬. 한 폴더에 SKILL.md 하나
     scripts/           check_prose.py (기계로 잡히는 생략·어색함 검사)
     data/              판정 기준. 패턴·허용 약어·비교로 인정할 말 (코드 아님)
     references/        work-report.md (작업 보고 6단계) · document-structure.md (문서 뼈대)
+  hook-replay/       훅을 실제 대화 기록의 사람 메시지마다 다시 돌려 오탐·놓침을 찾는다
+    scripts/           replay.py (시점별로 기록을 잘라 훅에 넘기고 결과를 TSV 로)
+  plugin-release/    버전 → 커밋·푸시 → CI 통과 확인 → 설치 → 설치본 확인. 순서를 못 건너뛴다
+    scripts/           release.py (bump · ship · verify)
+  research-to-wiki/  문헌 조사를 위키로. 출처마다 근거 수준·읽은 수준을 적게 하고 검사한다
+    scripts/           check_research.py (결론이 맨 앞인가, 출처 표시·인용 짝이 맞나)
+    data/              근거 수준 · 읽은 수준 이름 (코드 아님)
+    assets/            research-page-template.md (조사 페이지 틀)
 hooks/
   hooks.json         어떤 사건에 어떤 명령을 돌릴지 적은 표
                      SessionStart → 배너
@@ -102,9 +112,11 @@ hooks/
   run.sh             mac·리눅스: Python 훅이 있으면 그걸, 없으면 Rust 실행파일을 고름
   run.ps1            윈도우용 같은 역할
   py/<게이트>.py      Python 훅. 파일을 두면 그 게이트는 Python으로 돈다
+  py/_transcript.py  대화 기록에서 사람 메시지를 가르는 규칙. answer-check 와 hook-replay 가 같이 쓴다
 crates/kl-gate/      Rust 훅 본체. 모든 게이트를 `match` 하나로 처리
                      판단 로직은 순수 함수로 빼서 `cargo test` 로 고정
 bin/                 빌드된 실행파일 — CI가 채운다. 손으로 넣지 않는다
+version-files.txt    plugin.json 말고도 버전이 적힌 파일 목록. plugin-release 가 같이 올린다
 scripts/             리포 유지용 스크립트
   bench-hook-startup.py  Rust 훅 vs Python 훅 시작 시간 측정
 results/             측정 결과. 파일명에 환경·n·날짜를 넣어 덮어쓰지 않는다
@@ -123,6 +135,9 @@ tests/selftest*.sh   셀프테스트. CI가 이 패턴 전부를 돌린다
   selftest-planner.sh    잘 쓴 기획서는 깨끗하고, 목표 연결이 끊긴 기획서·계획 밖 일은 이름대로 걸리는지
   selftest-wiki-recall.sh 맞는 페이지가 먼저 나오고, 무관한 메시지에는 훅이 조용한지
   selftest-graph.sh      그래프 DB 집계가 맞는지 + 뷰어가 실제로 그려지는지
+  selftest-hook-replay.sh 시점을 맞게 자르고(stop·prompt), 기계 글은 시점으로 안 세는지
+  selftest-plugin-release.sh CI 가 실패하면 설치 명령을 한 번도 안 부르는지, 굳은 바이너리를 잡는지
+  selftest-research-to-wiki.sh 잘 쓴 조사 페이지는 조용하고, 빠진 표시는 이름대로 걸리는지
                          (크롬이 있으면 헤드리스로 띄워서 노드가 그려졌는지 센다.
                           없으면 그 검사만 건너뛴다)
 .github/workflows/build.yml   5종 빌드 → bin/ 에 자동 커밋
