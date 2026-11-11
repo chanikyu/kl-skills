@@ -15,6 +15,12 @@ on:
 permissions:
   contents: write
 
+# A newer push cancels the run still building older code. Without this, two runs
+# can finish out of order and the older binaries land on top of the newer ones.
+concurrency:
+  group: build-hook-binaries
+  cancel-in-progress: true
+
 jobs:
   build:
     name: ${{ matrix.target }}
@@ -100,4 +106,20 @@ jobs:
             exit 0
           fi
           git commit -m "chore: rebuild hook binaries for all targets"
-          git push
+          # main can move while the build runs — a docs-only push does not trigger
+          # this workflow but still moves main, and a plain `git push` is then
+          # rejected. On 2026-11-11 that dropped a whole build: five targets compiled
+          # and tested, nothing landed. So rebase onto the current main first.
+          for attempt in 1 2 3; do
+            git pull --rebase origin main
+            # If someone pushed newer gate code meanwhile, these binaries are stale;
+            # that push started its own run, which will commit the right ones.
+            if ! git diff --quiet "$GITHUB_SHA" HEAD~1 -- crates Cargo.toml; then
+              echo "newer gate code landed during this build — leaving it to that run"
+              exit 0
+            fi
+            git push && exit 0
+            sleep 5
+          done
+          echo "could not push after 3 attempts" >&2
+          exit 1
