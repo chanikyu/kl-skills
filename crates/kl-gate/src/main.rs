@@ -52,8 +52,15 @@ fn wiki_page(file_path: &str, root: &Path) -> Option<(String, String)> {
     if parts.next()?.as_os_str().to_str()? != "wiki" {
         return None;
     }
-    let page: PathBuf = parts.collect();
-    let page = page.to_str()?.to_string();
+    // Joined with '/' deliberately, never with the platform separator: this string
+    // is compared against an index entry written by index-add.py, which always
+    // uses '/'. On Windows a collected PathBuf would give "sub\\deep.md" and never
+    // match, so every page in a subfolder would be reported as unindexed forever.
+    let mut page_parts = Vec::new();
+    for c in parts {
+        page_parts.push(c.as_os_str().to_str()?);
+    }
+    let page = page_parts.join("/");
     if page.is_empty() || !page.ends_with(".md") || page == "index.md" || page == "log.md" {
         return None;
     }
@@ -123,6 +130,9 @@ mod tests {
         );
     }
 
+    /// Regression: this asserted the platform separator and so failed on Windows,
+    /// where the gate would then never match a subfolder page against its index
+    /// entry. The '/' is part of the contract with index-add.py, not a detail.
     #[test]
     fn subfolders_keep_their_path_so_the_index_entry_matches() {
         assert_eq!(
