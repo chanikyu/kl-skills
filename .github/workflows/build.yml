@@ -43,9 +43,11 @@ jobs:
         if: endsWith(matrix.target, '-musl')
         run: sudo apt-get update && sudo apt-get install -y musl-tools
 
-      - name: launcher selftest
+      # Runs every tests/selftest*.sh, so a new one is picked up without
+      # editing this workflow again.
+      - name: selftests
         if: runner.os != 'Windows'
-        run: sh tests/selftest.sh
+        run: for t in tests/selftest*.sh; do echo "== $t"; sh "$t" || exit 1; done
 
       - name: build
         run: cargo build --release --target ${{ matrix.target }}
