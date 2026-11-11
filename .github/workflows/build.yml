@@ -49,6 +49,12 @@ jobs:
         if: runner.os != 'Windows'
         run: for t in tests/selftest*.sh; do echo "== $t"; sh "$t" || exit 1; done
 
+      # Unit tests run on the host, not the cross-target: they cover the gate's
+      # decision logic, which is the same on every platform. The release profile
+      # sets panic=abort, which test harnesses cannot use, so this is a debug build.
+      - name: cargo test
+        run: cargo test
+
       - name: build
         run: cargo build --release --target ${{ matrix.target }}
 

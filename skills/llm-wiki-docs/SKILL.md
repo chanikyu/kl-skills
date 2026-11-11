@@ -38,18 +38,50 @@ splits the knowledge and neither half stays current. The root is overridable wit
 findings, and points at the code by path. Copying code into the wiki creates a second,
 rotting copy.
 
-## Starting a topic
+## Scripts
 
-Run the scaffold rather than making the files by hand — `index.md` and `log.md` are exactly
-what gets skipped when creating files manually, and a wiki without them degrades into a
-folder of loose notes:
+Use these rather than editing `index.md` and `log.md` by hand. Not because hand-editing is
+forbidden, but because it is what gets skipped under time pressure, and because a hand-typed
+entry drifts from the format — after which `lint.py` stops recognising it and the page goes
+quietly missing from the catalog.
+
+All of them resolve the root the same way: `$LLM_WIKI_ROOT`, else `~/llm-wiki-docs`.
 
 ```bash
+# create a topic — safe to re-run, never overwrites, refills anything missing
 scripts/new-topic.sh <topic> ["one-line description"]
+
+# file a page in the index — replaces the page's existing line instead of adding a second
+scripts/index-add.py <topic> <page.md> <category> "one line on what it holds"
+
+# append to the log — only ever adds at the bottom
+scripts/log-append.py <topic> <ingest|query|lint> "<title>" \
+    [--source raw/x.pdf] [--pages a.md,b.md] [--note "what changed in the understanding"]
+
+# find the mechanical inconsistencies — no topic means every topic
+scripts/lint.py [topic ...]
 ```
 
-It is safe to re-run; it never overwrites an existing file. Then `git init` inside the topic
-if the knowledge is worth a history (usually yes — diffs show how understanding changed).
+After `new-topic.sh`, `git init` inside the topic if the knowledge is worth a history
+(usually yes — the diffs show how the understanding changed, which the pages themselves
+cannot).
+
+`lint.py` reports five things, all pure comparisons, so the answer is identical every run:
+pages missing from the index, index entries whose file is gone, a page listed twice, links
+to pages that do not exist, and pages nothing links to. It exits 1 when it finds anything.
+Judgement calls — stale claims, contradictions — are deliberately not in it; those need
+reading, and the `lint` operation below is where they belong.
+
+A `[[link]]` to a page that does not exist is **not automatically a defect**: it may be a
+deliberate marker for a gap worth filling. `lint.py` lists them so the two can be told
+apart, not so they can be deleted.
+
+### The index hook
+
+A `PostToolUse` hook (`wiki-index-check`) watches writes under `~/llm-wiki-docs/<topic>/wiki/`
+and says so when the page is not in that wiki's `index.md`. It warns and never blocks, so a
+page can be written first and filed a moment later — but if the warning is still showing when
+the work is done, the page is unfindable and the warning is the last chance to notice.
 
 ## The three operations
 
@@ -66,7 +98,8 @@ Name the operation you are doing, because each has a different ending condition.
    the most common way a wiki goes stale.
 5. Cross-link with `[[wikilinks]]`. A link to a page that does not exist yet is useful — it
    marks a gap worth filling.
-6. Update `index.md` and append to `log.md`.
+6. Update `index.md` and append to `log.md` — use the scripts below rather than
+   hand-editing, so the entry format stays machine-readable.
 7. Where the new source contradicts an existing page, **write the contradiction down** on
    both pages rather than silently picking a side. Which one is right is often the next
    thing worth investigating.

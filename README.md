@@ -68,12 +68,15 @@ ARM 윈도우는 x86_64 실행파일을 에뮬레이션으로 돌리므로 따�
   marketplace.json   GitHub에서 바로 설치되게 하는 장터 정보
 skills/              스킬. 한 폴더에 SKILL.md 하나
   llm-wiki-docs/     문서를 ~/llm-wiki-docs/<주제>/wiki 로 모으는 위키 규약
+    scripts/           new-topic.sh · index-add.py · log-append.py · lint.py
 hooks/
   hooks.json         어떤 사건에 어떤 명령을 돌릴지 적은 표
+                     SessionStart → 배너 / PostToolUse(Write|Edit) → wiki-index-check
   run.sh             mac·리눅스: Python 훅이 있으면 그걸, 없으면 Rust 실행파일을 고름
   run.ps1            윈도우용 같은 역할
   py/<게이트>.py      Python 훅. 파일을 두면 그 게이트는 Python으로 돈다
 crates/kl-gate/      Rust 훅 본체. 모든 게이트를 `match` 하나로 처리
+                     판단 로직은 순수 함수로 빼서 `cargo test` 로 고정
 bin/                 빌드된 실행파일 — CI가 채운다. 손으로 넣지 않는다
 scripts/             리포 유지용 스크립트
   bench-hook-startup.py  Rust 훅 vs Python 훅 시작 시간 측정
@@ -81,6 +84,7 @@ results/             측정 결과. 파일명에 환경·n·날짜를 넣어 덮
 tests/selftest*.sh   셀프테스트. CI가 이 패턴 전부를 돌린다
   selftest.sh            run.sh 가 실행파일·인터프리터를 제대로 고르는지
   selftest-new-topic.sh  위키 주제 생성 스크립트가 덮어쓰지 않는지
+  selftest-wiki-scripts.sh  인덱스·로그·lint 스크립트가 제대로 동작하는지
 .github/workflows/build.yml   5종 빌드 → bin/ 에 자동 커밋
 ```
 
@@ -140,12 +144,23 @@ Python으로 시작해서 느리면 Rust로 옮기는 게 기본 경로다. `hoo
 이 리포는 Rust 없이도 **쓸** 수 있다. Rust 훅을 고치려면 빌드가 필요하다:
 
 ```sh
+cargo test                                        # Rust 훅 판단 로직 단위 테스트
 cargo build --release                             # 현재 컴퓨터용
 for t in tests/selftest*.sh; do sh "$t"; done     # 셀프테스트 전부
 claude plugin validate .                          # 플러그인·스킬 형식 검사
 ```
 
 5종 전부는 로컬에서 만들 수 없다(윈도우·맥 SDK 라이선스 문제). CI가 한다.
+
+## 지금 걸려 있는 훅
+
+| 사건 | 게이트 | 하는 일 | 언어 |
+|---|---|---|---|
+| `SessionStart` | `session-start` | 배너 한 줄. 훅이 실제로 걸렸는지 확인용 | Rust |
+| `PostToolUse` (`Write\|Edit\|MultiEdit`) | `wiki-index-check` | `~/llm-wiki-docs/<주제>/wiki/` 에 쓴 페이지가 `index.md` 에 없으면 경고. **막지 않는다** | Rust |
+
+`wiki-index-check` 가 Rust인 이유: `PostToolUse` 는 파일을 쓸 때마다 돈다(위 측정 참고).
+위키 밖 경로면 JSON에서 경로 하나 읽고 바로 끝낸다.
 
 ## 라이선스
 

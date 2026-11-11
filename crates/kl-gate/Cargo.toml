@@ -1,10 +1,13 @@
 [package]
 name = "kl-gate"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 description = "Hook gates for the kl-skills Claude Code plugin"
 license = "MIT"
 
-# No dependencies on purpose: zero-dep keeps the committed binaries tiny
-# and the cross-platform CI build fast. Add serde_json when a gate needs
-# to read fields out of the hook payload.
+[dependencies]
+# Hook payloads arrive as JSON on stdin. Hand-rolling a parser for "just one
+# field" is how you end up mis-reading a path that contains a quote or a brace,
+# and a gate that mis-reads its input either nags about the wrong file or stays
+# silent on the right one.
+serde_json = "1"
