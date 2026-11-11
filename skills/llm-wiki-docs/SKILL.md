@@ -38,6 +38,62 @@ splits the knowledge and neither half stays current. The root is overridable wit
 findings, and points at the code by path. Copying code into the wiki creates a second,
 rotting copy.
 
+## The line between this wiki and a project's own docs
+
+A project has its own documents — README, architecture, API reference, developer guide,
+troubleshooting. Those are a different thing from a wiki page, and this is the canonical
+rule for which is which. (The project-doc side, including the skeleton each kind of document
+uses, is in the `natural-answering` skill: `references/document-structure.md`.)
+
+**Do not split them by where the writing came from.** "Summarise the project's README into a
+wiki page" sounds tidy and produces the worst document in the repository. The same fact now
+lives twice. The README gets updated, the summary does not, and the stale half is the one
+that reads like a conclusion. That is the drift `source-of-truth.md` exists to prevent.
+
+Split them by one question instead:
+
+> **Does this writing have to change when the code changes?**
+
+| Answer | Where it goes | What is canonical |
+|---|---|---|
+| Yes | the project's own docs | the code |
+| No | this wiki | the wiki page |
+
+Concretely:
+
+| The writing | Where |
+|---|---|
+| README, API reference, developer guide | project |
+| architecture as it currently stands | project |
+| troubleshooting: this symptom, this fix | project |
+| how to run the pipeline, with its parameters | project |
+| **why A was chosen over B, and whether that reason still holds** | wiki |
+| **a result with its conditions** — value, how measured, dataset, filters, n, result file | wiki |
+| **a metric that was abandoned mid-measurement, and what broke it** | wiki |
+| a paper, a database, a tool: what it is and where it bites | wiki |
+
+So a wiki page **points at** a project document rather than summarising it. One line is
+enough: "how to run it is in `<repo>/docs/pipeline.md`". The page then holds what that
+document does not — why it was built that way, and what was never checked.
+
+### When to touch the wiki
+
+"Whenever something important happens" has no edge, so in practice either nothing gets
+filed or everything does. Three events, and nothing else:
+
+1. **A decision was made** — what was chosen, what was rejected, why, and what would
+   invalidate the reason
+2. **A number came out** — with the six columns `stable-claims.md` requires
+3. **Something was learned that outlives this project** — a tool's trap, an external
+   dataset's conditions
+
+Outside those three, update the project's docs and leave the wiki alone.
+
+**The direction is not always project → wiki.** In research the wiki usually comes first.
+Papers are read and the approach is settled before any code exists, so the project's docs
+are derived from the wiki rather than the other way round. The rule above does not care
+which came first. It only asks whether the writing ages with the code.
+
 ## Scripts
 
 Use these rather than editing `index.md` and `log.md` by hand. Not because hand-editing is

@@ -23,7 +23,15 @@ fn main() {
 
     match gate.as_str() {
         "session-start" => {
-            println!("KL-SKILLS GATES v{VERSION} — loaded, 1 rule enforced (wiki-index-check)");
+            // The count and the names are written out by hand, because this binary cannot
+            // see hooks.json and the Python gates are not in this crate at all. That makes
+            // the line drift the moment a gate is added, which is exactly what happened
+            // when wiki-graph and prose-check arrived. tests/selftest-banner.sh compares
+            // this string against hooks.json so the drift fails a test instead of shipping.
+            println!(
+                "KL-SKILLS GATES v{VERSION} — loaded, 3 rules enforced \
+                 (wiki-index-check, wiki-graph, prose-check)"
+            );
         }
         "wiki-index-check" => wiki_index_check(&payload),
         // Unknown or not-yet-implemented gate: allow, say nothing.

@@ -1,0 +1,43 @@
+# 한국어 글 안에서 설명 없이 써도 되는 영문 낱말(도구·언어·형식 이름).
+# 여기 없는 영문 낱말이 한국어 문장에 처음 나오면 "뜻을 안 붙였다"고 경고한다.
+# 도메인 용어(locus, read, identity, taxon, allele 같은 것)는 일부러 넣지 않는다 —
+# 그런 말이야말로 처음 나올 때 뜻을 한 줄로 붙여야 하는 말이다.
+git
+github
+python
+node
+rust
+bash
+shell
+sh
+cargo
+pip
+conda
+npm
+docker
+linux
+mac
+macos
+windows
+chrome
+claude
+code
+commit
+push
+pull
+branch
+merge
+diff
+repo
+hook
+skill
+script
+test
+build
+log
+index
+readme
+true
+false
+null
+none

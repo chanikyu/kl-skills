@@ -6,9 +6,9 @@ description: Turn every llm-wiki page under ~/llm-wiki-docs into one graph datab
 # Graph Doc Memory
 
 The `llm-wiki-docs` skill makes pages and `[[links]]`. Those links are already a graph, but
-nothing reads it as one, so the questions a graph answers best stay unanswered: what is this
-wiki's centre of gravity, what did I write and never link to, what did I keep linking to and
-never write. This skill compiles the links into a database and draws it.
+nothing read them as one. So the questions a graph answers best stayed unanswered: what is
+this wiki's centre of gravity, what did I write and never link to, what did I keep linking
+to and never write. This skill compiles the links into a database and draws it.
 
 Depends on the wiki layout the `llm-wiki-docs` skill creates. Read that skill if the wiki
 does not exist yet — build the pages first, there is nothing to graph otherwise.
@@ -87,10 +87,14 @@ timestamp — the graph is a snapshot, and the wiki moves.
 
 ## The viewer
 
-Obsidian's graph view, with its controls: search filter, orphan and missing-page toggles,
-link arrows, node size, link thickness, text fade threshold, and the four forces (centre,
-repel, link force, link distance). Topics are the colour groups. Local graph mode shows only
-what is connected to the selected node, out to a depth you set.
+Obsidian's graph view, with its controls:
+
+- search filter, orphan and missing-page toggles, link arrows
+- node size, link thickness, text fade threshold
+- the four forces: centre, repel, link force, link distance
+
+Topics are the colour groups. Local graph mode shows only what is connected to the selected
+node, out to a depth you set.
 
 Click a node for its path, its outbound links, and its backlinks; the path is a `file://`
 link to the page itself. Hover highlights the neighbourhood, scroll zooms, drag pans, and
