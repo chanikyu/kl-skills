@@ -1,0 +1,9 @@
+rust binary, called directly                   median    4.4 ms  (min 3.3 / max 6.8)
+rust gate through run.sh (as installed)        median   24.7 ms  (min 18.3 / max 31.5)
+python gate through run.sh (prose-check)       median   51.2 ms  (min 43.7 / max 60.5)
+
+launcher overhead (run.sh - direct): 20.2 ms
+rust vs python, both as installed:   26.5 ms
+n=30 per variant, target=aarch64-apple-darwin
+python=3.14.6  machine=Darwin/arm64
+note: the gate did no work — the wiki was already in sync, which is the usual case

@@ -72,6 +72,9 @@ skills/              스킬. 한 폴더에 SKILL.md 하나
   graph-doc-memory/  위키 전체를 그래프 DB 하나로 만들고 브라우저로 보여준다
     scripts/           build_graph.py (DB 생성) · open-graph.sh (빌드 후 브라우저로 열기)
     assets/viewer.html 뷰어 템플릿. 빌드할 때 데이터가 박힌 사본이 따로 생긴다
+  readable-code/     이름과 주석 규칙. 코드를 쓰거나 고칠 때
+    scripts/           check_code.py (파이썬 이름·설명문 검사, ast 로 정확히)
+    data/              허용할 짧은 이름 · 모호하다고 볼 이름 (코드 아님)
   natural-answering/ 생략 없이 쓰는 규칙. 보고·문서·답변 전부에 적용
     scripts/           check_prose.py (기계로 잡히는 생략·어색함 검사)
     data/              판정 기준. 패턴·허용 약어·비교로 인정할 말 (코드 아님)
@@ -99,6 +102,7 @@ tests/selftest*.sh   셀프테스트. CI가 이 패턴 전부를 돌린다
   selftest-banner.sh     배너가 말하는 게이트 개수가 hooks.json 과 맞는지
   selftest-wiki-sync.sh  쉘로 고친 페이지(= 훅이 못 본 변경)를 세션 끝에 잡는지
   selftest-wiki-touch.sh 같은 변경을 Bash 직후에 바로 잡는지 (바이너리 필요)
+  selftest-readable-code.sh 나쁜 이름·빠진 설명문을 잡고, 잘 쓴 코드는 조용한지
   selftest-graph.sh      그래프 DB 집계가 맞는지 + 뷰어가 실제로 그려지는지
                          (크롬이 있으면 헤드리스로 띄워서 노드가 그려졌는지 센다.
                           없으면 그 검사만 건너뛴다)

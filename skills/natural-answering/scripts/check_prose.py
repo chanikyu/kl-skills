@@ -160,8 +160,12 @@ class Doc:
             if in_fence:
                 continue
 
-            if s.startswith("|"):
-                if not prev_real.startswith("|"):
+            # 표 행은 앞뒤 | 를 생략해도 되는 문법이다. `|` 로 시작하는 줄만 표로 보면,
+            # 생략한 표의 칸들이 '아주 긴 문장' 으로 잡힌다.
+            is_row = s.startswith("|") or s.count("|") >= 2
+            prev_row = prev_real.startswith("|") or prev_real.count("|") >= 2
+            if is_row:
+                if not prev_row:
                     self.tables.append((i, prev_real))
                 prev_real = s
                 continue

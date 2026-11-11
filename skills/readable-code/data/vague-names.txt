@@ -1,0 +1,31 @@
+# 길지만 아무것도 알려주지 않는 이름. 무엇을 담았는지가 빠져 있다.
+# data -> allele_counts, tmp -> merged_rows, result -> matched_pages 처럼
+# "무엇의" 를 붙이면 바로 나아진다.
+data
+tmp
+temp
+val
+value
+val2
+res
+result
+ret
+out2
+obj
+item2
+thing
+things
+stuff
+foo
+bar
+baz
+qux
+arr
+lst
+dct
+num
+nums
+var
+info
+misc
+aux
