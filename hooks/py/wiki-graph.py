@@ -37,12 +37,14 @@ def wiki_page(path, root):
 
 
 def main():
+    """위키 페이지가 쓰였으면 그래프를 다시 만든다. 늘 0으로 끝낸다."""
     raw = sys.stdin.read()
     try:
         event = json.loads(raw) if raw.strip() else {}
     except ValueError:
         return 0
 
+    # Bash 로 쓴 경우는 여기 안 걸린다(경로가 payload 에 없다). 그쪽은 wiki-touch 가 본다.
     tool_input = event.get("tool_input") or {}
     path = tool_input.get("file_path") or tool_input.get("notebook_path") or ""
     root = os.environ.get("LLM_WIKI_ROOT") or os.path.join(os.path.expanduser("~"), "llm-wiki-docs")

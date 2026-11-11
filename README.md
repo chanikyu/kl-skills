@@ -83,7 +83,8 @@ skills/              스킬. 한 폴더에 SKILL.md 하나
 hooks/
   hooks.json         어떤 사건에 어떤 명령을 돌릴지 적은 표
                      SessionStart → 배너
-                     PostToolUse(Write|Edit) → wiki-index-check · wiki-graph · prose-check
+                     PostToolUse(Write|Edit) → wiki-index-check · wiki-graph
+                                               prose-check · code-check
                      PostToolUse(Bash) → wiki-touch
                      Stop → wiki-sync
   run.sh             mac·리눅스: Python 훅이 있으면 그걸, 없으면 Rust 실행파일을 고름
@@ -104,6 +105,7 @@ tests/selftest*.sh   셀프테스트. CI가 이 패턴 전부를 돌린다
   selftest-wiki-sync.sh  쉘로 고친 페이지(= 훅이 못 본 변경)를 세션 끝에 잡는지
   selftest-wiki-touch.sh 같은 변경을 Bash 직후에 바로 잡는지 (바이너리 필요)
   selftest-readable-code.sh 나쁜 이름·빠진 설명문을 잡고, 잘 쓴 코드는 조용한지
+  selftest-code-check.sh 그 검사를 훅으로 걸었을 때 조용해야 할 경우에 조용한지
   selftest-graph.sh      그래프 DB 집계가 맞는지 + 뷰어가 실제로 그려지는지
                          (크롬이 있으면 헤드리스로 띄워서 노드가 그려졌는지 센다.
                           없으면 그 검사만 건너뛴다)
@@ -183,6 +185,7 @@ claude plugin validate .                          # 플러그인·스킬 형식 
 | `PostToolUse` (`Write\|Edit\|MultiEdit`) | `wiki-graph` | 위키 페이지를 쓰면 그래프 DB(`<루트>/.graph/`)를 다시 만든다. 위키 밖 파일이면 즉시 끝 | Python |
 | `PostToolUse` (`Write\|Edit\|MultiEdit`) | `prose-check` | 위키 페이지에서 읽는 사람이 걸릴 자리(뜻 없는 용어, 기준 없는 숫자, 빠진 주어)를 알려 준다. **막지 않는다** | Python |
 | `PostToolUse` (`Bash`) | `wiki-touch` | 쉘로 위키를 고쳤는지 수정 시각으로 본다. 안 바뀌었으면 몇 ms 로 끝나고, 바뀌었을 때만 `wiki-sync` 를 부른다 | Rust |
+| `PostToolUse` (`Write\|Edit\|MultiEdit`) | `code-check` | 쓴 `.py` 파일의 이름과 설명문을 바로 지적한다. 캐시·가상환경·임시 경로는 건너뛴다. **막지 않는다** | Python |
 | `Stop` | `wiki-sync` | 세션당 한 번. 수정 시각을 비교해 **어떤 방법으로 쓴 변경이든** 찾아내 그래프를 맞추고 바뀐 페이지를 검사한다. **막지 않는다** | Python |
 
 `wiki-index-check` 가 Rust인 이유: `PostToolUse` 는 파일을 쓸 때마다 돈다(위 측정 참고).

@@ -46,6 +46,15 @@
             "statusMessage": "Checking prose...",
             "description": "A wiki page was written: point at omissions a reader would stumble on (undefined terms, numbers with no baseline, missing subjects). Warns only; never blocks. Exits immediately for every other file.",
             "id": "post-write:prose-check"
+          },
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" code-check",
+            "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\run.ps1\" code-check",
+            "timeout": 30,
+            "statusMessage": "Checking names and comments...",
+            "description": "A python file was written: report vague names, missing docstrings and long functions with no comment inside. Caches, virtualenvs and scratch paths are skipped. Reports; never blocks.",
+            "id": "post-write:code-check"
           }
         ]
       },

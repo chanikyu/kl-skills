@@ -24,6 +24,7 @@ LIMIT = "6"  # ponytail: 한 번에 6건까지만. 더 보려면 스크립트를
 
 
 def wiki_page(path, root):
+    """<뿌리>/<토픽>/wiki/**.md 인가. 목차와 기록은 빼고 본다."""
     if not path or not path.endswith(".md"):
         return False
     if os.path.basename(path) in SKIP:
@@ -37,6 +38,7 @@ def wiki_page(path, root):
 
 
 def main():
+    """위키 페이지가 쓰였으면 글 검사 결과를 보여준다. 늘 0으로 끝낸다."""
     raw = sys.stdin.read()
     try:
         event = json.loads(raw) if raw.strip() else {}

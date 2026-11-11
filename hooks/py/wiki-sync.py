@@ -42,10 +42,14 @@ def wiki_root() -> Path:
 
 
 def wiki_pages(root: Path) -> list[Path]:
+    """<뿌리>/<토픽>/wiki/**.md 전부. 목차와 기록은 빼고 준다.
+
+    토픽은 wiki/ 를 가진 디렉토리로 정한다. 숨은 디렉토리(.graph 등)는 토픽이 아니다.
+    """
     out: list[Path] = []
     try:
-        topics = sorted(d for d in root.iterdir()
-                        if not d.name.startswith(".") and (d / "wiki").is_dir())
+        topics = sorted(entry for entry in root.iterdir()
+                        if not entry.name.startswith(".") and (entry / "wiki").is_dir())
     except OSError:
         return out
     for topic in topics:
@@ -56,15 +60,21 @@ def wiki_pages(root: Path) -> list[Path]:
 
 
 def run(cmd: list[str]) -> str:
+    """다른 스크립트를 돌려 그 출력만 돌려준다. 실패하면 빈 문자열이다.
+
+    실패를 예외로 올리지 않는 것은 훅이기 때문이다. 한 스크립트가 없다고 세션을
+    끝내지 못하게 만들면, 규칙이 지켜지는 대신 작업이 멈춘다.
+    """
     try:
-        res = subprocess.run(cmd, stdout=subprocess.PIPE,
-                             stderr=subprocess.DEVNULL, timeout=120)
+        finished = subprocess.run(cmd, stdout=subprocess.PIPE,
+                                  stderr=subprocess.DEVNULL, timeout=120)
     except (OSError, subprocess.SubprocessError):
         return ""
-    return (res.stdout or b"").decode("utf-8", "replace").strip()
+    return (finished.stdout or b"").decode("utf-8", "replace").strip()
 
 
 def main() -> int:
+    """세션 끝에 한 번: 바뀐 페이지를 찾아 그래프를 맞추고 글을 검사한다."""
     sys.stdin.read()          # 파이프를 비운다. 안 읽으면 호출한 쪽이 깨진 파이프를 본다
     root = wiki_root()
     if not root.is_dir():
@@ -77,10 +87,10 @@ def main() -> int:
         marker = 0.0
 
     changed = []
-    for path in wiki_pages(root):
+    for page in wiki_pages(root):
         try:
-            if path.stat().st_mtime > marker:
-                changed.append(path)
+            if page.stat().st_mtime > marker:
+                changed.append(page)
         except OSError:
             continue
     if not changed:
@@ -94,7 +104,7 @@ def main() -> int:
 
     if CHECKER.is_file() and len(changed) <= MAX_PAGES:
         found = run([sys.executable, str(CHECKER), "--exit-zero", "--limit", LIMIT]
-                    + [str(p) for p in changed])
+                    + [str(page) for page in changed])
         # 마지막 줄은 집계다. 그 줄만 있으면 경고가 없다는 뜻이므로 싣지 않는다.
         if found and len(found.splitlines()) > 1:
             lines.append(found)
