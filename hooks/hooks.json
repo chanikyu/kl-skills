@@ -83,6 +83,15 @@
             "statusMessage": "Syncing wiki graph...",
             "description": "Once per session: rebuild the graph db and check any wiki page that changed, no matter how it was written. The PostToolUse gates only see Write/Edit, and a model often writes files with Bash. Reports; never blocks.",
             "id": "stop:wiki-sync"
+          },
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" answer-check",
+            "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\run.ps1\" answer-check",
+            "timeout": 30,
+            "statusMessage": "Checking the answer...",
+            "description": "Read the answer just given and block once if it misses: the same question asked again, an answer past one screen, or prose findings. Blocking is capped by stop_hook_active so it cannot loop.",
+            "id": "stop:answer-check"
           }
         ]
       }
