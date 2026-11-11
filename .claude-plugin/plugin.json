@@ -1,6 +1,6 @@
 {
   "name": "kl-skills",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Skill package with Rust-backed hook gates. Installing the plugin installs the hooks too — no settings.json editing on the target machine.",
   "author": {
     "name": "chanikyu",
