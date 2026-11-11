@@ -72,6 +72,7 @@ skills/              스킬. 한 폴더에 SKILL.md 하나
   graph-doc-memory/  위키 전체를 그래프 DB 하나로 만들고 브라우저로 보여준다
     scripts/           build_graph.py (DB 생성) · open-graph.sh (빌드 후 브라우저로 열기)
     assets/viewer.html 뷰어 템플릿. 빌드할 때 데이터가 박힌 사본이 따로 생긴다
+  no-hardcoding/     값·목록·매핑·경로·임계값을 코드에 박지 않게 (전역에서 옮겨 옴)
   readable-code/     이름과 주석 규칙. 코드를 쓰거나 고칠 때
     scripts/           check_code.py (파이썬 이름·설명문 검사, ast 로 정확히)
     data/              허용할 짧은 이름 · 모호하다고 볼 이름 (코드 아님)
