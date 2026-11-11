@@ -46,6 +46,8 @@ A가 더 빠릅니다.
 
 빌더는 skills/does-not-exist/nope.py 에 있습니다.
 
+관련: [[graph-doc-memory-설계]] — 링크 안은 페이지 이름이므로 용어가 아니다.
+
 ## 표
 
 | 항목 | 값 |
@@ -96,6 +98,13 @@ case "$out" in
 esac
 hits=$(printf '%s' "$out" | grep -c "locus" || true)
 [ "$hits" -eq 0 ] && ok "인라인 코드 안은 건너뛴다" || bad "인라인 코드 안의 용어를 잡았다($hits건)"
+
+# --- 위키 링크 안은 주소다. 2026-11-11 실사용에서 'graph-doc-memory-' 로 잡혔다:
+# --- 링크를 용어로 센 것과, 낱말 끝의 하이픈을 붙여 읽은 것 두 가지가 겹쳤다.
+case "$out" in
+  *"graph-doc-memory"*) bad "위키 링크 안의 페이지 이름을 용어로 셌다" ;;
+  *)                    ok "위키 링크 안은 건너뛴다" ;;
+esac
 
 # --- 잘 쓴 글은 조용해야 한다. 여기서 소리가 나면 검사가 쓸모없다
 good="$("$PY" "$CHECK" "$TMP/good.md" 2>&1)"

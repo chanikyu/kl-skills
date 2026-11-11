@@ -40,11 +40,13 @@ CODE_SPAN = re.compile(r"`[^`]*`")
 # 인용부호 안은 이름이거나 남의 말이다. 한국어 글에서 영어 제목을 인용하면 그 안의 낱말이
 # 전부 "뜻 없는 용어"로 걸리는데, 그건 용어를 던진 게 아니라 제목을 가리킨 것이다.
 QUOTED = re.compile(r"[\"“][^\"”\n]{2,}[\"”]")
+# [[링크]] 안은 가리키는 페이지의 이름이다. 뜻을 붙일 용어가 아니라 주소다.
+WIKILINK = re.compile(r"\[\[[^\]\n]*\]\]")
 URL = re.compile(r"(?:https?://|file://|www\.)\S+")
 PATHLIKE = re.compile(r"[~./]?[\w.-]*[/\\][\w./\\-]+|\b[\w-]+\.(?:py|sh|md|json|tsv|txt|toml|html|rs|ps1|yml|yaml|csv)\b")
 IDENT = re.compile(r"\b\w*(?:_|[a-z][A-Z])\w*\b")  # snake_case, camelCase, PascalCase
 ACRONYM = re.compile(r"\b[A-Z]{2,6}\b")
-LATIN_WORD = re.compile(r"\b[a-z][a-z-]{2,}\b")
+LATIN_WORD = re.compile(r"\b[a-z][a-z-]*[a-z]\b")
 NUMBER_WITH_UNIT = re.compile(r"\d+(?:[.,]\d+)?\s*(?:%|배|개|건|초|분|시간|ms|s|bp|KB|MB|GB|점|명|쌍)")
 SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+|(?<=[。!?])")
 
@@ -94,7 +96,7 @@ def is_glossed(body, tok):
 
 def mask(line):
     """글이 아닌 부분을 지운다. 길이는 유지하지 않는다 — 줄 번호만 쓰기 때문."""
-    for rx in (CODE_SPAN, QUOTED, URL, PATHLIKE, IDENT):
+    for rx in (CODE_SPAN, QUOTED, WIKILINK, URL, PATHLIKE, IDENT):
         line = rx.sub(" ", line)
     return line
 
