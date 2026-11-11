@@ -38,6 +38,8 @@ KL-SKILLS GATES v<버전> — loaded, N rules enforced
    ```
 4. `claude plugin details kl-skills` 로 스킬·훅 개수가 맞는지 확인한다
 
+문서만 고쳤다면 올리지 않아도 된다 — 설치본은 README를 읽지 않는다.
+
 ## 지원 환경
 
 | 컴퓨터 | 실행파일 |
@@ -73,6 +75,9 @@ hooks/
   py/<게이트>.py      Python 훅. 파일을 두면 그 게이트는 Python으로 돈다
 crates/kl-gate/      Rust 훅 본체. 모든 게이트를 `match` 하나로 처리
 bin/                 빌드된 실행파일 — CI가 채운다. 손으로 넣지 않는다
+scripts/             리포 유지용 스크립트
+  bench-hook-startup.py  Rust 훅 vs Python 훅 시작 시간 측정
+results/             측정 결과. 파일명에 환경·n·날짜를 넣어 덮어쓰지 않는다
 tests/selftest*.sh   셀프테스트. CI가 이 패턴 전부를 돌린다
   selftest.sh            run.sh 가 실행파일·인터프리터를 제대로 고르는지
   selftest-new-topic.sh  위키 주제 생성 스크립트가 덮어쓰지 않는지
@@ -89,11 +94,16 @@ Rust만 쓰지 않는다. 갈리는 지점은 **설치받는 컴퓨터에 뭐가
 | 설치받는 컴퓨터에 필요한 것 | 없음 (실행파일이 리포에 있음) | `python3` |
 | 윈도우 | 됨 | 대개 안 깔려 있음 |
 | 고치고 확인 | CI 빌드 약 1분 | 즉시 |
-| 훅 시작 시간 | 1ms 수준 | 30~80ms |
+| 훅 한 번 시작 시간 | 4.5 ms | 32.0 ms |
 
-시작 시간이 중요한 이유: `PreToolUse` 는 **도구를 쓸 때마다** 돈다. Bash를 100번 쓰면
-100번 돌아서 50ms면 5초가 쌓인다. 반대로 `SessionStart`·`Stop` 은 세션당 한 번이라
-50ms는 체감되지 않는다.
+시작 시간은 이 맥에서 실제로 쟀다 — 중앙값, 각 30회. 재는 방법과 결과는
+`scripts/bench-hook-startup.py` 와 `results/hook-startup_macos-arm64_n30_20261111.txt`.
+둘 다 프로세스를 띄우는 비용을 똑같이 포함하므로, **의미 있는 건 차이인 27.5 ms** 다.
+다른 컴퓨터·다른 Python 버전에서는 달라지니, 궁금하면 그 컴퓨터에서 다시 돌려보면 된다.
+
+27.5 ms가 문제가 되는 이유: `PreToolUse` 는 **도구를 쓸 때마다** 돈다. Bash를 100번 쓰면
+100번 돌아서 약 2.8초가 쌓인다. 반대로 `SessionStart`·`Stop` 은 세션당 한 번이라
+27.5 ms는 체감되지 않는다.
 
 - **Python** — 세션당 몇 번만 도는 훅(`SessionStart`, `Stop`, `SubagentStop`),
   텍스트·JSON을 많이 다루는 규칙, 일단 만들어보고 싶을 때

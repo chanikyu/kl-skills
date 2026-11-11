@@ -1,0 +1,7 @@
+rust kl-gate (unknown gate: no work, no output)    median    4.5 ms  (min 3.6 / max 168.9)
+python3 empty gate script                          median   32.0 ms  (min 26.8 / max 39.3)
+
+gap (python - rust, medians): 27.5 ms per hook invocation
+n=30 per variant, target=aarch64-apple-darwin
+python=3.14.6  machine=Darwin/arm64
+root=/Users/kyukyu/workspace/kl-skills
