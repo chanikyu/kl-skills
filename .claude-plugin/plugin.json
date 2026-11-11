@@ -1,14 +1,22 @@
 {
   "name": "kl-skills",
-  "version": "0.2.0",
-  "description": "Skill package with Rust-backed hook gates. Installing the plugin installs the hooks too — no settings.json editing on the target machine.",
+  "version": "0.3.0",
+  "description": "Skill package whose hooks install with it — no settings.json editing on the target machine. Hook gates are written in Rust or Python, whichever fits: Rust ships prebuilt for the hot paths and for Windows, Python needs no build step.",
   "author": {
     "name": "chanikyu",
     "url": "https://github.com/chanikyu"
   },
   "repository": "https://github.com/chanikyu/kl-skills",
   "license": "MIT",
-  "keywords": ["claude-code", "skills", "hooks", "rust"],
-  "skills": ["./skills/"],
+  "keywords": [
+    "claude-code",
+    "skills",
+    "hooks",
+    "rust",
+    "python"
+  ],
+  "skills": [
+    "./skills/"
+  ],
   "hooks": "./hooks/hooks.json"
 }

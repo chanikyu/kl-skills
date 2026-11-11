@@ -10,7 +10,8 @@
 /plugin install kl-skills@kl-skills
 ```
 
-끝. Rust도, 인터넷 추가 다운로드도 필요 없다 — 실행파일이 리포 안에 들어 있다.
+끝. Rust도, 인터넷 추가 다운로드도 필요 없다 — Rust 훅은 실행파일로 리포 안에 들어 있다.
+(Python 훅을 쓰는 규칙은 설치받는 컴퓨터에 `python3` 가 있어야 돈다. 아래 "훅을 어떤 언어로 쓸까" 참고.)
 
 설치되면 세션 시작할 때 이 줄이 뜬다:
 
@@ -47,6 +48,9 @@ KL-SKILLS GATES v<버전> — loaded, N rules enforced
 | 리눅스 ARM (라즈베리파이 등) | `bin/kl-gate-aarch64-unknown-linux-musl` |
 | 윈도우 | `bin/kl-gate-x86_64-pc-windows-msvc.exe` |
 
+Python 훅은 빌드가 없으므로 환경을 가리지 않지만, **그 컴퓨터에 `python3` 가 깔려 있어야** 돈다.
+없으면 그 훅만 조용히 통과한다. Rust 훅은 영향받지 않는다.
+
 리눅스용은 `musl`(= 필요한 부품을 실행파일 안에 다 넣는 방식)로 만들어서,
 오래된 리눅스에서도 "라이브러리 버전이 안 맞는다"는 에러가 나지 않는다.
 ARM 윈도우는 x86_64 실행파일을 에뮬레이션으로 돌리므로 따로 만들지 않았다.
@@ -64,30 +68,66 @@ skills/              스킬. 한 폴더에 SKILL.md 하나
   llm-wiki-docs/     문서를 ~/llm-wiki-docs/<주제>/wiki 로 모으는 위키 규약
 hooks/
   hooks.json         어떤 사건에 어떤 명령을 돌릴지 적은 표
-  run.sh             mac·리눅스: CPU 보고 맞는 실행파일 고름
+  run.sh             mac·리눅스: Python 훅이 있으면 그걸, 없으면 Rust 실행파일을 고름
   run.ps1            윈도우용 같은 역할
-crates/kl-gate/      훅 본체 (Rust)
+  py/<게이트>.py      Python 훅. 파일을 두면 그 게이트는 Python으로 돈다
+crates/kl-gate/      Rust 훅 본체. 모든 게이트를 `match` 하나로 처리
 bin/                 빌드된 실행파일 — CI가 채운다. 손으로 넣지 않는다
 tests/selftest*.sh   셀프테스트. CI가 이 패턴 전부를 돌린다
-  selftest.sh            run.sh 가 실행파일을 제대로 고르는지
+  selftest.sh            run.sh 가 실행파일·인터프리터를 제대로 고르는지
   selftest-new-topic.sh  위키 주제 생성 스크립트가 덮어쓰지 않는지
 .github/workflows/build.yml   5종 빌드 → bin/ 에 자동 커밋
 ```
 
+## 훅을 어떤 언어로 쓸까
+
+Rust만 쓰지 않는다. 갈리는 지점은 **설치받는 컴퓨터에 뭐가 있어야 하는가**와
+**그 훅이 얼마나 자주 도는가** 두 가지다.
+
+| | Rust | Python |
+|---|---|---|
+| 설치받는 컴퓨터에 필요한 것 | 없음 (실행파일이 리포에 있음) | `python3` |
+| 윈도우 | 됨 | 대개 안 깔려 있음 |
+| 고치고 확인 | CI 빌드 약 1분 | 즉시 |
+| 훅 시작 시간 | 1ms 수준 | 30~80ms |
+
+시작 시간이 중요한 이유: `PreToolUse` 는 **도구를 쓸 때마다** 돈다. Bash를 100번 쓰면
+100번 돌아서 50ms면 5초가 쌓인다. 반대로 `SessionStart`·`Stop` 은 세션당 한 번이라
+50ms는 체감되지 않는다.
+
+- **Python** — 세션당 몇 번만 도는 훅(`SessionStart`, `Stop`, `SubagentStop`),
+  텍스트·JSON을 많이 다루는 규칙, 일단 만들어보고 싶을 때
+- **Rust** — 모든 도구 호출마다 도는 훅(`PreToolUse`, `PostToolUse`),
+  윈도우에서 반드시 돌아야 하는 규칙
+
+Python으로 시작해서 느리면 Rust로 옮기는 게 기본 경로다. `hooks.json` 은 안 고쳐도 된다 —
+`.py` 를 지우면 그때부터 Rust 쪽이 처리한다.
+
 ## 개발
 
-### 훅 규칙 추가하기
+### Python 훅 추가하기
+
+1. `hooks/py/<게이트이름>.py` 를 만든다. 게이트 이름이 `argv[1]` 로 들어오고,
+   사건 내용(JSON)이 표준입력으로 들어온다
+2. `hooks/hooks.json` 에 그 사건을 등록한다 — 명령은 Rust와 **똑같이** `run.sh <게이트이름>`
+3. 푸시하면 끝. 빌드 없음
+
+### Rust 훅 추가하기
 
 1. `crates/kl-gate/src/main.rs` 의 `match event` 에 분기를 추가한다
 2. `hooks/hooks.json` 에 그 사건을 등록한다 (`PostToolUse`, `Stop` 등)
 3. `crates/**` 를 푸시하면 CI가 5종을 다시 빌드해서 `bin/` 에 커밋한다
 
-종료 코드 규약: `0` = 통과(stdout은 모델에 전달됨), `2` = 차단(stderr가 모델에 보임).
-**판단이 안 서면 반드시 0.** 훅이 터지면 그 사건이 걸린 모든 세션이 깨진다.
+### 두 언어가 공유하는 규약
+
+- 게이트 이름은 `argv[1]`, 사건 내용(JSON)은 표준입력
+- 종료 코드: `0` = 통과(stdout은 모델에 전달됨), `2` = 차단(stderr가 모델에 보임)
+- **판단이 안 서면 반드시 0.** 훅이 터지면 그 사건이 걸린 모든 세션이 깨진다.
+  런처(`run.sh`/`run.ps1`)도 같은 원칙이라, 실행할 게 없으면 조용히 0으로 빠진다
 
 ### 로컬 빌드 (선택)
 
-이 리포는 Rust 없이도 쓸 수 있다. 직접 빌드하려면:
+이 리포는 Rust 없이도 **쓸** 수 있다. Rust 훅을 고치려면 빌드가 필요하다:
 
 ```sh
 cargo build --release                             # 현재 컴퓨터용
