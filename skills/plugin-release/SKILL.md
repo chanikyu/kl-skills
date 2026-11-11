@@ -30,7 +30,10 @@ description: Ship a change to a Claude Code plugin all the way to the installed 
    - 푸시가 안 됐거나 커밋 안 한 변경이 있으면 멈춘다
    - CI 를 끝까지 기다린다(몇 분 걸린다 — 백그라운드로 돌린다). 실패하면 설치하지 않고 멈춘다
    - 통과하면 CI 가 만든 커밋을 받고 → 장터 갱신 → 업데이트 → `verify` 순서로 간다
-   - CI 가 없는 리포만 `--no-ci` 를 쓴다
+   - CI 가 끝내 안 보이면 커밋이 바꾼 파일을 CI 설정(`.github/workflows/`)의 push 경로 조건과
+     견준다. 조건 밖이면(스킬·문서만 바꾼 커밋) CI 가 애초에 돌지 않으므로 그대로 설치한다 —
+     바이너리가 그대로라서 굳을 것도 없다. 조건 안인데 CI 가 안 보이면 멈춘다
+   - 기다리는 시간은 `PLUGIN_RELEASE_CI_WAIT_SECONDS`(기본 90초). CI 가 아예 없는 리포는 `--no-ci`
 5. **재시작 안내** — 훅은 세션이 시작될 때 읽힌다. "다시 시작해야 새 훅이 돈다"고 말한다
 6. **재시작 뒤 확인** — 사람이 "다시 시작했어"라고 하면 `python3 scripts/release.py verify`
    - 세션 첫 줄 배너의 버전도 같이 본다. 둘 다 새 버전이어야 끝이다

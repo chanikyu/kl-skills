@@ -29,7 +29,10 @@ MARKETPLACE_MANIFEST = os.path.join(".claude-plugin", "marketplace.json")
 INSTALLED_PLUGINS = os.environ.get("PLUGIN_RELEASE_INSTALLED_PLUGINS",
                                    os.path.expanduser("~/.claude/plugins/installed_plugins.json"))
 SEMVER = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
-CI_APPEAR_WAIT_SECONDS = 90   # 푸시 직후에는 CI 실행이 아직 목록에 없다. 이만큼 기다려 본다
+# 푸시 직후에는 CI 실행이 아직 목록에 없다. 이만큼 기다려 본다. 테스트처럼 짧게 하려면 환경 변수로.
+CI_WAIT_ENV = "PLUGIN_RELEASE_CI_WAIT_SECONDS"
+DEFAULT_CI_WAIT_SECONDS = 90
+WORKFLOWS_FOLDER = os.path.join(".github", "workflows")
 CI_POLL_SECONDS = 5
 BANNER_VERSION = re.compile(r"\bv(\d+\.\d+\.\d+)\b")
 
@@ -120,9 +123,18 @@ def pushed_head(root):
     return head
 
 
+def ci_wait_seconds():
+    """CI 가 나타나기를 기다릴 초. 환경 변수가 정수가 아니면 멈춘다 — 시작할 때 읽으면 bump·verify 까지 터진다."""
+    raw = os.environ.get(CI_WAIT_ENV, str(DEFAULT_CI_WAIT_SECONDS))
+    try:
+        return max(int(raw), 0)
+    except ValueError:
+        raise SystemExit("%s 는 초 단위 정수여야 한다: %r" % (CI_WAIT_ENV, raw))
+
+
 def find_ci_runs(root, commit):
     """그 커밋의 CI 실행 id 전부. 푸시 직후라 아직 없으면 잠깐씩 기다리며 다시 본다."""
-    deadline = time.monotonic() + CI_APPEAR_WAIT_SECONDS
+    deadline = time.monotonic() + ci_wait_seconds()
     while True:
         _, listing = run(["gh", "run", "list", "--commit", commit, "--json", "databaseId"], cwd=root)
         runs = json.loads(listing or "[]")
@@ -131,6 +143,95 @@ def find_ci_runs(root, commit):
         if time.monotonic() > deadline:
             return []
         time.sleep(CI_POLL_SECONDS)
+
+
+def without_comment(line):
+    """줄 끝의 # 주석을 뗀다. ponytail: 따옴표 안의 # 는 가리지 않는다 — 경로에 # 를 쓰는 일은 드물다."""
+    return re.sub(r"(?:^|\s)#.*$", "", line).rstrip()
+
+
+def push_path_filters(workflow_text):
+    """워크플로 하나가 push 때 도는 경로 조건. 경로 목록, None(모든 push 에 돈다), "no-push" 중 하나.
+
+    확실히 읽은 모양만 경로 목록으로 돌려준다 — "on: / push: / paths: / - '경로'" 를 줄마다 쓴 꼴이다.
+    나머지는 전부 None 이다. 2026-11-11 리뷰에서, 줄 단위로 읽다가 모르는 모양(한 줄로 몰아 쓴 on,
+    목록으로 쓴 push, 주석)을 "push 없음" 으로 읽어 CI 를 기다리지 않고 설치할 뻔한 것이 여섯 가지였다.
+    모르면 CI 가 돈다고 보는 쪽이 안전하다. "no-push" 는 push 라는 낱말이 아예 없을 때만이다.
+    """
+    lines = [without_comment(line) for line in workflow_text.splitlines()]
+    if not re.search(r"\bpush\b", "\n".join(lines)):
+        return "no-push"
+    saw_block_push, in_push, in_paths, paths = False, False, False, None
+    push_indent = paths_indent = 0
+    for line in lines:
+        stripped = line.strip()
+        if not stripped:
+            continue
+        indent = len(line) - len(line.lstrip())
+        if stripped == "push:":
+            saw_block_push, in_push, push_indent = True, True, indent
+            continue
+        if in_push and indent <= push_indent:
+            in_push = in_paths = False
+        if in_paths and stripped.startswith("- ") and indent >= paths_indent:
+            item = stripped[2:].strip().strip("'\"")
+            # 제외 경로(!)는 "어떤 파일이 빠지나" 까지 따져야 한다. 모르는 쪽으로 둔다.
+            if item.startswith("!"):
+                return None
+            paths.append(item)
+            continue
+        in_paths = False
+        if in_push and stripped == "paths:":
+            in_paths, paths_indent, paths = True, indent, []
+            continue
+        # paths-ignore, 한 줄 목록 paths: [...] 같은 다른 꼴은 모른다.
+        if in_push and stripped.startswith("paths"):
+            return None
+    # push 가 블록 꼴이 아닌 자리(on: [push], - push, { push: ... })에 있었다 — 모르는 모양이다.
+    if not saw_block_push:
+        return None
+    # 읽힌 목록이 비었으면 무언가 잘못 읽은 것이다.
+    if paths is not None and not paths:
+        return None
+    return paths
+
+
+def github_path_matches(pattern, path):
+    """GitHub 워크플로의 경로 규칙으로 맞춘다. fnmatch 와 달리 **/ 는 폴더 0개도 맞고, * 는 / 를 넘지 않는다."""
+    regex, index = "", 0
+    while index < len(pattern):
+        if pattern.startswith("**/", index):
+            regex, index = regex + "(?:.*/)?", index + 3
+        elif pattern.startswith("**", index):
+            regex, index = regex + ".*", index + 2
+        elif pattern[index] == "*":
+            regex, index = regex + "[^/]*", index + 1
+        elif pattern[index] == "?":
+            regex, index = regex + "[^/]", index + 1
+        else:
+            regex, index = regex + re.escape(pattern[index]), index + 1
+    return re.fullmatch(regex, path) is not None
+
+
+def commit_needs_ci(root, commit):
+    """이 커밋이 CI 를 돌게 하는가. 커밋이 바꾼 파일이 어느 워크플로의 push 경로 조건에 걸리면 그렇다."""
+    folder = os.path.join(root, WORKFLOWS_FOLDER)
+    if not os.path.isdir(folder):
+        return False
+    # git show 는 한글 이름을 "\355..." 로 감싸고, 병합 커밋에서는 아무것도 안 찍었다. 공백 든 이름은 잘렸다.
+    listing = run(["git", "-c", "core.quotepath=off", "diff-tree", "--no-commit-id", "--name-only", "-r",
+                   "-z", "-m", "--first-parent", "--root", commit], cwd=root)[1]
+    changed = [path for path in listing.split("\0") if path]
+    for name in sorted(os.listdir(folder)):
+        if not name.endswith((".yml", ".yaml")):
+            continue
+        with open(os.path.join(folder, name), encoding="utf-8") as handle:
+            paths = push_path_filters(handle.read())
+        if paths == "no-push":
+            continue
+        if paths is None or any(github_path_matches(pattern, path) for path in changed for pattern in paths):
+            return True
+    return False
 
 
 def command_ship(options):
@@ -144,9 +245,15 @@ def command_ship(options):
         print("CI 확인을 건너뛴다(--no-ci). 이 리포에 CI 가 없을 때만 쓴다")
     else:
         run_ids = find_ci_runs(root, head)
+        # CI 가 끝내 안 보일 때: 이 커밋이 CI 경로를 건드렸으면 멈추고, 안 건드렸으면 CI 없이 간다.
+        # 기다린 다음에 판단하는 이유 — 여러 커밋을 한 번에 푸시하면 앞 커밋 때문에 돈 CI 도
+        # 마지막 커밋 이름으로 보인다. 기다리지 않고 건너뛰면 그 CI 를 놓친다.
+        if not run_ids and commit_needs_ci(root, head):
+            raise SystemExit("커밋 %s 는 CI 가 돌아야 하는데 %d초 안에 CI 실행이 안 보인다. "
+                             "CI 가 없는 리포면 --no-ci" % (head[:7], ci_wait_seconds()))
         if not run_ids:
-            raise SystemExit("커밋 %s 의 CI 실행이 %d초 안에 안 보인다. CI 가 없는 리포면 --no-ci"
-                             % (head[:7], CI_APPEAR_WAIT_SECONDS))
+            print("커밋 %s 는 CI 대상 경로를 건드리지 않아 CI 가 돌지 않는다 — 바이너리는 그대로라 "
+                  "CI 확인 없이 설치한다" % head[:7])
         # 한 커밋에 워크플로가 여럿이면 전부 통과해야 한다. 첫 번째만 보면 실패한 둘째를 놓친다.
         for run_id in run_ids:
             print("CI %s 를 기다린다 (커밋 %s)" % (run_id, head[:7]))
@@ -154,9 +261,10 @@ def command_ship(options):
             if code != 0:
                 # 여기서 멈추는 것이 이 스크립트의 핵심이다. 실패한 빌드를 설치하면 옛 바이너리가 굳는다.
                 raise SystemExit("CI %s 가 실패했다 — 설치하지 않는다.\n%s" % (run_id, output[-1500:]))
-        print("CI %d개 모두 통과" % len(run_ids))
-        # CI 가 바이너리를 커밋했으면 그 커밋까지 받아야 장터 복제본과 같아진다.
-        run(["git", "pull", "-q", "--rebase"], cwd=root)
+        if run_ids:
+            print("CI %d개 모두 통과" % len(run_ids))
+            # CI 가 바이너리를 커밋했으면 그 커밋까지 받아야 장터 복제본과 같아진다.
+            run(["git", "pull", "-q", "--rebase"], cwd=root)
     print(last_line(run(["claude", "plugin", "marketplace", "update", market], timeout=300)[1]))
     print(last_line(run(["claude", "plugin", "update", "%s@%s" % (plugin, market)], timeout=300)[1]))
     return verify(plugin, market, version)

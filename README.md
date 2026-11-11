@@ -1,33 +1,80 @@
+<div align="center">
+
 # kl-skills
 
-스킬과 훅을 한 덩어리로 묶은 Claude Code 플러그인.
-**설치하면 훅까지 같이 걸린다** — 설치받는 컴퓨터에서 `settings.json`을 손댈 필요가 없다.
+**스킬과 훅을 한 덩어리로 묶은 Claude Code 플러그인**
+
+설치하면 훅까지 같이 걸린다 — 설치받는 컴퓨터에서 `settings.json` 을 손댈 필요가 없다.
+
+<p>
+  <img src="https://img.shields.io/badge/Claude%20Code-plugin-D97757?logo=anthropic&logoColor=white" alt="Claude Code plugin" />
+  <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license" />
+  <img src="https://img.shields.io/badge/macOS-arm64%20%C2%B7%20x86__64-000000?logo=apple&logoColor=white" alt="macOS" />
+  <img src="https://img.shields.io/badge/Linux-arm64%20%C2%B7%20x86__64-FCC624?logo=linux&logoColor=black" alt="Linux" />
+  <img src="https://img.shields.io/badge/Windows-x86__64-0078D4?logo=windows&logoColor=white" alt="Windows" />
+</p>
+<p>
+  <img src="https://img.shields.io/badge/-Python-3776AB?logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/-Rust-000000?logo=rust&logoColor=white" alt="Rust" />
+  <img src="https://img.shields.io/badge/-Shell-4EAA25?logo=gnu-bash&logoColor=white" alt="Shell" />
+  <img src="https://img.shields.io/badge/-Markdown-000000?logo=markdown&logoColor=white" alt="Markdown" />
+</p>
+
+[설치](#설치) · [쓰는 법](#쓰는-법) · [스킬](#스킬) · [훅 게이트](#훅-게이트) · [구조](#구조) · [개발](#개발)
+
+</div>
+
+> [!NOTE]
+> 작업 습관 몇 가지를 기계가 지키게 만든 것이다 — 알게 된 것은 위키에 남기고, 답은 생략 없이 쉽게
+> 쓰고, 계획에서 벗어나지 않고, 배포는 순서대로 한다. 스킬(= 필요할 때 Claude 가 읽는 작업 설명서)이
+> 방법을 알려 주고, 훅(= 정해진 순간마다 자동으로 도는 검사)이 그 방법을 지켰는지 본다.
+
+## kl-skills 가 하는 일
+
+Claude 가 일하는 흐름의 고비마다 검사를 하나씩 건다.
+
+```text
+말하기 → 위키에서 찾기 → 일하기 → 고친 것 검사 → 답 검사 → 위키에 남기기 → 배포
+```
+
+스킬만 있으면 기억날 때만 지켜진다. 그래서 같은 규칙을 훅으로도 건다. 아래 표의 개수는
+`tests/selftest-readme.sh` 가 실제 저장소와 맞는지 확인한다.
+
+| 들어 있는 것 | 개수 | 하는 일 |
+| --- | --: | --- |
+| 스킬 | 11개 | 위키 기록·검색·그래프, 쉬운 답변, 이름·주석 규칙, 기획, 디버깅, 배포, 문헌 조사 |
+| 훅 게이트 | 9개 | 답변 검사, 위키 목차·그래프 갱신, 글·코드 검사, 계획 이탈 알림, 위키 자동 검색 |
+| 셀프테스트 | 18묶음 | 훅·Rust 코드를 바꾼 커밋마다 CI(= GitHub 에서 도는 자동 테스트와 빌드)가 전부 돌린다 |
+| 실행파일 | 5종 | 맥·리눅스·윈도우용. Rust 없이 설치된다 |
 
 ## 설치
+
+> [!IMPORTANT]
+> 9개 게이트 중 대부분이 Python 훅이다. 설치받는 컴퓨터에 `python3` 가 있어야 돈다.
+> 없으면 그 훅들은 오류 없이 그냥 통과한다 — 설치는 됐는데 검사가 안 걸린 상태가 된다.
+
+Claude Code 안에서:
 
 ```
 /plugin marketplace add chanikyu/kl-skills
 /plugin install kl-skills@kl-skills
 ```
 
-끝. Rust도, 인터넷 추가 다운로드도 필요 없다 — Rust 훅은 실행파일로 리포 안에 들어 있다.
-(Python 훅을 쓰는 규칙은 설치받는 컴퓨터에 `python3` 가 있어야 돈다. 아래 "훅을 어떤 언어로 쓸까" 참고.)
-
-설치되면 세션 시작할 때 이 줄이 뜬다:
+끝. Rust 도, 인터넷 추가 다운로드도 필요 없다 — Rust 훅은 실행파일로 리포 안에 들어 있다.
+세션을 다시 시작하면 첫 줄에 이것이 뜬다:
 
 ```
-KL-SKILLS GATES v<버전> — loaded, N rules enforced
+KL-SKILLS GATES v<버전> — loaded, 9 rules enforced
 ```
 
-이 줄이 안 뜨면 훅이 안 걸린 것이다. `/plugin` 으로 활성 상태를 확인한다.
+이 줄이 안 뜨면 훅이 안 걸린 것이다. `/plugin` 으로 켜져 있는지 확인한다.
 
-## 고친 걸 설치본에 반영하려면 — 버전을 올려야 한다
+### 고친 걸 설치본에 반영하려면 — 버전을 올려야 한다
 
-`claude plugin update` 는 `plugin.json` 의 `version` 을 보고 판단한다. 버전이 그대로면
-내용을 아무리 고쳐도 `already at the latest version` 이라며 **아무것도 갱신하지 않는다.**
-
-그래서 내용을 바꿀 때마다 `plugin-release` 스킬의 순서를 따른다. 손으로 하면 순서를 건너뛰게
-된다 — CI 가 끝나기 전에 설치해서 옛 바이너리가 굳은 일이 실제로 있었다.
+`claude plugin update` 는 `plugin.json` 의 `version` 만 보고 판단한다. 버전이 그대로면 내용을
+아무리 고쳐도 `already at the latest version` 이라며 **아무것도 갱신하지 않는다.** 그래서
+`plugin-release` 스킬의 순서를 따른다. 손으로 하면 순서를 건너뛰게 된다 — CI 가 끝나기 전에
+설치해서 옛 바이너리가 설치본에 굳은 일이 실제로 있었다.
 
 ```sh
 python3 skills/plugin-release/scripts/release.py bump X.Y.Z   # plugin.json + version-files.txt 의 파일
@@ -38,43 +85,110 @@ python3 skills/plugin-release/scripts/release.py verify
 ```
 
 `crates/kl-gate/Cargo.toml` 이 `version-files.txt` 에 있는 이유: 배너가 찍는 버전이 설치본
-버전과 어긋나면, 배너로 "어느 버전이 깔렸나"를 확인할 수 없다.
+버전과 어긋나면, 배너로 "어느 버전이 깔렸나"를 확인할 수 없다. 문서만 고쳤다면 버전을 올리지
+않아도 된다 — 설치본은 README 를 읽지 않는다.
 
-문서만 고쳤다면 올리지 않아도 된다 — 설치본은 README를 읽지 않는다.
+## 쓰는 법
 
-## 지원 환경
+**스킬** 은 두 가지로 쓴다.
 
-| 컴퓨터 | 실행파일 |
-|---|---|
-| 맥 (M1 이후) | `bin/kl-gate-aarch64-apple-darwin` |
-| 맥 (인텔) | `bin/kl-gate-x86_64-apple-darwin` |
-| 리눅스 x86_64 · WSL | `bin/kl-gate-x86_64-unknown-linux-musl` |
-| 리눅스 ARM (라즈베리파이 등) | `bin/kl-gate-aarch64-unknown-linux-musl` |
-| 윈도우 | `bin/kl-gate-x86_64-pc-windows-msvc.exe` |
+- 대화 내용이 스킬 설명과 맞으면 Claude 가 알아서 읽는다 — "리서치 부탁해"면 `research-to-wiki`,
+  "에러 났어"면 `pipeline-debug`
+- 이름을 직접 말해도 된다 — "planner 스킬로 기획해줘"
 
-Python 훅은 빌드가 없으므로 환경을 가리지 않지만, **그 컴퓨터에 `python3` 가 깔려 있어야** 돈다.
-없으면 그 훅만 조용히 통과한다. Rust 훅은 영향받지 않는다.
+**훅** 은 할 일이 없다. 설치하면 정해진 순간마다 돈다. 대화에서 이런 모양으로 보인다:
 
-리눅스용은 `musl`(= 필요한 부품을 실행파일 안에 다 넣는 방식)로 만들어서,
-오래된 리눅스에서도 "라이브러리 버전이 안 맞는다"는 에러가 나지 않는다.
-ARM 윈도우는 x86_64 실행파일을 에뮬레이션으로 돌리므로 따로 만들지 않았다.
+```text
+Stop hook feedback:
+natural-answering: 답변을 고치고 다시 끝낼 것.
+1. 파일을 고친 턴이라 작업 보고 6단계로 끝내야 한다(references/work-report.md).
+   빠진 단계: 검증 결과, 문제 및 제약
+```
 
-**목록에 없는 환경**(FreeBSD, RISC-V 등)에서는 훅이 조용히 통과한다.
-세션이 깨지는 것보다 규칙이 안 걸리는 게 낫다는 판단이다.
+막는 훅은 `answer-check` 하나뿐이고, 한 턴에 한 번만 막는다. 나머지는 알리기만 한다.
+
+## 스킬
+
+| 스킬 | 언제 쓰나 | 하는 일 |
+| --- | --- | --- |
+| `llm-wiki-docs` | 알게 된 것을 남길 때 | 문서를 `~/llm-wiki-docs/<주제>/wiki/` 에 한 주제 한 페이지로 모은다. `index.md`·`log.md` 를 같이 관리한다 |
+| `wiki-recall` | 매 메시지 (훅이 대신 부른다) | 위키에서 관련 페이지를 찾아 답에 쓴다. 위키가 작으면 통째로(CAG), 크면 골라서(RAG) |
+| `graph-doc-memory` | "그래프 보여줘" 할 때 | 위키 전체를 그래프 DB 하나로 만들고, Obsidian 식 그래프 뷰로 브라우저에 띄운다 |
+| `research-to-wiki` | 리서치·문헌 조사 | 출처마다 근거 수준(사람 시험·동물 실험…)과 읽은 수준(본문·초록)을 적게 하고, 빠지면 검사가 잡는다 |
+| `natural-answering` | 사람이 읽는 모든 글 | 용어 정의·비교 기준·중간 단계를 생략하지 않게 한다. 작업 보고 6단계와 문서 뼈대도 여기 있다 |
+| `readable-code` | 코드를 쓰거나 고칠 때 | 이름은 담긴 것을 따라 짓고, 주석에는 왜 그렇게 했는지를 쓴다 |
+| `no-hardcoding` | 코드에 값을 적으려 할 때 | 목록·매핑·경로·임계값을 코드에 박지 않고, 이미 있는 파일에서 읽거나 데이터 파일로 뺀다 |
+| `pipeline-debug` | 에러·이상한 결과 | 에러가 난 줄이 아니라, 파이프라인을 따라 처음 틀어진 단계를 찾는다 |
+| `planner` | 기획할 때 | 분야·기간·수준으로 틀을 정하고 리서치 → 목표 → 명세 → 일정 순으로 쓴다. 진행이 계획에서 벗어나면 알린다 |
+| `hook-replay` | 훅을 고친 뒤, 오탐이 났을 때 | 훅을 실제 대화 기록의 사람 메시지마다 다시 돌려, 그때 뭐라고 했을지 표로 남긴다 |
+| `plugin-release` | 플러그인을 배포할 때 | 버전 → 커밋·푸시 → CI 통과 확인 → 설치 → 설치본 확인. 순서를 못 건너뛴다 |
+
+## 훅 게이트
+
+| 사건 | 게이트 | 하는 일 | 언어 |
+| --- | --- | --- | --- |
+| `SessionStart` | `session-start` | 배너 한 줄. 훅이 실제로 걸렸는지 확인용 | Rust |
+| `UserPromptSubmit` | `wiki-recall` | 사용자가 말할 때마다 위키를 검색해 관련 페이지의 경로와 핵심 줄을 붙인다. 낱말 둘 이상이 겹치고 질문을 40% 이상 덮을 때만 붙인다 | Python |
+| `PostToolUse` (`Write\|Edit\|MultiEdit`) | `wiki-index-check` | 위키에 쓴 페이지가 `index.md` 에 없으면 경고. **막지 않는다** | Rust |
+| `PostToolUse` (`Write\|Edit\|MultiEdit`) | `wiki-graph` | 위키 페이지를 쓰면 그래프 DB(`<루트>/.graph/`)를 다시 만든다. 위키 밖 파일이면 즉시 끝 | Python |
+| `PostToolUse` (`Write\|Edit\|MultiEdit`) | `prose-check` | 위키 페이지에서 읽는 사람이 걸릴 자리(뜻 없는 용어, 기준 없는 숫자, 빠진 주어)를 알려 준다. **막지 않는다** | Python |
+| `PostToolUse` (`Write\|Edit\|MultiEdit`) | `code-check` | 쓴 `.py` 파일의 이름과 설명문을 바로 지적한다. 캐시·가상환경·임시 경로는 건너뛴다. **막지 않는다** | Python |
+| `PostToolUse` (`Write\|Edit\|MultiEdit`) | `plan-drift` | 목표 번호가 정의된 계획서를 쓰면 틀과 이탈을 같이 알린다. **막지 않는다** | Python |
+| `PostToolUse` (`Bash`) | `after-bash` | Bash 뒤에 두 가지를 본다 — 쉘로 위키를 고쳤나, 커밋했나. 커밋이면 계획 이탈을 알린다. 한 게이트로 묶어 런처 비용을 한 번만 낸다 | Rust |
+| `Stop` | `wiki-sync` | 세션당 한 번. **어떤 방법으로 쓴 변경이든** 찾아내 그래프를 맞추고 바뀐 페이지를 검사한다. **막지 않는다** | Python |
+| `Stop` | `answer-check` | 방금 한 답변을 읽는다. 답이 빗나가 사람이 다시 물었거나, 파일을 고친 턴인데 작업 보고 6단계가 없거나, 답이 화면 하나를 넘거나, 글 검사에 걸리면 **한 번 막는다**. 두 번은 막지 않는다 | Python |
+
+<details>
+<summary><strong>왜 <code>Stop</code> 게이트가 따로 있나</strong></summary>
+
+`PostToolUse` 는 `Write`·`Edit`·`MultiEdit` 에만 걸린다. 그런데 모델은 **파일을 Bash 로도
+쓴다** — heredoc(= 셸에서 여러 줄 텍스트를 파일로 쏟아 넣는 문법), `sed`, 짧은 python 스크립트.
+그러면 위의 게이트들이 전부 조용히 넘어가고, 그래프는 위키보다 뒤처진 채로 남는다. 2026-11-11 에
+실제로 그랬다: 어떤 세션이 조사 결과를 페이지·목차·기록에 다 반영했는데, 전부 Bash 로 써서
+아무 게이트도 돌지 않았다.
+
+발동 조건에 `Bash` 를 넣는 것이 당연해 보이지만 비싸다. Bash 는 가장 자주 쓰는 도구이고, 사건
+내용에 담겨 오는 것은 경로가 아니라 명령문이며, 그 안의 쉘 변수는 풀 수 없다. 그래서 `wiki-sync` 는
+**세션당 한 번** 돌면서 파일시스템에 묻는다 — `graph.json` 보다 새 페이지가 바뀐 페이지다. 어떻게
+썼는지는 묻지 않는다. `graph.json` 이 기준점을 겸한다. 다시 만들면 그 파일의 수정 시각이 앞으로
+가므로, 다음 세션은 알아서 맞는 지점과 비교한다.
+
+`wiki-index-check` 가 Rust 인 이유: `PostToolUse` 는 파일을 쓸 때마다 돈다. 위키 밖 경로면 JSON 에서
+경로 하나 읽고 바로 끝낸다. 반대로 `wiki-graph` 와 `prose-check` 는 같은 사건에 걸리지만 Python 이다.
+**두 훅이 실제로 하는 일이 둘 다 Python 이라서다** — 그래프를 만드는 빌더와 글을 검사하는 스크립트.
+게이트만 Rust 로 옮기면 Python 프로세스가 사라지지 않고 하나가 더 붙는다. 위키 밖 경로면 문자열
+몇 개만 비교하고 끝나므로, 드는 비용은 Python 이 한 번 뜨는 약 32 ms 이고 그것도 파일을 쓸 때만 든다.
+
+</details>
 
 ## 구조
 
+```text
+kl-skills/
+|-- .claude-plugin/   # 플러그인 정보와 장터(marketplace) 정보
+|-- skills/           # 스킬 11개. 한 폴더에 SKILL.md 하나
+|-- hooks/            # hooks.json (어떤 사건에 무엇을 돌리나) + 런처 + Python 훅
+|-- crates/kl-gate/   # Rust 훅 본체
+|-- bin/              # 빌드된 실행파일 5종 — CI 가 채운다
+|-- scripts/          # 리포 유지용 스크립트 (훅 시작 시간 측정)
+|-- results/          # 측정 결과
+|-- tests/            # 셀프테스트 18묶음
 ```
+
+<details>
+<summary><strong>파일별 설명</strong></summary>
+
+```text
 .claude-plugin/
   plugin.json        플러그인 정보 + 훅 등록 위치
-  marketplace.json   GitHub에서 바로 설치되게 하는 장터 정보
-skills/              스킬. 한 폴더에 SKILL.md 하나
+  marketplace.json   GitHub 에서 바로 설치되게 하는 장터 정보
+skills/
   llm-wiki-docs/     문서를 ~/llm-wiki-docs/<주제>/wiki 로 모으는 위키 규약
     scripts/           new-topic.sh · index-add.py · log-append.py · lint.py
   graph-doc-memory/  위키 전체를 그래프 DB 하나로 만들고 브라우저로 보여준다
     scripts/           build_graph.py (DB 생성) · open-graph.sh (빌드 후 브라우저로 열기)
     assets/viewer.html 뷰어 템플릿. 빌드할 때 데이터가 박힌 사본이 따로 생긴다
-  no-hardcoding/     값·목록·매핑·경로·임계값을 코드에 박지 않게 (전역에서 옮겨 옴)
+  no-hardcoding/     값·목록·매핑·경로·임계값을 코드에 박지 않게
   pipeline-debug/    에러가 나면 파이프라인을 따라 처음 틀어진 단계를 찾는다
     scripts/           probe.py (단계 사이 파일의 개수·열·빈 칸·앞부분을 숫자로)
   planner/           분야·기간·수준으로 틀을 정하고 리서치 → 목표 → 명세 → 일정으로 기획
@@ -91,11 +205,11 @@ skills/              스킬. 한 폴더에 SKILL.md 하나
     data/              허용할 짧은 이름 · 모호하다고 볼 이름 (코드 아님)
   natural-answering/ 생략 없이 쓰는 규칙. 보고·문서·답변 전부에 적용
     scripts/           check_prose.py (기계로 잡히는 생략·어색함 검사)
-    data/              판정 기준. 패턴·허용 약어·비교로 인정할 말 (코드 아님)
+    data/              판정 기준. 패턴·허용 약어·되묻는 말투 (코드 아님)
     references/        work-report.md (작업 보고 6단계) · document-structure.md (문서 뼈대)
   hook-replay/       훅을 실제 대화 기록의 사람 메시지마다 다시 돌려 오탐·놓침을 찾는다
     scripts/           replay.py (시점별로 기록을 잘라 훅에 넘기고 결과를 TSV 로)
-  plugin-release/    버전 → 커밋·푸시 → CI 통과 확인 → 설치 → 설치본 확인. 순서를 못 건너뛴다
+  plugin-release/    버전 → 커밋·푸시 → CI 통과 확인 → 설치 → 설치본 확인
     scripts/           release.py (bump · ship · verify)
   research-to-wiki/  문헌 조사를 위키로. 출처마다 근거 수준·읽은 수준을 적게 하고 검사한다
     scripts/           check_research.py (결론이 맨 앞인가, 출처 표시·인용 짝이 맞나)
@@ -103,94 +217,118 @@ skills/              스킬. 한 폴더에 SKILL.md 하나
     assets/            research-page-template.md (조사 페이지 틀)
 hooks/
   hooks.json         어떤 사건에 어떤 명령을 돌릴지 적은 표
-                     SessionStart → 배너
-                     PostToolUse(Write|Edit) → wiki-index-check · wiki-graph
-                                               prose-check · code-check · plan-drift
-                     PostToolUse(Bash) → after-bash (위키 변경 + 커밋 이탈)
-                     Stop → wiki-sync · answer-check
-                     UserPromptSubmit → wiki-recall
   run.sh             mac·리눅스: Python 훅이 있으면 그걸, 없으면 Rust 실행파일을 고름
   run.ps1            윈도우용 같은 역할
-  py/<게이트>.py      Python 훅. 파일을 두면 그 게이트는 Python으로 돈다
-  py/_transcript.py  대화 기록에서 사람 메시지를 가르는 규칙. answer-check 와 hook-replay 가 같이 쓴다
+  py/<게이트>.py      Python 훅. 파일을 두면 그 게이트는 Python 으로 돈다
+  py/_transcript.py  대화 기록에서 사람 메시지와 이번 턴의 도구 호출을 읽는다 (answer-check · hook-replay)
+  py/_work_files.py  사용자 작업 파일과 임시 경로를 가른다 (answer-check · code-check)
+  py/_hook_output.py 모델에게 알리는 JSON 출력
 crates/kl-gate/      Rust 훅 본체. 모든 게이트를 `match` 하나로 처리
                      판단 로직은 순수 함수로 빼서 `cargo test` 로 고정
-bin/                 빌드된 실행파일 — CI가 채운다. 손으로 넣지 않는다
+bin/                 빌드된 실행파일 — CI 가 채운다. 손으로 넣지 않는다
 version-files.txt    plugin.json 말고도 버전이 적힌 파일 목록. plugin-release 가 같이 올린다
-scripts/             리포 유지용 스크립트
+scripts/
   bench-hook-startup.py  Rust 훅 vs Python 훅 시작 시간 측정
 results/             측정 결과. 파일명에 환경·n·날짜를 넣어 덮어쓰지 않는다
-tests/selftest*.sh   셀프테스트. CI가 이 패턴 전부를 돌린다
-  selftest.sh            run.sh 가 실행파일·인터프리터를 제대로 고르는지
-  selftest-new-topic.sh  위키 주제 생성 스크립트가 덮어쓰지 않는지
-  selftest-wiki-scripts.sh  인덱스·로그·lint 스크립트가 제대로 동작하는지
-  selftest-prose.sh      생략 많은 글은 걸리고 잘 쓴 글은 조용한지 (검사별로 한 줄씩)
-  selftest-banner.sh     배너가 말하는 게이트 개수가 hooks.json 과 맞는지
-  selftest-wiki-sync.sh  쉘로 고친 페이지(= 훅이 못 본 변경)를 세션 끝에 잡는지
-  selftest-wiki-touch.sh 같은 변경을 Bash 직후에 바로 잡는지 (바이너리 필요)
-  selftest-readable-code.sh 나쁜 이름·빠진 설명문을 잡고, 잘 쓴 코드는 조용한지
-  selftest-code-check.sh 그 검사를 훅으로 걸었을 때 조용해야 할 경우에 조용한지
-  selftest-answer-check.sh 되물었을 때만 막고(한 번 요청·기계 글·재전송은 안 막음), 파일을 고친 턴은 작업 보고 6단계를 요구하고, 한 번 막은 뒤에는 안 막는지(무한 반복 방지)
-  selftest-pipeline-debug.sh 세 단계 중 둘째에서 생긴 빈 칸이 숫자로 드러나는지
-  selftest-planner.sh    잘 쓴 기획서는 깨끗하고, 목표 연결이 끊긴 기획서·계획 밖 일은 이름대로 걸리는지
-  selftest-wiki-recall.sh 맞는 페이지가 먼저 나오고, 무관한 메시지에는 훅이 조용한지
-  selftest-graph.sh      그래프 DB 집계가 맞는지 + 뷰어가 실제로 그려지는지
-  selftest-hook-replay.sh 시점을 맞게 자르고(stop·prompt), 기계 글은 시점으로 안 세는지
-  selftest-plugin-release.sh CI 가 실패하면 설치 명령을 한 번도 안 부르는지, 굳은 바이너리를 잡는지
+tests/selftest*.sh   셀프테스트. CI 가 이 패턴 전부를 돌린다
+  selftest.sh                  run.sh 가 실행파일·인터프리터를 제대로 고르는지
+  selftest-readme.sh           README 의 개수·스킬·게이트가 실제 저장소와 맞는지
+  selftest-banner.sh           배너가 말하는 게이트 개수가 hooks.json 과 맞는지
+  selftest-new-topic.sh        위키 주제 생성 스크립트가 덮어쓰지 않는지
+  selftest-wiki-scripts.sh     인덱스·로그·lint 스크립트가 제대로 동작하는지
+  selftest-wiki-sync.sh        쉘로 고친 페이지(= 훅이 못 본 변경)를 세션 끝에 잡는지
+  selftest-wiki-touch.sh       같은 변경을 Bash 직후에 바로 잡는지 (바이너리 필요)
+  selftest-wiki-recall.sh      맞는 페이지가 먼저 나오고, 무관한 메시지에는 훅이 조용한지
+  selftest-graph.sh            그래프 DB 집계가 맞는지 + 뷰어가 실제로 그려지는지
+                               (크롬이 있으면 헤드리스로 띄워서 노드가 그려졌는지 센다)
+  selftest-prose.sh            생략 많은 글은 걸리고 잘 쓴 글은 조용한지 (검사별로 한 줄씩)
+  selftest-readable-code.sh    나쁜 이름·빠진 설명문을 잡고, 잘 쓴 코드는 조용한지
+  selftest-code-check.sh       그 검사를 훅으로 걸었을 때 조용해야 할 경우에 조용한지
+  selftest-answer-check.sh     되물었을 때만 막고, 파일을 고친 턴은 작업 보고 6단계를 요구하고,
+                               한 번 막은 뒤에는 안 막는지(무한 반복 방지)
+  selftest-pipeline-debug.sh   세 단계 중 둘째에서 생긴 빈 칸이 숫자로 드러나는지
+  selftest-planner.sh          잘 쓴 기획서는 깨끗하고, 목표 연결이 끊긴 기획서·계획 밖 일은 걸리는지
+  selftest-hook-replay.sh      시점을 맞게 자르고(stop·prompt), 기계 글은 시점으로 안 세는지
+  selftest-plugin-release.sh   CI 가 실패하면 설치 명령을 한 번도 안 부르는지, 굳은 바이너리를 잡는지
+  release_paths_check.py       (위 테스트가 부름) 워크플로 모양·경로 규칙·파일 이름별 CI 판정
   selftest-research-to-wiki.sh 잘 쓴 조사 페이지는 조용하고, 빠진 표시는 이름대로 걸리는지
-                         (크롬이 있으면 헤드리스로 띄워서 노드가 그려졌는지 센다.
-                          없으면 그 검사만 건너뛴다)
 .github/workflows/build.yml   5종 빌드 → bin/ 에 자동 커밋
 ```
 
-## 훅을 어떤 언어로 쓸까
+</details>
 
-Rust만 쓰지 않는다. 갈리는 지점은 **설치받는 컴퓨터에 뭐가 있어야 하는가**와
-**그 훅이 얼마나 자주 도는가** 두 가지다.
+## 지원 환경
+
+| 컴퓨터 | 실행파일 |
+| --- | --- |
+| 맥 (M1 이후) | `bin/kl-gate-aarch64-apple-darwin` |
+| 맥 (인텔) | `bin/kl-gate-x86_64-apple-darwin` |
+| 리눅스 x86_64 · WSL(= 윈도우 안에서 리눅스를 돌리는 환경) | `bin/kl-gate-x86_64-unknown-linux-musl` |
+| 리눅스 ARM(= 휴대폰·라즈베리파이 같은 저전력 칩) | `bin/kl-gate-aarch64-unknown-linux-musl` |
+| 윈도우 | `bin/kl-gate-x86_64-pc-windows-msvc.exe` |
+
+Python 훅은 빌드가 없으므로 환경을 가리지 않지만, **그 컴퓨터에 `python3` 가 깔려 있어야** 돈다.
+없으면 그 훅만 조용히 통과한다. Rust 훅은 영향받지 않는다.
+
+리눅스용은 `musl`(= 필요한 부품을 실행파일 안에 다 넣는 방식)로 만들어서, 오래된 리눅스에서도
+"라이브러리 버전이 안 맞는다"는 에러가 나지 않는다. ARM(= 휴대폰 계열의 저전력 칩) 윈도우 컴퓨터는 x86_64 실행파일을 에뮬레이션으로
+돌리므로 따로 만들지 않았다. **목록에 없는 환경**(FreeBSD, RISC-V 등)에서는 훅이 조용히 통과한다.
+세션이 깨지는 것보다 규칙이 안 걸리는 게 낫다는 판단이다.
+
+## 개발
+
+<details>
+<summary><strong>훅을 어떤 언어로 쓸까 — Rust 와 Python</strong></summary>
+
+Rust 만 쓰지 않는다. 갈리는 지점은 **설치받는 컴퓨터에 뭐가 있어야 하는가**와 **그 훅이 얼마나 자주
+도는가** 두 가지다.
 
 | | Rust | Python |
-|---|---|---|
+| --- | --- | --- |
 | 설치받는 컴퓨터에 필요한 것 | 없음 (실행파일이 리포에 있음) | `python3` |
 | 윈도우 | 됨 | 대개 안 깔려 있음 |
 | 고치고 확인 | CI 빌드 약 1분 | 즉시 |
 | 훅 한 번 시작 시간 | 4.5 ms | 32.0 ms |
 
 시작 시간은 이 맥에서 실제로 쟀다 — 중앙값, 각 30회. 재는 방법과 결과는
-`scripts/bench-hook-startup.py` 와 `results/hook-startup_macos-arm64_n30_20261111.txt`.
-둘 다 프로세스를 띄우는 비용을 똑같이 포함하므로, **의미 있는 건 차이인 27.5 ms** 다.
-다른 컴퓨터·다른 Python 버전에서는 달라지니, 궁금하면 그 컴퓨터에서 다시 돌려보면 된다.
+`scripts/bench-hook-startup.py` 와 `results/hook-startup_macos-arm64_n30_20261111.txt`. 둘 다 프로세스를
+띄우는 비용을 똑같이 포함하므로, **의미 있는 건 차이인 27.5 ms** 다. 다른 컴퓨터·다른 Python 버전에서는
+달라지니, 궁금하면 그 컴퓨터에서 다시 돌려보면 된다.
 
-27.5 ms가 문제가 되는 이유: `PreToolUse` 는 **도구를 쓸 때마다** 돈다. Bash를 100번 쓰면
-100번 돌아서 약 2.8초가 쌓인다. 반대로 `SessionStart`·`Stop` 은 세션당 한 번이라
-27.5 ms는 체감되지 않는다.
+27.5 ms 가 문제가 되는 이유: `PreToolUse` 는 **도구를 쓸 때마다** 돈다. Bash 를 100번 쓰면 100번
+돌아서 약 2.8초가 쌓인다. 반대로 `SessionStart`·`Stop` 은 세션당 한 번이라 27.5 ms 는 체감되지 않는다.
 
-- **Python** — 세션당 몇 번만 도는 훅(`SessionStart`, `Stop`, `SubagentStop`),
-  텍스트·JSON을 많이 다루는 규칙, 일단 만들어보고 싶을 때
-- **Rust** — 모든 도구 호출마다 도는 훅(`PreToolUse`, `PostToolUse`),
-  윈도우에서 반드시 돌아야 하는 규칙
+- **Python** — 세션당 몇 번만 도는 훅(`SessionStart`, `Stop`, `SubagentStop`), 텍스트·JSON 을 많이
+  다루는 규칙, 일단 만들어보고 싶을 때
+- **Rust** — 모든 도구 호출마다 도는 훅(`PreToolUse`, `PostToolUse`), 윈도우에서 반드시 돌아야 하는 규칙
 
-Python으로 시작해서 느리면 Rust로 옮기는 게 기본 경로다. `hooks.json` 은 안 고쳐도 된다 —
+Python 으로 시작해서 느리면 Rust 로 옮기는 게 기본 경로다. `hooks.json` 은 안 고쳐도 된다 —
 `.py` 를 지우면 그때부터 Rust 쪽이 처리한다.
 
-## 개발
+</details>
 
-### Python 훅 추가하기
+<details>
+<summary><strong>훅 추가하기 — Python · Rust</strong></summary>
 
-1. `hooks/py/<게이트이름>.py` 를 만든다. 게이트 이름이 `argv[1]` 로 들어오고,
-   사건 내용(JSON)이 표준입력으로 들어온다
-2. `hooks/hooks.json` 에 그 사건을 등록한다 — 명령은 Rust와 **똑같이** `run.sh <게이트이름>`
+**Python 훅**
+
+1. `hooks/py/<게이트이름>.py` 를 만든다. 게이트 이름이 `argv[1]` 로 들어오고, 사건 내용(JSON)이 표준입력으로 들어온다
+2. `hooks/hooks.json` 에 그 사건을 등록한다 — 명령은 Rust 와 **똑같이** `run.sh <게이트이름>`
 3. 푸시하면 끝. 빌드 없음
 
-### Rust 훅 추가하기
+**Rust 훅**
 
 1. `crates/kl-gate/src/main.rs` 의 `match event` 에 분기를 추가한다
 2. `hooks/hooks.json` 에 그 사건을 등록한다 (`PostToolUse`, `Stop` 등)
-3. `crates/**` 를 푸시하면 CI가 5종을 다시 빌드해서 `bin/` 에 커밋한다
+3. `crates/**` 를 푸시하면 CI 가 5종을 다시 빌드해서 `bin/` 에 커밋한다
 
-### 두 언어가 공유하는 규약
+</details>
+
+<details>
+<summary><strong>두 언어가 공유하는 규약 — 출력이 모델에게 가는 방법</strong></summary>
 
 - 게이트 이름은 `argv[1]`, 사건 내용(JSON)은 표준입력
-- 종료 코드: `0` = 통과, `2` = 차단(stderr가 모델에 보임)
+- 종료 코드: `0` = 통과, `2` = 차단(stderr 가 모델에 보임)
 - **그냥 찍은 출력(stdout)은 대부분 모델에게 가지 않는다.** `SessionStart` 는 가지만, `PostToolUse` 와
   `Stop` 의 stdout 은 디버그 기록에만 남는다. 모델에게 알리려면 JSON 한 덩어리를 찍는다:
   `{"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": "..."}}`.
@@ -198,10 +336,13 @@ Python으로 시작해서 느리면 Rust로 옮기는 게 기본 경로다. `hoo
   막아야 할 때(Stop)는 `{"decision": "block", "reason": "..."}` 이다
 - 이 규약을 몰라서 2026-11-11 까지 게이트 넷의 지적이 **기록에만 쌓이고 아무도 못 읽었다.**
   예전 판의 이 README 가 "stdout 은 모델에 전달됨" 이라고 적고 있었다
-- **판단이 안 서면 반드시 0.** 훅이 터지면 그 사건이 걸린 모든 세션이 깨진다.
-  런처(`run.sh`/`run.ps1`)도 같은 원칙이라, 실행할 게 없으면 조용히 0으로 빠진다
+- **판단이 안 서면 반드시 0.** 훅이 터지면 그 사건이 걸린 모든 세션이 깨진다. 런처(`run.sh`/`run.ps1`)도
+  같은 원칙이라, 실행할 게 없으면 조용히 0으로 빠진다
 
-### 로컬 빌드 (선택)
+</details>
+
+<details>
+<summary><strong>로컬 빌드와 테스트</strong></summary>
 
 이 리포는 Rust 없이도 **쓸** 수 있다. Rust 훅을 고치려면 빌드가 필요하다:
 
@@ -212,49 +353,13 @@ for t in tests/selftest*.sh; do sh "$t"; done     # 셀프테스트 전부
 claude plugin validate .                          # 플러그인·스킬 형식 검사
 ```
 
-5종 전부는 로컬에서 만들 수 없다(윈도우·맥 SDK 라이선스 문제). CI가 한다.
+5종 전부는 로컬에서 만들 수 없다(윈도우·맥 SDK 라이선스 문제). CI 가 한다.
+CI 는 `crates/`·`hooks/`·`Cargo.toml`·워크플로 파일이 바뀐 커밋에만 돈다. 스킬·문서만 바꿨다면
+셀프테스트를 직접 돌린다.
+훅을 고쳤다면 테스트만으로 끝내지 말고 `hook-replay` 로 실제 대화 기록에 한 번 돌려 본다 —
+테스트는 만든 사람이 상상한 대화만 담고 있다.
 
-## 지금 걸려 있는 훅
-
-| 사건 | 게이트 | 하는 일 | 언어 |
-|---|---|---|---|
-| `SessionStart` | `session-start` | 배너 한 줄. 훅이 실제로 걸렸는지 확인용 | Rust |
-| `PostToolUse` (`Write\|Edit\|MultiEdit`) | `wiki-index-check` | `~/llm-wiki-docs/<주제>/wiki/` 에 쓴 페이지가 `index.md` 에 없으면 경고. **막지 않는다** | Rust |
-| `PostToolUse` (`Write\|Edit\|MultiEdit`) | `wiki-graph` | 위키 페이지를 쓰면 그래프 DB(`<루트>/.graph/`)를 다시 만든다. 위키 밖 파일이면 즉시 끝 | Python |
-| `PostToolUse` (`Write\|Edit\|MultiEdit`) | `prose-check` | 위키 페이지에서 읽는 사람이 걸릴 자리(뜻 없는 용어, 기준 없는 숫자, 빠진 주어)를 알려 준다. **막지 않는다** | Python |
-| `PostToolUse` (`Write\|Edit\|MultiEdit`) | `plan-drift` | 목표 번호가 정의된 계획서를 쓰면 틀과 이탈을 같이 알린다. **막지 않는다** | Python |
-| `PostToolUse` (`Bash`) | `after-bash` | Bash 뒤에 두 가지를 본다 — 쉘로 위키를 고쳤나(수정 시각), 커밋했나(명령어). 둘 다 아니면 아무것도 띄우지 않는다. 커밋이면 계획 이탈을 알린다. 한 게이트로 묶어 런처 비용을 한 번만 낸다 | Rust |
-| `UserPromptSubmit` | `wiki-recall` | 사용자가 말할 때마다 위키를 검색해 관련 페이지의 경로와 핵심 줄을 붙인다. 낱말 둘 이상이 겹치고 질문을 40% 이상 덮을 때만 붙인다 | Python |
-| `PostToolUse` (`Write\|Edit\|MultiEdit`) | `code-check` | 쓴 `.py` 파일의 이름과 설명문을 바로 지적한다. 캐시·가상환경·임시 경로는 건너뛴다. **막지 않는다** | Python |
-| `Stop` | `answer-check` | 방금 한 답변을 읽는다. 답이 빗나가서 사람이 다시 물었거나(되묻는 말투, 또는 거의 같은 질문 재전송 — 한 번만 한 요청은 안 막는다), 파일을 고친 턴인데 작업 보고 6단계가 없거나, 답이 화면 하나를 넘거나, 글 검사에 걸리면 **한 번 막는다**. 두 번은 막지 않는다 | Python |
-| `Stop` | `wiki-sync` | 세션당 한 번. 수정 시각을 비교해 **어떤 방법으로 쓴 변경이든** 찾아내 그래프를 맞추고 바뀐 페이지를 검사한다. **막지 않는다** | Python |
-
-`wiki-index-check` 가 Rust인 이유: `PostToolUse` 는 파일을 쓸 때마다 돈다(위 측정 참고).
-위키 밖 경로면 JSON에서 경로 하나 읽고 바로 끝낸다.
-
-### 왜 `Stop` 게이트가 따로 있나
-
-`PostToolUse` 는 `Write`·`Edit`·`MultiEdit` 에만 걸린다. 그런데 모델은 **파일을 Bash로도
-쓴다** — heredoc(= 셸에서 여러 줄 텍스트를 파일로 쏟아 넣는 문법), `sed`, 짧은 python 스크립트. 그러면 위 세 게이트가 전부 조용히 넘어가고,
-그래프는 위키보다 뒤처진 채로 남는다. 2026-11-11에 실제로 그랬다: 어떤 세션이 조사 결과를
-페이지·목차·기록에 다 반영했는데, 전부 Bash로 써서 아무 게이트도 돌지 않았다.
-
-발동 조건에 `Bash` 를 넣는 것이 당연해 보이지만 비싸다. Bash는 가장 자주 쓰는 도구이고,
-사건 내용에 담겨 오는 것은 경로가 아니라 명령문이며, 그 안의 쉘 변수는 풀 수 없다.
-그래서 `wiki-sync` 는 **세션당 한 번** 돌면서 파일시스템에 묻는다 — `graph.json` 보다
-새 페이지가 바뀐 페이지다. 어떻게 썼는지는 묻지 않는다.
-
-`graph.json` 이 기준점을 겸한다. 다시 만들면 그 파일의 수정 시각이 앞으로 가므로, 다음
-세션은 알아서 맞는 지점과 비교한다. 따로 기록할 상태가 없다.
-
-`wiki-graph` 와 `prose-check` 도 같은 사건에 걸리지만 Python이다. 위 표의 기준
-("`PostToolUse` 는 Rust")을 일부러 어긴 자리라 이유를 적어 둔다. **두 훅이 실제로 하는 일이
-둘 다 Python이다** — 그래프를 만드는 빌더와 글을 검사하는 스크립트. 게이트만 Rust로 옮기면
-Python 프로세스가 사라지지 않고, 오히려 프로세스가 하나 더 붙는다.
-
-위키 밖 경로면 게이트가 문자열 몇 개만 비교하고 바로 끝낸다. 그래서 드는 비용은 Python이 한 번
-뜨는 약 32 ms 뿐이고, 그 비용도 파일을 쓸 때만 든다. 빌더와 검사기를 Rust로 옮기는 날에
-게이트도 같이 옮기면 된다.
+</details>
 
 ## 라이선스
 

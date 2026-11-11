@@ -26,6 +26,17 @@ printf '{\n  "name": "demo",\n  "version": "1.2.3",\n  "description": "x"\n}\n' 
 printf '{"name": "demo-market", "plugins": [{"name": "demo", "source": "./"}]}\n' > "$PLUG/.claude-plugin/marketplace.json"
 printf '[package]\nname = "demo"\nversion = "1.2.3"\n\n[dependencies]\nserde = { version = "1" }\n' > "$PLUG/crate/Cargo.toml"
 printf '# 같이 올릴 파일\ncrate/Cargo.toml\n' > "$PLUG/version-files.txt"
+mkdir -p "$PLUG/.github/workflows"
+cat > "$PLUG/.github/workflows/build.yml" <<'EOF'
+name: build
+on:
+  push:
+    paths:
+      - 'crate/**'
+      - 'hooks/**'
+  workflow_dispatch:
+jobs: {}
+EOF
 cat > "$PLUG/hooks/hooks.json" <<'EOF'
 {"hooks": {"SessionStart": [{"hooks": [{"type": "command", "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/banner.sh\"", "timeout": 5}]}]}}
 EOF
@@ -114,6 +125,31 @@ grep -q '^claude plugin update' "$CALLS" && ok "설치 명령이 조용해도 �
 FAKE_CI=pass FAKE_RUN_LIST='[{"databaseId": 1}, {"databaseId": 2}]' FAKE_FAIL_ID=2 \
   "$PY" "$RELEASE" --repo "$PLUG" ship >"$TMP/two.log" 2>&1
 grep -q '^claude' "$CALLS" && bad "둘째 CI 가 실패했는데 설치했다" || ok "CI 가 여러 개면 전부 통과해야 설치한다"
+
+# --- CI 가 애초에 돌지 않는 커밋(CI 경로 밖만 바꿈)은 CI 를 기다리지 않고 설치한다 (2026-11-11 빈틈)
+echo "문서" > "$PLUG/NOTES.md"
+git -C "$PLUG" add NOTES.md; git -C "$PLUG" commit -q -m "docs only"; git -C "$PLUG" push -q
+: > "$CALLS"
+FAKE_CI=fail FAKE_RUN_LIST='[]' PLUGIN_RELEASE_CI_WAIT_SECONDS=1 "$PY" "$RELEASE" --repo "$PLUG" ship >"$TMP/docs.log" 2>&1
+grep -q '^gh run watch' "$CALLS" && bad "CI 가 돌지 않는 커밋인데 CI 를 기다렸다" || ok "CI 경로 밖만 바꾼 커밋은 CI 를 기다리지 않는다"
+grep -q '^claude plugin update' "$CALLS" && ok "그런 커밋은 바로 설치까지 간다" || bad "문서만 바꾼 커밋을 설치하지 않았다: $(tail -3 "$TMP/docs.log")"
+grep -q "CI 대상" "$TMP/docs.log" && ok "CI 를 건너뛴 이유를 말한다" || bad "건너뛴 이유가 없다: $(cat "$TMP/docs.log")"
+
+# --- CI 경로 안을 바꾼 커밋은 여전히 CI 를 기다린다
+echo "# 훅" > "$PLUG/hooks/note.sh"
+git -C "$PLUG" add hooks/note.sh; git -C "$PLUG" commit -q -m "hook change"; git -C "$PLUG" push -q
+: > "$CALLS"
+FAKE_CI=fail "$PY" "$RELEASE" --repo "$PLUG" ship >"$TMP/hook.log" 2>&1
+grep -q '^claude' "$CALLS" && bad "CI 경로 안을 바꿨는데 CI 실패를 무시하고 설치했다" || ok "CI 경로 안을 바꾼 커밋은 CI 가 통과해야 설치한다"
+: > "$CALLS"
+FAKE_RUN_LIST='[]' PLUGIN_RELEASE_CI_WAIT_SECONDS=1 "$PY" "$RELEASE" --repo "$PLUG" ship >"$TMP/hook-norun.log" 2>&1
+grep -q '^claude' "$CALLS" && bad "CI 가 돌아야 하는 커밋인데 CI 없이 설치했다" || ok "CI 가 돌아야 하는 커밋에 CI 가 안 보이면 멈춘다"
+
+# --- 워크플로 모양·경로 규칙·파일 이름별 판정 (2026-11-11 리뷰가 재현한 모양들)
+"$PY" "$REPO/tests/release_paths_check.py" "$RELEASE" > "$TMP/paths.log" 2>&1
+cat "$TMP/paths.log"
+fails=$((fails + $(grep -c '^FAIL' "$TMP/paths.log")))
+grep -q '^Traceback' "$TMP/paths.log" && bad "판정 확인 스크립트가 터졌다"
 
 # --- 설치본에 옛 바이너리가 굳은 경우: 배너 버전이 다르면 알려 준다
 OLD="$TMP/old-copy"; cp -R "$PLUG" "$OLD"

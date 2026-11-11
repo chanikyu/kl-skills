@@ -44,6 +44,12 @@ QUOTED = re.compile(r"[\"“][^\"”\n]{2,}[\"”]")
 WIKILINK = re.compile(r"\[\[[^\]\n]*\]\]")
 # 인용은 글이 아니라 출처 표시다. 안에 든 저자 이름(van Nood)·학술지 이름(PNAS)은 뜻을 붙일
 # 용어가 아니다 — 2026-11-11 에 이것들이 "뜻 없는 용어" 로 잡혀 답변이 여러 번 막혔다.
+# HTML 태그와 GitHub 알림 표시([!NOTE] 등)는 글이 아니라 문서의 뼈대다. README 의 배지 묶음이
+# "195자짜리 문장" 으로, <summary><strong> 이 "뜻 없는 용어" 로 잡혔다(2026-11-11). 태그만 지우고
+# 태그 사이의 글은 그대로 검사한다.
+HTML_TAG = re.compile(r"</?[A-Za-z][A-Za-z0-9-]*"
+                      r"(?:\s+[A-Za-z_:][A-Za-z0-9_:.-]*(?:\s*=\s*(?:\"[^\"]*\"|'[^']*'|[^\s<>]+))?)*\s*/?>")
+GITHUB_ALERT = re.compile(r"\[![A-Z]+\]")
 MARKDOWN_LINK = re.compile(r"\[[^\]\n]*\]\([^)\n]*\)")
 CITATION = re.compile(r"\[[^\]\n]*\b(?:1[89]|20)\d{2}[a-z]?\b[^\]\n]*\]")
 # 참고문헌 목록의 한 줄: "[저자 연도] 설명. 학술지. <주소>" 또는 "[1] ...". 주소가 있어야 한다.
@@ -111,7 +117,8 @@ def is_glossed(body, tok):
 
 def mask(line):
     """글이 아닌 부분을 지운다. 길이는 유지하지 않는다 — 줄 번호만 쓰기 때문."""
-    for rx in (CODE_SPAN, QUOTED, WIKILINK, MARKDOWN_LINK, CITATION, URL, PATHLIKE, IDENT):
+    for rx in (CODE_SPAN, HTML_TAG, GITHUB_ALERT, QUOTED, WIKILINK, MARKDOWN_LINK, CITATION, URL,
+               PATHLIKE, IDENT):
         line = rx.sub(" ", line)
     return line
 

@@ -154,6 +154,44 @@ case "$("$PY" "$CHECK" "$TMP/cite-prose.md" 2>&1)" in
   *)        bad "본문 문장 속 약어까지 놓쳤다" ;;
 esac
 
+# --- 2026-11-11 README 에서 난 오탐: HTML 태그·배지 묶음·GitHub 알림 표시를 글로 읽었다
+cat > "$TMP/html.md" <<'EOF'
+# 머리말
+
+<p>
+  <img src="https://img.shields.io/badge/a-b-blue" alt="Claude Code plugin badge for the repository" />
+  <img src="https://img.shields.io/badge/c-d-red" alt="MIT license badge shown in the header row" />
+  <img src="https://img.shields.io/badge/e-f-green" alt="macOS arm64 and x86_64 supported platforms" />
+</p>
+
+> [!NOTE]
+> 작업 습관을 기계가 지키게 만든 것이다.
+
+<details>
+<summary><strong>왜 따로 있나</strong></summary>
+
+설명이다.
+
+</details>
+EOF
+html="$("$PY" "$CHECK" "$TMP/html.md" 2>&1)"
+case "$html" in
+  *"경고 0건"*) ok "HTML 태그·배지·알림 표시는 글로 읽지 않는다" ;;
+  *)            bad "HTML·알림 표시를 글로 읽었다: $html" ;;
+esac
+# 꺾쇠가 든 보통 문장은 태그가 아니다 (리뷰에서 재현: AUC 를 놓쳤다)
+printf '# t\n\nn <m 이면 AUC 가 높고 k> 3 이다.\n' > "$TMP/angle.md"
+case "$("$PY" "$CHECK" "$TMP/angle.md" 2>&1)" in
+  *"AUC"*) ok "꺾쇠가 든 보통 문장을 태그로 지우지 않는다" ;;
+  *)       bad "꺾쇠 사이의 글을 태그로 지워 약어를 놓쳤다" ;;
+esac
+# 태그를 지워도 그 사이의 글은 검사한다
+printf '# t\n\n<p>이 결과는 PNAS 에 실렸다.</p>\n' > "$TMP/html-prose.md"
+case "$("$PY" "$CHECK" "$TMP/html-prose.md" 2>&1)" in
+  *"PNAS"*) ok "태그 사이의 글은 여전히 검사한다" ;;
+  *)        bad "태그 사이의 글까지 건너뛰었다" ;;
+esac
+
 # --- 종료 코드: 경고가 있으면 1, --exit-zero 면 0 (훅은 세션을 깨면 안 된다)
 "$PY" "$CHECK" "$TMP/bad.md" >/dev/null 2>&1 && bad "경고가 있는데 0으로 끝났다" \
   || ok "경고가 있으면 1로 끝난다"
