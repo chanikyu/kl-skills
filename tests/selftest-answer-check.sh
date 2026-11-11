@@ -323,6 +323,21 @@ case "$out" in
   *"작업 보고"*) bad "git commit-tree 를 커밋으로 셌다: $out" ;;
   *)            ok "git commit-tree 는 커밋이 아니다" ;;
 esac
+# 리뷰가 남긴 4건 (2026-11-11). 커밋이 아닌데 커밋으로 본 2건, 커밋인데 놓친 2건.
+not_commit_case() {  # $1 이름, $2 명령 JSON 문자열
+  out="$(report_case "$1" "[\"tool\", \"Bash\", {\"command\": $2}]," "명령을 돌렸습니다.")"
+  case "$out" in *"작업 보고"*) return 1 ;; *) return 0 ;; esac
+}
+not_commit_case work-heredoc-line '"cat <<EOF\ngit commit\nEOF"' \
+  && ok "여러 줄 글(heredoc) 안의 'git commit' 줄은 커밋이 아니다" || bad "heredoc 본문 줄을 커밋으로 셌다"
+not_commit_case work-quoted "\"echo 'a; git commit'\"" \
+  && ok "따옴표 안의 'git commit' 는 커밋이 아니다" || bad "따옴표 안의 글자를 커밋으로 셌다"
+not_commit_case work-git-dir '"git --git-dir /x commit -m y"' \
+  && bad "--git-dir 를 띄어 쓴 커밋을 놓쳤다" || ok "옵션 값을 띄어 쓴 커밋(--git-dir /x)도 커밋으로 본다"
+not_commit_case work-paren '"(git commit -m x)"' \
+  && bad "괄호로 묶은 커밋을 놓쳤다" || ok "괄호로 묶은 커밋도 커밋으로 본다"
+not_commit_case work-msg-quote "\"git commit -m \\\"don't stop\\\"\"" \
+  && bad "메시지에 따옴표가 든 커밋을 놓쳤다" || ok "메시지에 작은따옴표가 들어도 커밋으로 본다"
 grep -q "작업 요약" "$REPO/hooks/py/answer-check.py" && bad "단계 이름이 코드에 박혀 있다" \
   || ok "단계 이름은 work-report.md 의 표에서 읽는다"
 unset LLM_WIKI_ROOT

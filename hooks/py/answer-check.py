@@ -44,12 +44,16 @@ WORK_REPORT_GUIDE = os.path.join(PLUGIN_ROOT, "skills", "natural-answering", "re
 # Claude Code 가 파일을 쓰는 도구와, 그 입력에서 경로가 든 칸 — 외부 규격이다.
 EDIT_TOOLS = {"Write": "file_path", "Edit": "file_path", "MultiEdit": "file_path",
               "NotebookEdit": "notebook_path"}
-# 명령 첫머리의 git ... commit. 줄 머리나 ; & | 뒤에서 시작하고, 사이에는 환경 변수 지정과
-# git 의 전역 옵션(-C 경로, -c 키=값, --옵션)만 올 수 있다. 줄 어디서나 두 낱말을 찾으면
-# 패치 코드 속 문자열("run git commit after tests")까지 커밋으로 셌다(2026-11-11 hook-replay).
+# 명령 첫머리의 git ... commit. 줄 머리나 ; & | ( { 뒤에서 시작하고, 사이에는 환경 변수 지정과
+# git 의 전역 옵션(-C 경로, -c 키=값, --git-dir 경로 같은 값 있는 옵션, --옵션)만 올 수 있다.
+# 줄 어디서나 두 낱말을 찾으면 패치 코드 속 문자열까지 커밋으로 셌다(2026-11-11 hook-replay).
 COMMIT_COMMAND = re.compile(
-    r"(?:^|[;&|])\s*(?:\w+=\S+\s+)*git\s+"
-    r"(?:(?:-[cC]\s+(?:\"[^\"]*\"|'[^']*'|\S+)|--\S+)\s+)*commit(?![\w-])", re.MULTILINE)
+    r"(?:^|[;&|({])\s*(?:\w+=\S+\s+)*git\s+"
+    r"(?:(?:-[cC]|--(?:git-dir|work-tree|namespace|super-prefix|config-env))\s+\S+\s+|--\S+\s+)*"
+    r"commit(?![\w-])", re.MULTILINE)
+# 여러 줄 글(heredoc)의 본문과 따옴표 안은 명령이 아니라 글이다. 커밋을 찾기 전에 지운다.
+HEREDOC_BODY = re.compile(r"<<-?\s*(['\"]?)(\w+)\1[^\n]*\n.*?\n[ \t]*\2[ \t]*(?=\n|$)", re.DOTALL)
+QUOTED_TEXT = re.compile(r"\"[^\"]*\"|'[^']*'")
 GUIDE_TABLE_ROW = re.compile(r"^\|\s*(\d+)\s*\|\s*([^|]+?)\s*\|\s*([^|]*?)\s*\|\s*$")
 OUTCOME_LOOKAHEAD_CHARS = 80   # 1단계 이름 뒤에서 결과 낱말을 찾는 범위. 제목 다음 줄까지 닿는다
 MAX_ANSWER_LINES = 30   # 스킬이 말하는 "화면 하나"에 여유를 둔 값
@@ -162,6 +166,18 @@ def work_report_steps():
     return steps, outcomes
 
 
+def runs_commit(command):
+    """이 셸 명령이 git commit 을 돌리나. 글(heredoc 본문, 따옴표 안)은 명령이 아니다.
+
+    리뷰가 재현한 네 가지(2026-11-11): heredoc 본문의 줄과 echo 'a; git commit' 를 커밋으로
+    셌고, git --git-dir /x commit 과 (git commit) 은 놓쳤다. 따옴표는 지우되 빈 따옴표를 남겨,
+    -C "/a b" 같은 옵션 자리는 그대로 둔다. 셸 해석기가 아니다 — 명령 자리만 찾으면 된다.
+    """
+    without_heredocs = HEREDOC_BODY.sub("\n", command)
+    without_quoted = QUOTED_TEXT.sub(lambda quoted: quoted.group(0)[0] * 2, without_heredocs)
+    return bool(COMMIT_COMMAND.search(without_quoted))
+
+
 def turn_changed_work(tool_calls):
     """이번 턴에 사용자 파일을 고쳤거나 커밋했나. 위키 페이지·임시 폴더만 쓴 턴은 아니다.
 
@@ -175,7 +191,7 @@ def turn_changed_work(tool_calls):
         # is_work_file 안의 realpath 는 예외를 던진다.
         if path and os.path.exists(path) and is_work_file(path):
             return True
-        if name == "Bash" and COMMIT_COMMAND.search(str(tool_input.get("command") or "")):
+        if name == "Bash" and runs_commit(str(tool_input.get("command") or "")):
             return True
     return False
 
