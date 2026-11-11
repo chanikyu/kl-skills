@@ -164,7 +164,7 @@ Python으로 시작해서 느리면 Rust로 옮기는 게 기본 경로다. `hoo
 
 - 게이트 이름은 `argv[1]`, 사건 내용(JSON)은 표준입력
 - 종료 코드: `0` = 통과, `2` = 차단(stderr가 모델에 보임)
-- **그냥 찍은 stdout(= 프로그램이 화면으로 내보내는 출력)은 대부분 모델에게 가지 않는다.** `SessionStart` 는 가지만, `PostToolUse` 와
+- **그냥 찍은 출력(stdout)은 대부분 모델에게 가지 않는다.** `SessionStart` 는 가지만, `PostToolUse` 와
   `Stop` 의 stdout 은 디버그 기록에만 남는다. 모델에게 알리려면 JSON 한 덩어리를 찍는다:
   `{"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": "..."}}`.
   Python 은 `hooks/py/_hook_output.py` 의 `tell_model`, Rust 는 `model_note` 를 쓴다.
