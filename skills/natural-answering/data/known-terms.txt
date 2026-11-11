@@ -41,3 +41,16 @@ true
 false
 null
 none
+# 단위: 용어가 아니라 눈금이다
+ms
+us
+ns
+bp
+kb
+mb
+gb
+tb
+px
+mm
+cm
+km

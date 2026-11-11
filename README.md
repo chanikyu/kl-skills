@@ -80,6 +80,7 @@ hooks/
   hooks.json         어떤 사건에 어떤 명령을 돌릴지 적은 표
                      SessionStart → 배너
                      PostToolUse(Write|Edit) → wiki-index-check · wiki-graph · prose-check
+                     Stop → wiki-sync
   run.sh             mac·리눅스: Python 훅이 있으면 그걸, 없으면 Rust 실행파일을 고름
   run.ps1            윈도우용 같은 역할
   py/<게이트>.py      Python 훅. 파일을 두면 그 게이트는 Python으로 돈다
@@ -95,6 +96,7 @@ tests/selftest*.sh   셀프테스트. CI가 이 패턴 전부를 돌린다
   selftest-wiki-scripts.sh  인덱스·로그·lint 스크립트가 제대로 동작하는지
   selftest-prose.sh      생략 많은 글은 걸리고 잘 쓴 글은 조용한지 (검사별로 한 줄씩)
   selftest-banner.sh     배너가 말하는 게이트 개수가 hooks.json 과 맞는지
+  selftest-wiki-sync.sh  쉘로 고친 페이지(= 훅이 못 본 변경)를 세션 끝에 잡는지
   selftest-graph.sh      그래프 DB 집계가 맞는지 + 뷰어가 실제로 그려지는지
                          (크롬이 있으면 헤드리스로 띄워서 노드가 그려졌는지 센다.
                           없으면 그 검사만 건너뛴다)
@@ -173,9 +175,25 @@ claude plugin validate .                          # 플러그인·스킬 형식 
 | `PostToolUse` (`Write\|Edit\|MultiEdit`) | `wiki-index-check` | `~/llm-wiki-docs/<주제>/wiki/` 에 쓴 페이지가 `index.md` 에 없으면 경고. **막지 않는다** | Rust |
 | `PostToolUse` (`Write\|Edit\|MultiEdit`) | `wiki-graph` | 위키 페이지를 쓰면 그래프 DB(`<루트>/.graph/`)를 다시 만든다. 위키 밖 파일이면 즉시 끝 | Python |
 | `PostToolUse` (`Write\|Edit\|MultiEdit`) | `prose-check` | 위키 페이지에서 읽는 사람이 걸릴 자리(뜻 없는 용어, 기준 없는 숫자, 빠진 주어)를 알려 준다. **막지 않는다** | Python |
+| `Stop` | `wiki-sync` | 세션당 한 번. 수정 시각을 비교해 **어떤 방법으로 쓴 변경이든** 찾아내 그래프를 맞추고 바뀐 페이지를 검사한다. **막지 않는다** | Python |
 
 `wiki-index-check` 가 Rust인 이유: `PostToolUse` 는 파일을 쓸 때마다 돈다(위 측정 참고).
 위키 밖 경로면 JSON에서 경로 하나 읽고 바로 끝낸다.
+
+### 왜 `Stop` 게이트가 따로 있나
+
+`PostToolUse` 는 `Write`·`Edit`·`MultiEdit` 에만 걸린다. 그런데 모델은 **파일을 Bash로도
+쓴다** — heredoc(= 셸에서 여러 줄 텍스트를 파일로 쏟아 넣는 문법), `sed`, 짧은 python 스크립트. 그러면 위 세 게이트가 전부 조용히 넘어가고,
+그래프는 위키보다 뒤처진 채로 남는다. 2026-11-11에 실제로 그랬다: 어떤 세션이 조사 결과를
+페이지·목차·기록에 다 반영했는데, 전부 Bash로 써서 아무 게이트도 돌지 않았다.
+
+발동 조건에 `Bash` 를 넣는 것이 당연해 보이지만 비싸다. Bash는 가장 자주 쓰는 도구이고,
+사건 내용에 담겨 오는 것은 경로가 아니라 명령문이며, 그 안의 쉘 변수는 풀 수 없다.
+그래서 `wiki-sync` 는 **세션당 한 번** 돌면서 파일시스템에 묻는다 — `graph.json` 보다
+새 페이지가 바뀐 페이지다. 어떻게 썼는지는 묻지 않는다.
+
+`graph.json` 이 기준점을 겸한다. 다시 만들면 그 파일의 수정 시각이 앞으로 가므로, 다음
+세션은 알아서 맞는 지점과 비교한다. 따로 기록할 상태가 없다.
 
 `wiki-graph` 와 `prose-check` 도 같은 사건에 걸리지만 Python이다. 위 표의 기준
 ("`PostToolUse` 는 Rust")을 일부러 어긴 자리라 이유를 적어 둔다. **두 훅이 실제로 하는 일이
