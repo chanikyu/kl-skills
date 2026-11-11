@@ -1,0 +1,11 @@
+[workspace]
+members = ["crates/kl-gate"]
+resolver = "2"
+
+# Binaries are committed to bin/, so size matters more than compile time.
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

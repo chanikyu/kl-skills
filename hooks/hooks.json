@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" session-start",
+            "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\run.ps1\" session-start",
+            "timeout": 5,
+            "statusMessage": "Loading kl-skills gates...",
+            "description": "Announce that the kl-skills gate binary is live. Install smoke test.",
+            "id": "session-start:banner"
+          }
+        ]
+      }
+    ]
+  }
+}

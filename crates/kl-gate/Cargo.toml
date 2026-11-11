@@ -1,0 +1,10 @@
+[package]
+name = "kl-gate"
+version = "0.1.0"
+edition = "2021"
+description = "Hook gates for the kl-skills Claude Code plugin"
+license = "MIT"
+
+# No dependencies on purpose: zero-dep keeps the committed binaries tiny
+# and the cross-platform CI build fast. Add serde_json when a gate needs
+# to read fields out of the hook payload.

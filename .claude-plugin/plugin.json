@@ -1,0 +1,14 @@
+{
+  "name": "kl-skills",
+  "version": "0.1.0",
+  "description": "Skill package with Rust-backed hook gates. Installing the plugin installs the hooks too — no settings.json editing on the target machine.",
+  "author": {
+    "name": "chanikyu",
+    "url": "https://github.com/chanikyu"
+  },
+  "repository": "https://github.com/chanikyu/kl-skills",
+  "license": "MIT",
+  "keywords": ["claude-code", "skills", "hooks", "rust"],
+  "skills": ["./skills/"],
+  "hooks": "./hooks/hooks.json"
+}

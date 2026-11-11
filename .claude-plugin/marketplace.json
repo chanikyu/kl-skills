@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "kl-skills",
+  "description": "chanikyu's skill package — skills plus Rust hook gates that install together.",
+  "owner": {
+    "name": "chanikyu",
+    "url": "https://github.com/chanikyu"
+  },
+  "plugins": [
+    {
+      "name": "kl-skills",
+      "source": "./",
+      "description": "Skills plus Rust-backed hook gates. Prebuilt binaries ship in the repo, so no Rust toolchain is needed to install.",
+      "category": "productivity"
+    }
+  ]
+}

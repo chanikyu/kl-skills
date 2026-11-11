@@ -1,0 +1,94 @@
+name: build hook binaries
+
+# Binaries live in bin/ so that installing the plugin needs no Rust toolchain.
+# GitHub's runners do the building; bin/ is excluded from the path filter so the
+# commit this workflow pushes cannot retrigger it.
+on:
+  push:
+    paths:
+      - 'crates/**'
+      - 'hooks/**'
+      - 'Cargo.toml'
+      - '.github/workflows/build.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Apple Silicon runner builds both Mac architectures: Apple's linker
+          # is natively cross-arch, so no extra toolchain is needed.
+          - { os: macos-14,         target: aarch64-apple-darwin }
+          - { os: macos-14,         target: x86_64-apple-darwin }
+          # musl = statically linked, so old glibc on the target machine
+          # cannot break the binary.
+          - { os: ubuntu-24.04,     target: x86_64-unknown-linux-musl }
+          - { os: ubuntu-24.04-arm, target: aarch64-unknown-linux-musl }
+          - { os: windows-latest,   target: x86_64-pc-windows-msvc }
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: add target
+        run: rustup target add ${{ matrix.target }}
+
+      - name: install musl toolchain
+        if: endsWith(matrix.target, '-musl')
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+
+      - name: launcher selftest
+        if: runner.os != 'Windows'
+        run: sh tests/selftest.sh
+
+      - name: build
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: stage binary
+        shell: bash
+        run: |
+          mkdir -p staged
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            cp "target/${{ matrix.target }}/release/kl-gate.exe" "staged/kl-gate-${{ matrix.target }}.exe"
+          else
+            cp "target/${{ matrix.target }}/release/kl-gate" "staged/kl-gate-${{ matrix.target }}"
+          fi
+          ls -l staged
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kl-gate-${{ matrix.target }}
+          path: staged/
+          retention-days: 1
+
+  commit:
+    name: commit binaries to bin/
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: bin
+          merge-multiple: true
+
+      - name: make executable
+        run: chmod +x bin/kl-gate-* || true
+
+      - name: commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bin
+          if git diff --cached --quiet; then
+            echo "binaries unchanged — nothing to commit"
+            exit 0
+          fi
+          git commit -m "chore: rebuild hook binaries for all targets"
+          git push
