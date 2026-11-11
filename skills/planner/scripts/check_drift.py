@@ -195,7 +195,10 @@ def main(argv=None):
     found, summary = analyse(goals, progress + commits, today, options)
 
     # 커밋 직후 훅에서 부를 때는 "방금 한 일" 이 계획 밖인지를 따로, 맨 앞에 알린다.
-    # 30일 요약 속에 묻히면 지금 무엇이 문제인지 안 보인다.
+    # 30일 요약 속에 묻히면 지금 무엇이 문제인지 안 보인다. 지난 일 하나하나는 빼고 요약으로만
+    # 남긴다 — 커밋할 때마다 지난 커밋 스물 몇 줄이 다시 나오면 아무도 읽지 않는다.
+    if options.latest_commit:
+        found = [item for item in found if item[1] != "off-plan-work"]
     if options.latest_commit and commits and not GOAL_REFERENCE.findall(commits[0]["text"]) \
             and OFF_PLAN_MARK not in commits[0]["text"]:
         found.insert(0, ("warn", "off-plan-work",

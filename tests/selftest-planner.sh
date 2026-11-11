@@ -136,11 +136,14 @@ git -C "$PROJ" add plan.md
 commit_on "$D3" "S1.1.1 실패 로그 분류 스크립트"
 commit_on "$D1" "README 오타"
 
-out="$("$PY" "$DRIFT" --all --latest-commit "$PROJ/plan.md" 2>&1)"
+# 손으로 돌리는 전체 분석: 계획 밖 일을 하나하나 보여준다
+out="$("$PY" "$DRIFT" --all "$PROJ/plan.md" 2>&1)"
 drift_has() { case "$out" in *"$1"*) ok "이탈: $2" ;; *) bad "놓침: $2 ($1)" ;; esac; }
 drift_has "회의록 정리"        "목표 번호 없는 진행 기록을 계획 밖으로 잡는다"
-drift_has "커밋"               "목표 번호 없는 커밋을 계획 밖으로 잡는다"
-drift_has "방금 커밋"          "마지막 커밋이 계획 밖이면 맨 앞에 따로 알린다"
+drift_has "README 오타"        "목표 번호 없는 커밋을 계획 밖으로 잡는다"
+# 커밋 직후 모드: 방금 커밋을 맨 앞에 따로 알린다
+latest="$("$PY" "$DRIFT" --all --latest-commit "$PROJ/plan.md" 2>&1)"
+case "$latest" in *"방금 커밋"*) ok "이탈: 마지막 커밋이 계획 밖이면 맨 앞에 따로 알린다" ;; *) bad "방금 커밋 알림이 없다: $latest" ;; esac
 drift_has "[unknown-goal]"     "없는 목표 M9.9 를 가리킨 일을 잡는다"
 drift_has "[overdue-goal]"     "기한이 지났는데 완료가 없는 목표를 잡는다"
 drift_has "[drifting]"         "계획 안 비율이 기준보다 낮다고 알린다"
@@ -188,10 +191,35 @@ case "$out" in
   *)             bad "커밋 경로에서 이탈을 못 찾았다: $out" ;;
 esac
 
+# --- 2026-11-11 실사용에서 드러난 결함들. 세션 폴더와 커밋한 폴더가 다를 때.
+ELSEWHERE="$TMP/elsewhere"; mkdir -p "$ELSEWHERE"
+out="$(printf '{"tool_input":{"command":"cd %s && git commit -m x"},"cwd":"%s"}' "$PROJ" "$ELSEWHERE" \
+       | "$PY" "$REPO/hooks/py/plan-drift.py" --plain 2>/dev/null)"
+case "$out" in *"방금 커밋"*) ok "'cd 폴더 && 커밋' 은 그 폴더의 저장소를 본다" ;; *) bad "cd 한 폴더를 안 봤다: $out" ;; esac
+out="$(printf '{"tool_input":{"command":"git -C %s commit -m x"},"cwd":"%s"}' "$PROJ" "$ELSEWHERE" \
+       | "$PY" "$REPO/hooks/py/plan-drift.py" --plain 2>/dev/null)"
+case "$out" in *"방금 커밋"*) ok "'git -C 폴더 commit' 은 그 폴더의 저장소를 본다" ;; *) bad "-C 폴더를 안 봤다: $out" ;; esac
+case "$out" in *"커밋 "*"는 어느 목표의 일인지"*) bad "커밋 직후인데 지난 커밋을 하나하나 나열했다" ;; *) ok "커밋 직후에는 방금 커밋과 요약만 낸다" ;; esac
+
+# 틀의 자리표시만 있는 저장소: 계획서가 없는 것과 같다
+TPL="$TMP/template-only"; mkdir -p "$TPL"
+cp "$REPO/skills/planner/assets/plan-template.md" "$TPL/plan-template.md"
+git -C "$TPL" init -q; git -C "$TPL" config user.name t; git -C "$TPL" config user.email t@example.invalid
+git -C "$TPL" add plan-template.md
+GIT_AUTHOR_DATE="${D1}T12:00:00" GIT_COMMITTER_DATE="${D1}T12:00:00" git -C "$TPL" commit -q -m "틀 추가"
+out="$(printf '{"tool_input":{"command":"git commit -m x"},"cwd":"%s"}' "$TPL" \
+       | "$PY" "$REPO/hooks/py/plan-drift.py" --plain 2>/dev/null)"
+[ -z "$out" ] && ok "기획서 틀의 자리표시는 계획서로 세지 않는다" || bad "틀을 계획서로 셌다: $out"
+
 # --- Bash 뒤 Rust 게이트: 새 바이너리일 때만 (커밋 감지는 Rust 쪽에 있다)
 T="$(sh "$REPO/hooks/run.sh" --print-target)"
 BIN="$REPO/bin/kl-gate-$T"
-if [ -x "$BIN" ] && grep -q "after-bash" "$BIN" 2>/dev/null; then
+SOURCE_VERSION="$(sed -n 's/^version = "\(.*\)"/\1/p' "$REPO/crates/kl-gate/Cargo.toml" | head -1)"
+BINARY_BANNER="$(printf '{}' | "$BIN" session-start 2>/dev/null)"
+if [ -x "$BIN" ] && case "$BINARY_BANNER" in *"v$SOURCE_VERSION "*) true ;; *) false ;; esac; then
+  out="$(printf '{"tool_input":{"command":"git -C %s commit -q -m x"},"cwd":"%s"}' "$PROJ" "$ELSEWHERE" \
+         | sh "$REPO/hooks/run.sh" after-bash 2>/dev/null)"
+  case "$out" in *"방금 커밋"*) ok "Bash 뒤 게이트가 'git -C 폴더 commit' 도 커밋으로 알아본다" ;; *) bad "-C 커밋을 놓쳤다: $out" ;; esac
   out="$(printf '{"tool_input":{"command":"git commit -m x"},"cwd":"%s"}' "$PROJ" \
          | sh "$REPO/hooks/run.sh" after-bash 2>/dev/null)"
   printf '%s' "$out" | "$PY" -c "import json,sys; d=json.load(sys.stdin)['hookSpecificOutput']; assert '방금 커밋' in d['additionalContext']" 2>/dev/null \
@@ -201,7 +229,7 @@ if [ -x "$BIN" ] && grep -q "after-bash" "$BIN" 2>/dev/null; then
          | LLM_WIKI_ROOT="$TMP/no-wiki" sh "$REPO/hooks/run.sh" after-bash 2>/dev/null)"
   [ -z "$out" ] && ok "커밋이 아닌 명령에는 조용하다" || bad "커밋이 아닌데 말했다: $out"
 else
-  echo "skip  로컬 바이너리가 after-bash 이전 것이다 — CI 빌드 뒤 다시 돌린다"
+  echo "skip  로컬 바이너리($BINARY_BANNER)가 소스(v$SOURCE_VERSION)보다 오래됐다 — CI 빌드 뒤 다시 돌린다"
 fi
 
 echo

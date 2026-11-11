@@ -268,16 +268,41 @@ fn wiki_touch() -> Option<String> {
 fn made_a_commit(payload: &str) -> bool {
     serde_json::from_str::<serde_json::Value>(payload)
         .ok()
-        .and_then(|event| {
-            event["tool_input"]["command"]
-                .as_str()
-                .map(|command| command.contains(COMMIT_COMMAND))
-        })
+        .and_then(|event| event["tool_input"]["command"].as_str().map(runs_a_commit))
         .unwrap_or(false)
 }
 
-/// The command text that marks a commit.
-const COMMIT_COMMAND: &str = "git commit";
+/// Does this shell command run `git ... commit`?
+///
+/// Looking for the literal text "git commit" missed `git -C <dir> commit`,
+/// which is how commits into another folder are usually written (2026-11-11). So
+/// each command segment is read word by word: optional `NAME=value` assignments,
+/// then `git`, then any global options (`-C dir`, `-c key=value`, `--flag`),
+/// then `commit`. `git` has to start the segment, so `echo git commit` is not one.
+fn runs_a_commit(command: &str) -> bool {
+    command
+        .split(|separator| matches!(separator, ';' | '&' | '|' | '\n'))
+        .any(|segment| {
+            let words: Vec<&str> = segment.split_whitespace().collect();
+            let mut index = 0;
+            // GIT_AUTHOR_DATE=... 같은 환경 변수 지정은 명령 앞에 올 수 있다.
+            while index < words.len() && words[index].contains('=') && !words[index].starts_with('-') {
+                index += 1;
+            }
+            if words.get(index) != Some(&"git") {
+                return false;
+            }
+            index += 1;
+            while let Some(word) = words.get(index) {
+                match *word {
+                    "-C" | "-c" => index += 2,
+                    flag if flag.starts_with("--") => index += 1,
+                    _ => break,
+                }
+            }
+            words.get(index) == Some(&"commit")
+        })
+}
 
 /// Run one of the plugin's Python scripts and return what it printed, if anything.
 /// `stdin_text` is handed over as the script's input — the hook payload, usually.
@@ -317,6 +342,17 @@ mod tests {
 
     fn root() -> PathBuf {
         PathBuf::from("/home/u/llm-wiki-docs")
+    }
+
+    #[test]
+    fn a_commit_into_another_folder_is_still_a_commit() {
+        assert!(runs_a_commit("git -C /some/repo commit -q -m x"));
+        assert!(runs_a_commit("git -c user.name=t commit -m x"));
+        assert!(runs_a_commit("A=1 B=2 git -C \"/a b\" commit -m y"));
+        assert!(runs_a_commit("cd repo && git add -A && git commit -m z"));
+        // 낱말이 들어 있을 뿐인 명령은 커밋이 아니다.
+        assert!(!runs_a_commit("echo git commit is a command"));
+        assert!(!runs_a_commit("git log --format=%s | grep commit"));
     }
 
     #[test]

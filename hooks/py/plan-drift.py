@@ -25,7 +25,11 @@ from _hook_output import tell_model
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SCRIPTS = os.path.join(PLUGIN_ROOT, "skills", "planner", "scripts")
-GOAL_DEFINITION = re.compile(r"^\s*[-*]\s*\[L\d+\]", re.MULTILINE)
+# 목표 번호 뒤에 실제 내용이 있어야 계획서다. 틀의 "[L1] <목표>" 같은 자리표시는 계획이 아니다 —
+# 2026-11-11 에 기획서 틀 하나 때문에 리포의 커밋 24건이 전부 '계획 밖' 으로 잡혔다.
+GOAL_DEFINITION = re.compile(r"^\s*[-*]\s*\[L\d+\]\s*[^<\s]", re.MULTILINE)
+# 커밋한 폴더를 명령에서 찾는다: "git -C 폴더 ..." 와 "cd 폴더 && ..." 두 모양.
+FOLDER_IN_COMMAND = re.compile(r"""(?:\bgit\s+-C\s+|(?:^|&&|;|\|\|)\s*cd\s+)("[^"]+"|'[^']+'|\S+)""")
 MAX_FILES = 300            # ponytail: 저장소의 .md 를 이만큼만 훑는다. 넘으면 계획서 위치 규약이 필요하다
 MAX_BYTES = 200_000        # 한 파일에서 이만큼만 읽는다. 계획서가 이보다 크면 쪼개는 게 맞다
 
@@ -58,6 +62,23 @@ def plans_in_repo(folder):
             if is_plan(os.path.join(root, name))]
 
 
+def commit_folder(event):
+    """커밋이 일어난 폴더. 명령에 적힌 폴더가 먼저고, 없으면 세션 폴더다.
+
+    세션 폴더만 보면 "cd 다른저장소 && 커밋" 이 세션 폴더의 저장소로 잘못 읽힌다
+    (2026-11-11 에 실제로 다른 저장소의 계획서를 검사했다).
+    """
+    base = event.get("cwd") or os.getcwd()
+    command = (event.get("tool_input") or {}).get("command") or ""
+    for match in FOLDER_IN_COMMAND.finditer(command):
+        folder = os.path.expanduser(match.group(1).strip("\"'"))
+        if not os.path.isabs(folder):
+            folder = os.path.join(base, folder)
+        if os.path.isdir(folder):
+            return folder
+    return base
+
+
 def run_script(name, args):
     """계획 검사 스크립트를 돌려 (종료 코드, 출력) 을 돌려준다. 실패하면 (0, '') 이다."""
     try:
@@ -87,8 +108,7 @@ def main():
                 reports.append(output)
     elif plain:
         # 커밋한 순간: 저장소의 계획서마다, 방금 커밋까지 포함해 이탈을 본다.
-        folder = event.get("cwd") or os.getcwd()
-        for plan in plans_in_repo(folder):
+        for plan in plans_in_repo(commit_folder(event)):
             code, output = run_script("check_drift.py", ["--latest-commit", plan])
             if code:
                 reports.append(output)
