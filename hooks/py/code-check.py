@@ -16,12 +16,10 @@ import subprocess
 import sys
 
 from _hook_output import tell_model
+from _work_files import is_skipped
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CHECKER = os.path.join(PLUGIN_ROOT, "skills", "readable-code", "scripts", "check_code.py")
-# 내 코드가 아닌 자리. 여기까지 지적하면 게이트가 꺼진다.
-SKIP_PARTS = ("__pycache__", "/.venv/", "/venv/", "/site-packages/", "/node_modules/",
-              "/.git/", "/scratchpad/", "/.tox/", "/build/", "/dist/")
 LIMIT = "6"   # ponytail: 한 번에 6건까지. 전부 보려면 check_code.py 를 직접 돌린다.
 
 
@@ -29,8 +27,7 @@ def own_python_file(path):
     """사용자가 직접 쓴 파이썬 파일인가."""
     if not path or not path.endswith(".py"):
         return False
-    normalised = path.replace("\\", "/")
-    return not any(part in normalised for part in SKIP_PARTS)
+    return not is_skipped(path)
 
 
 def main():

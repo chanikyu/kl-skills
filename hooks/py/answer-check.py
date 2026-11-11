@@ -14,6 +14,9 @@ Two things are checked that the prose checker cannot see on its own:
                      Only messages a person typed count, and a new question that
                      merely shares a question word ("왜") is not asking again.
   answer-too-long    an answer past the one-screen limit the skill sets.
+  work-report        a turn that changed the user's files (or committed) must end
+                     with the six-step work report, in order, read from the table
+                     in references/work-report.md.
 
 Blocking is capped by `stop_hook_active`, which Claude Code sets to true on the
 retry after a Stop hook blocked. Seeing it means "already blocked once" — report
@@ -29,12 +32,26 @@ import sys
 import tempfile
 
 # 사람 메시지와 기계 글을 가르는 규칙은 hook-replay 스킬과 같이 쓴다.
-from _transcript import read_turns
+from _transcript import read_turns, tool_calls_since_last_human
+from _work_files import is_work_file
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CHECKER = os.path.join(PLUGIN_ROOT, "skills", "natural-answering", "scripts", "check_prose.py")
 REASK_MARKERS_FILE = os.path.join(PLUGIN_ROOT, "skills", "natural-answering", "data",
                                   "reask-markers.txt")
+WORK_REPORT_GUIDE = os.path.join(PLUGIN_ROOT, "skills", "natural-answering", "references",
+                                 "work-report.md")
+# Claude Code 가 파일을 쓰는 도구와, 그 입력에서 경로가 든 칸 — 외부 규격이다.
+EDIT_TOOLS = {"Write": "file_path", "Edit": "file_path", "MultiEdit": "file_path",
+              "NotebookEdit": "notebook_path"}
+# 명령 첫머리의 git ... commit. 줄 머리나 ; & | 뒤에서 시작하고, 사이에는 환경 변수 지정과
+# git 의 전역 옵션(-C 경로, -c 키=값, --옵션)만 올 수 있다. 줄 어디서나 두 낱말을 찾으면
+# 패치 코드 속 문자열("run git commit after tests")까지 커밋으로 셌다(2026-11-11 hook-replay).
+COMMIT_COMMAND = re.compile(
+    r"(?:^|[;&|])\s*(?:\w+=\S+\s+)*git\s+"
+    r"(?:(?:-[cC]\s+(?:\"[^\"]*\"|'[^']*'|\S+)|--\S+)\s+)*commit(?![\w-])", re.MULTILINE)
+GUIDE_TABLE_ROW = re.compile(r"^\|\s*(\d+)\s*\|\s*([^|]+?)\s*\|\s*([^|]*?)\s*\|\s*$")
+OUTCOME_LOOKAHEAD_CHARS = 80   # 1단계 이름 뒤에서 결과 낱말을 찾는 범위. 제목 다음 줄까지 닿는다
 MAX_ANSWER_LINES = 30   # 스킬이 말하는 "화면 하나"에 여유를 둔 값
 # 앞 질문과 이만큼 닮은 질문이 또 오면 같은 질문을 다시 보낸 것이다. difflib 닮은 정도(0~1).
 # "어디에 저장돼?" -> "어디에 저장되는데?" 가 0.8 안팎이다. 바꾸려면 환경 변수로.
@@ -122,6 +139,73 @@ def repeated_question(turns):
     return (times_asked, latest_reason) if latest_reason else None
 
 
+def work_report_steps():
+    """작업 보고 단계 이름(순서대로)과 1단계의 결과 낱말. 정본인 work-report.md 의 표에서 읽는다.
+
+    이름을 코드에 베끼면 문서를 고쳐도 검사는 옛 이름을 요구한다. 표가 하나뿐이라 첫 칸이
+    숫자인 행을 순서대로 읽으면 된다.
+    """
+    steps, outcomes = [], []
+    try:
+        with open(WORK_REPORT_GUIDE, encoding="utf-8") as handle:
+            for line in handle:
+                row = GUIDE_TABLE_ROW.match(line.strip())
+                if not row:
+                    continue
+                steps.append(row.group(2))
+                # 1단계 칸은 "완료 / 부분 완료 / 실패 — 한 단어로 먼저" 꼴이다.
+                if not outcomes:
+                    outcomes = [word.strip() for word in row.group(3).split("—")[0].split("/")
+                                if word.strip()]
+    except OSError:
+        return [], []
+    return steps, outcomes
+
+
+def turn_changed_work(tool_calls):
+    """이번 턴에 사용자 파일을 고쳤거나 커밋했나. 위키 페이지·임시 폴더만 쓴 턴은 아니다.
+
+    턴이 끝날 때 남아 있지 않은 파일은 세지 않는다. 훅 확인용으로 쓰고 바로 지운 파일 같은
+    것이라, 보고할 변경이 남지 않았다.
+    """
+    for name, tool_input in tool_calls:
+        path_key = EDIT_TOOLS.get(name)
+        path = str(tool_input.get(path_key) or "") if path_key else ""
+        # exists 를 먼저 본다. 경로가 이상하면(NUL 글자 등) exists 는 False 로 끝나지만,
+        # is_work_file 안의 realpath 는 예외를 던진다.
+        if path and os.path.exists(path) and is_work_file(path):
+            return True
+        if name == "Bash" and COMMIT_COMMAND.search(str(tool_input.get("command") or "")):
+            return True
+    return False
+
+
+def work_report_gaps(answer_text, steps, outcomes):
+    """작업 보고에서 빠진 것들. 단계가 빠졌나, 순서가 맞나, 1단계 뒤에 결과 낱말이 있나."""
+    found = {}
+    for step in steps:
+        # 줄 머리의 단계 이름. 제목(##)·굵게(**)·번호(1.)가 앞에 붙어도 같은 단계다.
+        label = re.compile(r"^\s*(?:#{1,6}\s*)?(?:\*\*)?(?:\d+[.)]\s*)?(?:\*\*)?"
+                           + re.escape(step) + r"(?![가-힣])", re.MULTILINE)
+        match = label.search(answer_text)
+        if match:
+            found[step] = match
+    gaps = []
+    missing = [step for step in steps if step not in found]
+    if missing:
+        gaps.append("빠진 단계: " + ", ".join(missing))
+    starts = [found[step].start() for step in steps if step in found]
+    if starts != sorted(starts):
+        gaps.append("순서가 다르다 — " + " → ".join(steps))
+    first_step = steps[0] if steps else None
+    if first_step in found:
+        end = found[first_step].end()
+        following = answer_text[end:end + OUTCOME_LOOKAHEAD_CHARS].lstrip(" \t\n:*#—–-")
+        if not any(following.startswith(word) for word in outcomes):
+            gaps.append("'%s' 바로 뒤에 %s 중 하나를 먼저 쓴다" % (first_step, " / ".join(outcomes)))
+    return gaps
+
+
 def check_answer(answer_text):
     """답변 글을 natural-answering 검사기에 넘긴다. 경고 줄만 돌려준다."""
     if not os.path.isfile(CHECKER):
@@ -172,6 +256,16 @@ def main():
             "   앞 답이 질문에 닿지 않았다는 뜻이다. 앞 답에 설명을 더 붙이지 말고,\n"
             "   질문의 낱말을 그대로 쓴 한 문장으로 먼저 답한 뒤 설명은 그 뒤에 둔다."
             % (times_asked, reason))
+
+    # 코드를 고친 턴은 작업 보고로 끝낸다. 무엇이 됐고, 무엇을 바꿨고, 확인했고, 무엇이 남았나.
+    if turn_changed_work(tool_calls_since_last_human(event["transcript_path"])):
+        steps, outcomes = work_report_steps()
+        gaps = work_report_gaps(answer_text, steps, outcomes) if steps else []
+        if gaps:
+            problems.append(
+                "파일을 고친 턴이라 작업 보고 %d단계로 끝내야 한다(references/work-report.md).\n   "
+                % len(steps) + "\n   ".join(gaps)
+                + "\n   단계마다 한두 줄이면 된다 — 화면 하나 안에 담는다.")
 
     line_count = len([line for line in answer_text.splitlines() if line.strip()])
     if line_count > MAX_ANSWER_LINES:

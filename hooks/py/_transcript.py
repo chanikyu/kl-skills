@@ -75,3 +75,31 @@ def read_turns(transcript_path):
     except OSError:
         return []
     return turns
+
+
+def tool_calls_since_last_human(transcript_path):
+    """마지막 사람 메시지 뒤에 assistant 가 부른 도구들 [(이름, 입력)]. 이번 턴에 한 일이다."""
+    calls = []
+    try:
+        with open(transcript_path, encoding="utf-8", errors="replace") as handle:
+            for line in handle:
+                turn = classify_line(line)
+                # 사람 메시지가 나오면 새 턴이다. 앞 턴의 도구 호출은 버린다.
+                if turn and turn[0] == "user":
+                    calls = []
+                    continue
+                try:
+                    entry = json.loads(line)
+                except ValueError:
+                    continue
+                message = entry.get("message") if isinstance(entry, dict) else None
+                if not isinstance(message, dict) or message.get("role") != "assistant":
+                    continue
+                content = message.get("content")
+                for block in content if isinstance(content, list) else []:
+                    if isinstance(block, dict) and block.get("type") == "tool_use":
+                        tool_input = block.get("input")
+                        calls.append((block.get("name", ""), tool_input if isinstance(tool_input, dict) else {}))
+    except OSError:
+        return []
+    return calls

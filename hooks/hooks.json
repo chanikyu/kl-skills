@@ -99,7 +99,7 @@
             "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\run.ps1\" answer-check",
             "timeout": 30,
             "statusMessage": "Checking the answer...",
-            "description": "Read the answer just given and block once if it misses: the same question asked again, an answer past one screen, or prose findings. Blocking is capped by stop_hook_active so it cannot loop.",
+            "description": "Read the answer just given and block once if it misses: the same question asked again, a turn that changed files without the six-step work report, an answer past one screen, or prose findings. Blocking is capped by stop_hook_active so it cannot loop.",
             "id": "stop:answer-check"
           }
         ]

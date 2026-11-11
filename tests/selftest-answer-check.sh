@@ -64,6 +64,12 @@ import json, sys
 out_path, spec = sys.argv[1], json.loads(sys.argv[2])
 with open(out_path, "w", encoding="utf-8") as handle:
     for role, text, flags in spec:
+        if role == "tool":
+            # 도구 호출: text 는 도구 이름, flags 는 그 입력이다
+            entry = {"message": {"role": "assistant",
+                                 "content": [{"type": "tool_use", "name": text, "input": flags}]}}
+            handle.write(json.dumps(entry, ensure_ascii=False) + "\n")
+            continue
         as_string = flags.pop("str", False)
         content = text if as_string else [{"type": "text", "text": text}]
         handle.write(json.dumps(dict(flags, message={"role": role, "content": content}),
@@ -193,6 +199,133 @@ case "$out" in
   *"다시 물었다"*) ok "'<' 로 시작하는 사람 메시지도 사람 말로 센다" ;;
   *)              bad "'<' 로 시작한 사람의 되물음을 기계 글로 뺐다: $out" ;;
 esac
+
+# --- 작업 보고 6단계: 코드를 고친 턴은 6단계 보고로 끝내야 한다 (2026-11-11 사용자 요청)
+export LLM_WIKI_ROOT="$TMP/wiki-root"
+GOOD_REPORT='작업 결과: 완료 — 검사를 더했다.
+작업 요약: 요청한 6단계 검사를 훅에 넣었다.
+변경사항: answer-check.py 에 검사 함수를 더했다.
+검증 결과: 테스트 30/30 통과.
+문제 및 제약: Bash 로 고친 파일은 못 본다.
+후속 조치: 없음.'
+report_case() {  # $1 이름, $2 도구 호출 JSON 조각, $3 답변
+  make_conversation "$TMP/$1.jsonl" "[
+    [\"user\", \"검사를 더해줘\", $HUMAN],
+    $2
+    [\"assistant\", $("$PY" -c 'import json,sys; print(json.dumps(sys.argv[1], ensure_ascii=False))' "$3"), {}]
+  ]"
+  gate "$TMP/$1.jsonl"
+}
+mkdir -p "$TMP/repo/hooks"; echo "x = 1" > "$TMP/repo/hooks/a.py"
+EDIT_CODE="[\"tool\", \"Edit\", {\"file_path\": \"$TMP/repo/hooks/a.py\"}],"
+out="$(report_case work-missing "$EDIT_CODE" "고쳤습니다. 테스트도 통과했습니다.")"
+case "$out" in
+  *"작업 보고"*"작업 결과"*"후속 조치"*) ok "코드를 고친 턴에 6단계가 없으면 빠진 단계를 말한다" ;;
+  *) bad "6단계 없는 작업 보고를 넘겼다: $out" ;;
+esac
+out="$(report_case work-good "$EDIT_CODE" "$GOOD_REPORT")"
+case "$out" in
+  *"작업 보고"*) bad "6단계를 갖춘 보고를 막았다: $out" ;;
+  *)            ok "6단계를 순서대로 갖춘 보고는 통과한다" ;;
+esac
+out="$(report_case work-heading "$EDIT_CODE" '## 작업 결과
+
+부분 완료
+
+### 1. 작업 요약
+요약.
+### 2. 변경사항
+파일.
+### 3. 검증 결과
+3/3 통과.
+### 4. 문제 및 제약
+없음이 아니라 미확인 1건.
+### 5. 후속 조치
+CI 확인.')"
+case "$out" in
+  *"작업 보고"*) bad "제목 모양의 6단계 보고를 막았다: $out" ;;
+  *)            ok "제목(##)·번호 모양으로 쓴 6단계도 알아본다" ;;
+esac
+out="$(report_case work-order "$EDIT_CODE" '작업 결과: 완료
+변경사항: 파일.
+작업 요약: 요약.
+검증 결과: 통과.
+문제 및 제약: 없음.
+후속 조치: 없음.')"
+case "$out" in
+  *"순서"*) ok "단계 순서가 바뀌면 순서를 말한다" ;;
+  *)        bad "순서가 바뀐 보고를 넘겼다: $out" ;;
+esac
+out="$(report_case work-outcome "$EDIT_CODE" '작업 결과: 잘 됐습니다
+작업 요약: 요약.
+변경사항: 파일.
+검증 결과: 통과.
+문제 및 제약: 없음.
+후속 조치: 없음.')"
+case "$out" in
+  *"완료"*"실패"*) ok "작업 결과 바로 뒤에 완료·부분 완료·실패가 없으면 말한다" ;;
+  *)              bad "결과 낱말이 없는 작업 결과를 넘겼다: $out" ;;
+esac
+out="$(report_case work-commit '["tool", "Bash", {"command": "git commit -m x"}],' "커밋했습니다.")"
+case "$out" in
+  *"작업 보고"*) ok "커밋한 턴도 작업 보고를 요구한다" ;;
+  *)            bad "커밋한 턴을 놓쳤다: $out" ;;
+esac
+out="$(report_case work-wiki "[\"tool\", \"Write\", {\"file_path\": \"$TMP/wiki-root/topic/wiki/page.md\"}]," "위키 페이지를 썼습니다.")"
+case "$out" in
+  *"작업 보고"*) bad "위키 페이지만 쓴 턴에 작업 보고를 요구했다: $out" ;;
+  *)            ok "위키 페이지만 쓴 턴은 작업 보고 대상이 아니다" ;;
+esac
+out="$(report_case work-scratch '["tool", "Write", {"file_path": "/tmp/x/scratchpad/patch.py"}],' "임시 스크립트를 돌렸습니다.")"
+case "$out" in
+  *"작업 보고"*) bad "임시 폴더만 쓴 턴에 작업 보고를 요구했다: $out" ;;
+  *)            ok "임시 폴더만 쓴 턴은 작업 보고 대상이 아니다" ;;
+esac
+out="$(report_case work-none '' "질문에 대한 답입니다.")"
+case "$out" in
+  *"작업 보고"*) bad "아무것도 안 고친 턴에 작업 보고를 요구했다: $out" ;;
+  *)            ok "아무것도 안 고친 턴(질문에 답함)은 대상이 아니다" ;;
+esac
+make_conversation "$TMP/work-earlier.jsonl" "[
+  [\"user\", \"고쳐줘\", $HUMAN],
+  [\"tool\", \"Edit\", {\"file_path\": \"$TMP/repo/hooks/a.py\"}],
+  [\"assistant\", \"고쳤습니다\", {}],
+  [\"user\", \"이건 무슨 뜻이야?\", $HUMAN],
+  [\"assistant\", \"그 뜻은 이렇습니다.\", {}]
+]"
+out="$(gate "$TMP/work-earlier.jsonl")"
+case "$out" in
+  *"작업 보고"*) bad "앞 턴에서 고친 것을 이번 턴의 작업으로 셌다: $out" ;;
+  *)            ok "앞 턴의 수정은 이번 턴의 작업이 아니다" ;;
+esac
+# 2026-11-11 hook-replay 로 실제 턴에 돌려 보고 찾은 두 가지
+out="$(report_case work-probe "[\"tool\", \"Write\", {\"file_path\": \"$TMP/repo/_probe_tmp.py\"}]," "훅이 도는지 봤습니다.")"
+case "$out" in
+  *"작업 보고"*) bad "쓰고 지운 임시 파일을 작업으로 셌다: $out" ;;
+  *)            ok "턴이 끝날 때 남아 있지 않은 파일은 작업이 아니다" ;;
+esac
+PATCH_CMD="python3 - <<'EOF'\ntext = 'run git commit after tests'\nEOF"
+out="$(report_case work-heredoc "[\"tool\", \"Bash\", {\"command\": \"$PATCH_CMD\"}]," "스크립트를 돌렸습니다.")"
+case "$out" in
+  *"작업 보고"*) bad "코드 속 'git ... commit' 글자를 커밋으로 셌다: $out" ;;
+  *)            ok "명령 첫머리의 git commit 만 커밋으로 본다" ;;
+esac
+out="$(report_case work-commit-c '["tool", "Bash", {"command": "cd x && git -C \"/a b\" commit -q -m y"}],' "커밋했습니다.")"
+case "$out" in
+  *"작업 보고"*) ok "git -C \"경로\" commit 도 커밋으로 본다" ;;
+  *)            bad "git -C 커밋을 놓쳤다: $out" ;;
+esac
+# 리뷰에서 재현: 경로에 NUL 글자가 있으면 훅이 터졌다 / commit-tree 를 커밋으로 셌다
+out="$(report_case work-nul '["tool", "Edit", {"file_path": "/tmp/x\u0000y"}],' "고쳤습니다.")"; code=$?
+[ "$code" -eq 0 ] && ok "경로에 NUL 글자가 있어도 0으로 끝난다" || bad "경로의 NUL 글자에 터졌다"
+out="$(report_case work-tree '["tool", "Bash", {"command": "git commit-tree abc"}],' "트리를 만들었습니다.")"
+case "$out" in
+  *"작업 보고"*) bad "git commit-tree 를 커밋으로 셌다: $out" ;;
+  *)            ok "git commit-tree 는 커밋이 아니다" ;;
+esac
+grep -q "작업 요약" "$REPO/hooks/py/answer-check.py" && bad "단계 이름이 코드에 박혀 있다" \
+  || ok "단계 이름은 work-report.md 의 표에서 읽는다"
+unset LLM_WIKI_ROOT
 
 # --- 한 번 막은 뒤에는 다시 막지 않는다. 이게 없으면 턴이 끝나지 않는다
 out="$(gate "$TMP/again.jsonl" ',"stop_hook_active":true')"

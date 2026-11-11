@@ -130,7 +130,7 @@ tests/selftest*.sh   셀프테스트. CI가 이 패턴 전부를 돌린다
   selftest-wiki-touch.sh 같은 변경을 Bash 직후에 바로 잡는지 (바이너리 필요)
   selftest-readable-code.sh 나쁜 이름·빠진 설명문을 잡고, 잘 쓴 코드는 조용한지
   selftest-code-check.sh 그 검사를 훅으로 걸었을 때 조용해야 할 경우에 조용한지
-  selftest-answer-check.sh 되물었을 때만 막고(한 번 요청·기계 글·재전송은 안 막음), 한 번 막은 뒤에는 안 막는지(무한 반복 방지)
+  selftest-answer-check.sh 되물었을 때만 막고(한 번 요청·기계 글·재전송은 안 막음), 파일을 고친 턴은 작업 보고 6단계를 요구하고, 한 번 막은 뒤에는 안 막는지(무한 반복 방지)
   selftest-pipeline-debug.sh 세 단계 중 둘째에서 생긴 빈 칸이 숫자로 드러나는지
   selftest-planner.sh    잘 쓴 기획서는 깨끗하고, 목표 연결이 끊긴 기획서·계획 밖 일은 이름대로 걸리는지
   selftest-wiki-recall.sh 맞는 페이지가 먼저 나오고, 무관한 메시지에는 훅이 조용한지
@@ -226,7 +226,7 @@ claude plugin validate .                          # 플러그인·스킬 형식 
 | `PostToolUse` (`Bash`) | `after-bash` | Bash 뒤에 두 가지를 본다 — 쉘로 위키를 고쳤나(수정 시각), 커밋했나(명령어). 둘 다 아니면 아무것도 띄우지 않는다. 커밋이면 계획 이탈을 알린다. 한 게이트로 묶어 런처 비용을 한 번만 낸다 | Rust |
 | `UserPromptSubmit` | `wiki-recall` | 사용자가 말할 때마다 위키를 검색해 관련 페이지의 경로와 핵심 줄을 붙인다. 낱말 둘 이상이 겹치고 질문을 40% 이상 덮을 때만 붙인다 | Python |
 | `PostToolUse` (`Write\|Edit\|MultiEdit`) | `code-check` | 쓴 `.py` 파일의 이름과 설명문을 바로 지적한다. 캐시·가상환경·임시 경로는 건너뛴다. **막지 않는다** | Python |
-| `Stop` | `answer-check` | 방금 한 답변을 읽는다. 답이 빗나가서 사람이 다시 물었거나(되묻는 말투, 또는 거의 같은 질문 재전송 — 한 번만 한 요청은 안 막는다), 답이 화면 하나를 넘거나, 글 검사에 걸리면 **한 번 막는다**. 두 번은 막지 않는다 | Python |
+| `Stop` | `answer-check` | 방금 한 답변을 읽는다. 답이 빗나가서 사람이 다시 물었거나(되묻는 말투, 또는 거의 같은 질문 재전송 — 한 번만 한 요청은 안 막는다), 파일을 고친 턴인데 작업 보고 6단계가 없거나, 답이 화면 하나를 넘거나, 글 검사에 걸리면 **한 번 막는다**. 두 번은 막지 않는다 | Python |
 | `Stop` | `wiki-sync` | 세션당 한 번. 수정 시각을 비교해 **어떤 방법으로 쓴 변경이든** 찾아내 그래프를 맞추고 바뀐 페이지를 검사한다. **막지 않는다** | Python |
 
 `wiki-index-check` 가 Rust인 이유: `PostToolUse` 는 파일을 쓸 때마다 돈다(위 측정 참고).
