@@ -3,11 +3,12 @@
 
   lint.py [topic ...]        # no topic = every topic under the root
 
-Reports five things, all of them pure comparisons between the files and the
-index, so the answer is the same every run. A human eyeballing this gets a
+Reports six things, all of them pure comparisons between the files, the index
+and the log, so the answer is the same every run. A human eyeballing this gets a
 different answer each time, which is why it is a script:
 
   not-indexed      a page exists but index.md does not list it -> nobody finds it
+  not-logged       a page exists but log.md never mentions it  -> the history lost it
   dangling-index   index.md lists a page that is not there     -> a dead link
   duplicate-index  one page listed twice                       -> fix one, the other lies
   broken-link      [[link]] to a page that does not exist      -> may be a gap, may be a typo
@@ -25,7 +26,8 @@ import sys
 
 import _wiki
 
-CHECKS = ("not-indexed", "dangling-index", "duplicate-index", "broken-link", "orphan")
+CHECKS = ("not-indexed", "not-logged", "dangling-index", "duplicate-index",
+          "broken-link", "orphan")
 # The entry point is meant to be reached from the index, so it is never an orphan.
 ORPHAN_EXEMPT = {"overview.md"}
 
@@ -39,6 +41,15 @@ def lint(topic):
     for name in page_files:
         if name not in indexed:
             findings["not-indexed"].append(name)
+
+    # The log is the only record of WHEN and WHY a page changed. A page the log never
+    # mentions is a page whose history starts blank, and nothing else can reconstruct it.
+    # Matching by filename is enough because log-append.py writes the filenames it touched.
+    log = _wiki.log_path(topic)
+    log_text = log.read_text(encoding="utf-8") if log.exists() else ""
+    for name in page_files:
+        if name not in log_text:
+            findings["not-logged"].append(name)
 
     for name in indexed:
         if name not in page_files:

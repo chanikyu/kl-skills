@@ -77,6 +77,12 @@ printf '# Loose\n' > "$TMP/t/wiki/loose.md"
 out="$(python3 "$S/lint.py" t 2>&1)"
 echo "$out" | grep -q 'not-indexed .*loose\.md' && ok "lint finds a page missing from the index" \
   || bad "lint missed not-indexed"
+# loose.md was never logged; a.md was logged above. The pair proves the check reads
+# the log, not the index. (b.md is gone by now — the dangling-index case deleted it.)
+echo "$out" | grep -q 'not-logged .*loose\.md' && ok "lint finds a page the log never mentions" \
+  || bad "lint missed not-logged"
+echo "$out" | grep -q 'not-logged .*a\.md' && bad "a.md is in the log, not a finding" \
+  || ok "a logged page is not reported as not-logged"
 printf '%s\n' '- [loose](loose.md) — dup' >> "$IDX"
 printf '%s\n' '- [loose](loose.md) — dup' >> "$IDX"
 out="$(python3 "$S/lint.py" t 2>&1)"
@@ -87,8 +93,13 @@ echo "$out" | grep -q 'duplicate-index .*loose\.md' && ok "lint finds a page lis
 sh "$S/new-topic.sh" clean "clean topic" >/dev/null 2>&1
 printf '# Overview\n\nentry point.\n' > "$TMP/clean/wiki/overview.md"
 python3 "$S/index-add.py" clean overview.md Overview "entry point" >/dev/null
+# Indexed is not enough any more: a page the log never mentions is also a finding.
 python3 "$S/lint.py" clean >/dev/null 2>&1
-[ $? -eq 0 ] && ok "clean wiki exits 0 and overview.md is orphan-exempt" \
+[ $? -eq 1 ] && ok "indexed but never logged is still a finding" \
+  || bad "not-logged did not fire for an unlogged page"
+python3 "$S/log-append.py" clean ingest "overview written" --pages overview.md >/dev/null
+python3 "$S/lint.py" clean >/dev/null 2>&1
+[ $? -eq 0 ] && ok "indexed + logged wiki exits 0, overview.md is orphan-exempt" \
   || bad "clean wiki reported findings"
 
 # --- a topic that does not exist must say so, with the fix
