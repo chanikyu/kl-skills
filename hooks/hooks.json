@@ -48,6 +48,19 @@
             "id": "post-write:prose-check"
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" wiki-touch",
+            "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\run.ps1\" wiki-touch",
+            "timeout": 120,
+            "description": "A wiki page may have been written by a shell command rather than Write/Edit. Rust compares mtimes first (nothing changed = a few ms, no output) and only a real change pays for the Python sync. Reports; never blocks.",
+            "id": "post-bash:wiki-touch"
+          }
+        ]
       }
     ],
     "Stop": [

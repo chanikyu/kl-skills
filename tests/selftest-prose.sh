@@ -48,6 +48,14 @@ A가 더 빠릅니다.
 
 관련: [[graph-doc-memory-설계]] — 링크 안은 페이지 이름이므로 용어가 아니다.
 
+게이트는 위키 페이지를 쓸 때만 돌고 그 밖에는 바로 끝낸다.
+
+설정은 `a` 와 `b` 와 `c` 와 `d` 와 `e` 와 `f` 와 `g` 로 바꾼다.
+
+## 같은 말 반복
+
+게이트는 위키 페이지를 쓸 때만 돌고 그 밖에는 바로 끝낸다.
+
 ## 표
 
 | 항목 | 값 |
@@ -84,7 +92,8 @@ EOF
 # --- 나쁜 글에서 각 검사가 이름대로 걸리는가
 out="$("$PY" "$CHECK" --all "$TMP/bad.md" 2>&1)"
 for code in undefined-term undefined-acronym pattern missing-comparison missing-count \
-            long-sentence table-without-lead-in number-without-baseline missing-path; do
+            long-sentence table-without-lead-in number-without-baseline missing-path \
+            repeated-sentence code-mark-heavy; do
   case "$out" in
     *"[$code]"*) ok "걸림: $code" ;;
     *)           bad "안 걸림: $code" ;;

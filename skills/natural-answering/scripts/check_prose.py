@@ -268,6 +268,13 @@ def check(path, text, cfg, patterns, acronyms, terms, baseline):
             add(start, "note", "number-without-baseline",
                 "숫자에 비교 기준이 없다. 좋은 건지 나쁜 건지 함께 쓴다",
                 "34bp (read 길이 100bp보다 훨씬 짧다 = 안전하다)")
+        marks = len(re.findall(r"`[^`\n]+`", blob))
+        if marks > cfg.max_code_marks:
+            add(start, "note", "code-mark-heavy",
+                "한 문단에 백틱이 %d개다(기준 %d개). 이쯤이면 글이 아니라 목록이다"
+                % (marks, cfg.max_code_marks),
+                "이름을 나열하는 자리라면 목록으로 빼고, 문장은 문장으로 둔다")
+
         shorts = [s for s in split_sentences(mask(blob)) if 0 < len(s) < 12]
         if len(shorts) >= 3:
             add(start, "note", "period-spam",
@@ -278,6 +285,23 @@ def check(path, text, cfg, patterns, acronyms, terms, baseline):
             add(lineno, "note", "table-without-lead-in",
                 "표가 길잡이 문장 없이 바로 나온다. 표에서 무엇을 봐야 하는지 한 줄 먼저 쓴다",
                 "두 번째 지표가 결론을 냈다. 왜 그런지가 아래 표다")
+
+    # 같은 문장이 두 번 나오면, 둘 중 하나는 읽는 사람의 시간만 쓴다. 맨 앞 결론을
+    # 아래 절에서 다시 설명하는 것이 가장 흔한 형태다.
+    seen_sentence = {}
+    for start, lines in doc.paragraphs:
+        for unit in split_units(lines):
+            for sent in split_sentences(mask(unit)):
+                key = re.sub(r"\s+", " ", sent).strip()
+                if len(key) < 20:
+                    continue
+                if key in seen_sentence:
+                    add(start, "warn", "repeated-sentence",
+                        "같은 문장을 두 번 썼다(%d행에도 있다). 한 번만 쓴다"
+                        % seen_sentence[key],
+                        "맨 앞 결론을 아래에서 다시 설명하지 않는다")
+                else:
+                    seen_sentence[key] = start
 
     # 문서에 적힌 경로가 실제로 있는지. 없는 경로는 문서가 코드와 어긋났다는 가장 선명한 신호다.
     # 예시용·자리표시 경로까지 같이 걸리므로 등급은 note 로 둔다(훅에서는 안 보인다).
@@ -324,6 +348,8 @@ def main(argv=None):
     ap.add_argument("--max-bold", type=int, default=3)
     ap.add_argument("--max-paragraph", type=int, default=700)
     ap.add_argument("--max-emoji", type=int, default=3)
+    ap.add_argument("--max-code-marks", type=int, default=6,
+                    help="한 문단에 허용할 인라인 코드 개수")
     ap.add_argument("--exit-zero", action="store_true", help="찾아도 0으로 끝낸다(훅용)")
     ap.add_argument("--data-dir", default=None,
                     help="판정 기준 파일을 둔 디렉토리(기본: 이 스크립트 옆 data/)")
