@@ -280,28 +280,78 @@ fn made_a_commit(payload: &str) -> bool {
 /// then `git`, then any global options (`-C dir`, `-c key=value`, `--flag`),
 /// then `commit`. `git` has to start the segment, so `echo git commit` is not one.
 fn runs_a_commit(command: &str) -> bool {
-    command
-        .split(|separator| matches!(separator, ';' | '&' | '|' | '\n'))
-        .any(|segment| {
-            let words: Vec<&str> = segment.split_whitespace().collect();
-            let mut index = 0;
-            // GIT_AUTHOR_DATE=... 같은 환경 변수 지정은 명령 앞에 올 수 있다.
-            while index < words.len() && words[index].contains('=') && !words[index].starts_with('-') {
-                index += 1;
-            }
-            if words.get(index) != Some(&"git") {
-                return false;
-            }
+    command_segments(command).iter().any(|words| {
+        let mut index = 0;
+        // GIT_AUTHOR_DATE=... 같은 환경 변수 지정은 명령 앞에 올 수 있다.
+        while index < words.len() && words[index].contains('=') && !words[index].starts_with('-') {
             index += 1;
-            while let Some(word) = words.get(index) {
-                match *word {
-                    "-C" | "-c" => index += 2,
-                    flag if flag.starts_with("--") => index += 1,
-                    _ => break,
+        }
+        if words.get(index).map(String::as_str) != Some("git") {
+            return false;
+        }
+        index += 1;
+        while let Some(word) = words.get(index) {
+            match word.as_str() {
+                "-C" | "-c" => index += 2,
+                flag if flag.starts_with("--") => index += 1,
+                _ => break,
+            }
+        }
+        words.get(index).map(String::as_str) == Some("commit")
+    })
+}
+
+/// Split a shell command into segments (at unquoted `; & | newline`) of words.
+///
+/// Quotes are honoured: `-C "/a b"` is one word, and a `&` inside quotes does not
+/// end a segment. Splitting on whitespace alone broke the first case — CI caught it
+/// on all five targets, and paths with spaces are common on macOS. This is not a
+/// shell parser: no escapes, no variables, no subshells. It only has to find where
+/// a command word stands.
+fn command_segments(command: &str) -> Vec<Vec<String>> {
+    let mut segments: Vec<Vec<String>> = Vec::new();
+    let mut words: Vec<String> = Vec::new();
+    let mut current = String::new();
+    let mut in_word = false;
+    let mut open_quote: Option<char> = None;
+    for character in command.chars() {
+        if let Some(quote) = open_quote {
+            if character == quote {
+                open_quote = None;
+            } else {
+                current.push(character);
+            }
+            continue;
+        }
+        match character {
+            '"' | '\'' => {
+                open_quote = Some(character);
+                in_word = true;
+            }
+            ';' | '&' | '|' | '\n' => {
+                if in_word {
+                    words.push(std::mem::take(&mut current));
+                    in_word = false;
+                }
+                segments.push(std::mem::take(&mut words));
+            }
+            space if space.is_whitespace() => {
+                if in_word {
+                    words.push(std::mem::take(&mut current));
+                    in_word = false;
                 }
             }
-            words.get(index) == Some(&"commit")
-        })
+            other => {
+                current.push(other);
+                in_word = true;
+            }
+        }
+    }
+    if in_word {
+        words.push(current);
+    }
+    segments.push(words);
+    segments
 }
 
 /// Run one of the plugin's Python scripts and return what it printed, if anything.
@@ -350,8 +400,13 @@ mod tests {
         assert!(runs_a_commit("git -c user.name=t commit -m x"));
         assert!(runs_a_commit("A=1 B=2 git -C \"/a b\" commit -m y"));
         assert!(runs_a_commit("cd repo && git add -A && git commit -m z"));
+        // 따옴표 안의 & 와 ; 는 명령을 나누지 않는다.
+        assert!(runs_a_commit("git -C \"/a&b\" commit -m x"));
+        assert!(runs_a_commit("git commit -m \"fix a & b; c\""));
+        assert!(runs_a_commit("git -C '/Library/Application Support/x' commit -m z"));
         // 낱말이 들어 있을 뿐인 명령은 커밋이 아니다.
         assert!(!runs_a_commit("echo git commit is a command"));
+        assert!(!runs_a_commit("echo \"git commit\""));
         assert!(!runs_a_commit("git log --format=%s | grep commit"));
     }
 
