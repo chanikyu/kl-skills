@@ -73,6 +73,8 @@ skills/              스킬. 한 폴더에 SKILL.md 하나
     scripts/           build_graph.py (DB 생성) · open-graph.sh (빌드 후 브라우저로 열기)
     assets/viewer.html 뷰어 템플릿. 빌드할 때 데이터가 박힌 사본이 따로 생긴다
   no-hardcoding/     값·목록·매핑·경로·임계값을 코드에 박지 않게 (전역에서 옮겨 옴)
+  pipeline-debug/    에러가 나면 파이프라인을 따라 처음 틀어진 단계를 찾는다
+    scripts/           probe.py (단계 사이 파일의 개수·열·빈 칸·앞부분을 숫자로)
   readable-code/     이름과 주석 규칙. 코드를 쓰거나 고칠 때
     scripts/           check_code.py (파이썬 이름·설명문 검사, ast 로 정확히)
     data/              허용할 짧은 이름 · 모호하다고 볼 이름 (코드 아님)
@@ -107,6 +109,7 @@ tests/selftest*.sh   셀프테스트. CI가 이 패턴 전부를 돌린다
   selftest-readable-code.sh 나쁜 이름·빠진 설명문을 잡고, 잘 쓴 코드는 조용한지
   selftest-code-check.sh 그 검사를 훅으로 걸었을 때 조용해야 할 경우에 조용한지
   selftest-answer-check.sh 되물었을 때 막고, 한 번 막은 뒤에는 안 막는지(무한 반복 방지)
+  selftest-pipeline-debug.sh 세 단계 중 둘째에서 생긴 빈 칸이 숫자로 드러나는지
   selftest-graph.sh      그래프 DB 집계가 맞는지 + 뷰어가 실제로 그려지는지
                          (크롬이 있으면 헤드리스로 띄워서 노드가 그려졌는지 센다.
                           없으면 그 검사만 건너뛴다)
