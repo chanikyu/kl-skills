@@ -69,9 +69,13 @@ ARM 윈도우는 x86_64 실행파일을 에뮬레이션으로 돌리므로 따�
 skills/              스킬. 한 폴더에 SKILL.md 하나
   llm-wiki-docs/     문서를 ~/llm-wiki-docs/<주제>/wiki 로 모으는 위키 규약
     scripts/           new-topic.sh · index-add.py · log-append.py · lint.py
+  graph-doc-memory/  위키 전체를 그래프 DB 하나로 만들고 브라우저로 보여준다
+    scripts/           build_graph.py (DB 생성) · open-graph.sh (빌드 후 브라우저로 열기)
+    assets/viewer.html 뷰어 템플릿. 빌드할 때 데이터가 박힌 사본이 따로 생긴다
 hooks/
   hooks.json         어떤 사건에 어떤 명령을 돌릴지 적은 표
-                     SessionStart → 배너 / PostToolUse(Write|Edit) → wiki-index-check
+                     SessionStart → 배너
+                     PostToolUse(Write|Edit) → wiki-index-check · wiki-graph
   run.sh             mac·리눅스: Python 훅이 있으면 그걸, 없으면 Rust 실행파일을 고름
   run.ps1            윈도우용 같은 역할
   py/<게이트>.py      Python 훅. 파일을 두면 그 게이트는 Python으로 돈다
@@ -85,6 +89,9 @@ tests/selftest*.sh   셀프테스트. CI가 이 패턴 전부를 돌린다
   selftest.sh            run.sh 가 실행파일·인터프리터를 제대로 고르는지
   selftest-new-topic.sh  위키 주제 생성 스크립트가 덮어쓰지 않는지
   selftest-wiki-scripts.sh  인덱스·로그·lint 스크립트가 제대로 동작하는지
+  selftest-graph.sh      그래프 DB 집계가 맞는지 + 뷰어가 실제로 그려지는지
+                         (크롬이 있으면 헤드리스로 띄워서 노드가 그려졌는지 센다.
+                          없으면 그 검사만 건너뛴다)
 .github/workflows/build.yml   5종 빌드 → bin/ 에 자동 커밋
 ```
 
@@ -158,9 +165,16 @@ claude plugin validate .                          # 플러그인·스킬 형식 
 |---|---|---|---|
 | `SessionStart` | `session-start` | 배너 한 줄. 훅이 실제로 걸렸는지 확인용 | Rust |
 | `PostToolUse` (`Write\|Edit\|MultiEdit`) | `wiki-index-check` | `~/llm-wiki-docs/<주제>/wiki/` 에 쓴 페이지가 `index.md` 에 없으면 경고. **막지 않는다** | Rust |
+| `PostToolUse` (`Write\|Edit\|MultiEdit`) | `wiki-graph` | 위키 페이지를 쓰면 그래프 DB(`<루트>/.graph/`)를 다시 만든다. 위키 밖 파일이면 즉시 끝 | Python |
 
 `wiki-index-check` 가 Rust인 이유: `PostToolUse` 는 파일을 쓸 때마다 돈다(위 측정 참고).
 위키 밖 경로면 JSON에서 경로 하나 읽고 바로 끝낸다.
+
+`wiki-graph` 는 같은 사건에 걸리는데도 Python이다 — 위 표의 기준("`PostToolUse` 는 Rust")을
+일부러 어긴 자리라 이유를 적어둔다. **이 훅이 실제로 하는 일(그래프를 만드는 빌더)이 Python이다.**
+게이트만 Rust로 옮기면 Python 프로세스가 사라지는 게 아니라 프로세스가 하나 더 붙는다.
+위키 밖 경로면 문자열 비교 몇 번으로 끝나므로, 치르는 비용은 Python 시작 시간 약 32 ms 한 번이고
+그마저 파일을 쓸 때만이다. 빌더까지 Rust로 옮길 때 게이트도 같이 옮기는 게 맞다.
 
 ## 라이선스
 

@@ -1,0 +1,392 @@
+<!doctype html>
+<!--
+  llm-wiki graph viewer. Obsidian's graph view, rebuilt on d3-force.
+
+  This file is a TEMPLATE: build_graph.py writes a copy with __GRAPH_DATA__
+  replaced by the graph json, so the copy opens straight from file:// with no
+  server. Edit this template, never the generated graph.html.
+
+  ponytail: SVG nodes, one <circle> + <text> each. Comfortable to a few thousand
+  nodes; past that switch the render to <canvas> and keep the same simulation.
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wiki Graph</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+  :root {
+    --bg: #faf9f7; --panel: #ffffff; --ink: #1c1b19; --muted: #6b6760;
+    --line: #dcd8d2; --accent: #3b6ea8; --dim: 0.12;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17181a; --panel: #1e2023; --ink: #e8e6e3; --muted: #9a958d;
+      --line: #32353a; --accent: #7aa7d8; --dim: 0.08;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17181a; --panel: #1e2023; --ink: #e8e6e3; --muted: #9a958d;
+    --line: #32353a; --accent: #7aa7d8; --dim: 0.08;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg); color: var(--ink); overflow: hidden;
+    font: 13px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+  }
+  #app { display: flex; height: 100%; }
+  #stage { flex: 1; position: relative; min-width: 0; }
+  svg { display: block; width: 100%; height: 100%; cursor: grab; }
+  svg:active { cursor: grabbing; }
+
+  #panel {
+    width: 300px; flex: 0 0 300px; background: var(--panel);
+    border-left: 1px solid var(--line); overflow-y: auto; padding: 14px 16px 40px;
+  }
+  #panel h1 { font-size: 14px; margin: 0 0 2px; letter-spacing: -0.01em; }
+  #panel h2 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--muted); margin: 18px 0 8px; font-weight: 600;
+  }
+  .stat { color: var(--muted); font-size: 12px; margin-bottom: 10px; }
+  label.row { display: flex; align-items: center; gap: 8px; margin: 6px 0; cursor: pointer; }
+  label.slider { display: block; margin: 10px 0; color: var(--muted); font-size: 12px; }
+  label.slider b { color: var(--ink); font-weight: 600; float: right; font-variant-numeric: tabular-nums; }
+  input[type=range] { width: 100%; margin: 4px 0 0; accent-color: var(--accent); }
+  input[type=search], input[type=text] {
+    width: 100%; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px;
+    background: var(--bg); color: var(--ink); font: inherit;
+  }
+  button {
+    font: inherit; padding: 5px 10px; border: 1px solid var(--line); border-radius: 6px;
+    background: var(--bg); color: var(--ink); cursor: pointer;
+  }
+  button:hover { border-color: var(--accent); color: var(--accent); }
+  #legend div { display: flex; align-items: center; gap: 7px; margin: 4px 0; font-size: 12px; }
+  #legend i { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 10px; }
+  #detail { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 12px; }
+  #detail .t { font-weight: 600; font-size: 13px; word-break: break-word; }
+  #detail .m { color: var(--muted); font-size: 11.5px; margin-top: 3px; word-break: break-all; }
+  #detail ul { list-style: none; padding: 0; margin: 6px 0 0; }
+  #detail li { margin: 2px 0; }
+  #detail a, .jump {
+    color: var(--accent); text-decoration: none; cursor: pointer;
+    background: none; border: 0; padding: 0; font: inherit; text-align: left;
+  }
+  #detail a:hover, .jump:hover { text-decoration: underline; }
+  .missing { font-style: italic; color: var(--muted); }
+  #hint {
+    position: absolute; left: 12px; bottom: 10px; color: var(--muted); font-size: 11.5px;
+    pointer-events: none;
+  }
+  .node circle { stroke: var(--bg); stroke-width: 1.2px; cursor: pointer; }
+  .node.ghost circle { fill: none; stroke-dasharray: 2 2; stroke-width: 1.4px; }
+  .node text { fill: var(--ink); font-size: 10px; pointer-events: none; }
+  line.link { stroke: var(--line); }
+  @media (max-width: 760px) {
+    #app { flex-direction: column; }
+    #panel { width: 100%; flex: 0 0 auto; max-height: 45%; border-left: 0; border-top: 1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="stage">
+    <svg id="svg"></svg>
+    <div id="hint">스크롤 = 확대 · 드래그 = 이동 · 노드 클릭 = 상세 · 노드 드래그 = 고정</div>
+  </div>
+
+  <div id="panel">
+    <h1>Wiki Graph</h1>
+    <div class="stat" id="stats"></div>
+
+    <h2>필터</h2>
+    <input type="search" id="q" placeholder="페이지 검색 (제목·경로)">
+    <label class="row"><input type="checkbox" id="fOrphan" checked> 고아 페이지 (링크 0개)</label>
+    <label class="row"><input type="checkbox" id="fMissing" checked> 아직 없는 페이지 (점선)</label>
+    <label class="row"><input type="checkbox" id="fArrow"> 화살표 (링크 방향)</label>
+
+    <h2>로컬 그래프</h2>
+    <label class="row"><input type="checkbox" id="fLocal"> 선택한 노드 주변만</label>
+    <label class="slider">깊이 <b id="vDepth">1</b>
+      <input type="range" id="depth" min="1" max="5" step="1" value="1"></label>
+
+    <h2>표시</h2>
+    <label class="slider">노드 크기 <b id="vSize">1.0</b>
+      <input type="range" id="size" min="0.3" max="3" step="0.1" value="1"></label>
+    <label class="slider">링크 두께 <b id="vThick">1.0</b>
+      <input type="range" id="thick" min="0.3" max="4" step="0.1" value="1"></label>
+    <label class="slider">이름 표시 기준 <b id="vFade">0.6</b>
+      <input type="range" id="fade" min="0" max="2" step="0.05" value="0.6"></label>
+
+    <h2>힘</h2>
+    <label class="slider">중심으로 모으기 <b id="vCenter">0.05</b>
+      <input type="range" id="center" min="0" max="0.5" step="0.01" value="0.05"></label>
+    <label class="slider">서로 밀어내기 <b id="vRepel">300</b>
+      <input type="range" id="repel" min="20" max="1500" step="10" value="300"></label>
+    <label class="slider">링크가 당기는 힘 <b id="vLink">0.4</b>
+      <input type="range" id="linkf" min="0" max="1" step="0.05" value="0.4"></label>
+    <label class="slider">링크 길이 <b id="vDist">60</b>
+      <input type="range" id="dist" min="10" max="300" step="5" value="60"></label>
+
+    <div style="margin-top:14px; display:flex; gap:8px;">
+      <button id="reset">기본값으로</button>
+      <button id="refit">화면에 맞추기</button>
+    </div>
+
+    <h2>토픽</h2>
+    <div id="legend"></div>
+
+    <div id="detail"><div class="m">노드를 클릭하면 그 페이지의 연결이 여기에 나옵니다.</div></div>
+  </div>
+</div>
+
+<script id="graph-data" type="application/json">__GRAPH_DATA__</script>
+<script>
+(function () {
+  const DATA = JSON.parse(document.getElementById('graph-data').textContent);
+  const nodes = DATA.nodes.map(d => Object.assign({}, d));
+  const links = DATA.links.map(d => Object.assign({}, d));
+  const byId = new Map(nodes.map(n => [n.id, n]));
+
+  const s = DATA.stats;
+  document.getElementById('stats').textContent =
+    `${s.pages}개 페이지 · ${s.links}개 링크 · ${s.topics}개 토픽` +
+    (s.missing ? ` · 아직 없는 페이지 ${s.missing}개` : '') +
+    (s.orphans ? ` · 고아 ${s.orphans}개` : '');
+
+  // --- topic colors double as Obsidian's "groups"
+  const topics = Array.from(new Set(nodes.map(n => n.topic))).sort();
+  const palette = d3.schemeTableau10.concat(d3.schemeSet3);
+  const color = t => palette[topics.indexOf(t) % palette.length];
+  const legend = document.getElementById('legend');
+  topics.forEach(t => {
+    const row = document.createElement('div');
+    const dot = document.createElement('i');
+    dot.style.background = color(t);
+    row.appendChild(dot);
+    row.appendChild(document.createTextNode(`${t} (${nodes.filter(n => n.topic === t).length})`));
+    legend.appendChild(row);
+  });
+
+  // --- adjacency, used by hover highlight and the local graph
+  const nbr = new Map(nodes.map(n => [n.id, new Set()]));
+  links.forEach(l => { nbr.get(l.source).add(l.target); nbr.get(l.target).add(l.source); });
+
+  const ui = id => document.getElementById(id);
+  const DEFAULTS = { size: 1, thick: 1, fade: 0.6, center: 0.05, repel: 300, linkf: 0.4, dist: 60, depth: 1 };
+  const val = id => +ui(id).value;
+
+  function radius(d) {
+    return (3 + Math.sqrt(d.in) * 1.8) * val('size');
+  }
+
+  const svg = d3.select('#svg');
+  const root = svg.append('g');
+  svg.append('defs').append('marker')
+    .attr('id', 'arrow').attr('viewBox', '0 -4 8 8').attr('refX', 16)
+    .attr('markerWidth', 7).attr('markerHeight', 7).attr('orient', 'auto')
+    .append('path').attr('d', 'M0,-3L7,0L0,3').attr('fill', 'var(--line)');
+
+  let linkSel = root.append('g').attr('class', 'links').selectAll('line');
+  let nodeSel = root.append('g').attr('class', 'nodes').selectAll('g');
+
+  const sim = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(links).id(d => d.id))
+    .force('charge', d3.forceManyBody())
+    .force('x', d3.forceX())
+    .force('y', d3.forceY())
+    .force('collide', d3.forceCollide().radius(d => radius(d) + 2))
+    .on('tick', tick);
+
+  const zoom = d3.zoom().scaleExtent([0.05, 8]).on('zoom', e => {
+    root.attr('transform', e.transform);
+    scale = e.transform.k;
+    paintLabels();
+  });
+  svg.call(zoom).on('dblclick.zoom', null);
+  let scale = 1;
+
+  let selected = null, hovered = null;
+
+  function visibleNodes() {
+    const q = ui('q').value.trim().toLowerCase();
+    let keep = nodes.filter(n => {
+      if (!ui('fMissing').checked && !n.exists) return false;
+      if (!ui('fOrphan').checked && n.in + n.out === 0) return false;
+      if (q && !(n.id.toLowerCase().includes(q) || n.title.toLowerCase().includes(q))) return false;
+      return true;
+    });
+    if (ui('fLocal').checked && selected) {
+      const depth = val('depth');
+      const seen = new Set([selected]);
+      let edge = [selected];
+      for (let i = 0; i < depth; i++) {
+        const next = [];
+        edge.forEach(id => (nbr.get(id) || []).forEach(n => {
+          if (!seen.has(n)) { seen.add(n); next.push(n); }
+        }));
+        edge = next;
+      }
+      keep = keep.filter(n => seen.has(n.id));
+    }
+    return new Set(keep.map(n => n.id));
+  }
+
+  function render() {
+    const vis = visibleNodes();
+    const vn = nodes.filter(n => vis.has(n.id));
+    const vl = links.filter(l => vis.has(l.source.id || l.source) && vis.has(l.target.id || l.target));
+
+    linkSel = linkSel.data(vl, d => (d.source.id || d.source) + '>' + (d.target.id || d.target))
+      .join('line').attr('class', 'link');
+
+    nodeSel = nodeSel.data(vn, d => d.id).join(
+      enter => {
+        const g = enter.append('g').attr('class', d => 'node' + (d.exists ? '' : ' ghost'));
+        g.append('circle')
+          .attr('fill', d => color(d.topic))
+          .attr('stroke', d => d.exists ? null : color(d.topic))
+          .on('mouseenter', (e, d) => { hovered = d.id; paint(); })
+          .on('mouseleave', () => { hovered = null; paint(); })
+          .on('click', (e, d) => { selected = d.id; showDetail(d); render(); });
+        g.append('text').attr('text-anchor', 'middle');
+        // Unpin on double click. It must NOT be registered on the drag behaviour:
+        // d3-drag only knows start/drag/end and throws on any other type, which
+        // kills the whole enter-join and leaves the graph empty.
+        g.on('dblclick', (e, d) => { d.fx = d.fy = null; sim.alpha(0.3).restart(); });
+        g.call(d3.drag()
+          .on('start', (e, d) => { if (!e.active) sim.alphaTarget(0.25).restart(); d.fx = d.x; d.fy = d.y; })
+          .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
+          .on('end', (e, d) => { if (!e.active) sim.alphaTarget(0); }));
+        return g;
+      });
+
+    nodeSel.select('circle').attr('r', radius);
+    nodeSel.select('text').text(d => d.title).attr('y', d => radius(d) + 10);
+    sim.force('link').links(vl);
+    sim.nodes(nodes);
+    sim.alpha(0.5).restart();
+    paint();
+  }
+
+  function paint() {
+    const focus = hovered || (ui('fLocal').checked ? null : selected);
+    const near = focus ? new Set([focus, ...(nbr.get(focus) || [])]) : null;
+    nodeSel.attr('opacity', d => !near || near.has(d.id) ? 1 : 0.15);
+    linkSel
+      .attr('stroke-width', d => (near && near.has(d.source.id) && near.has(d.target.id) ? 2 : 1) * val('thick'))
+      .attr('stroke', d => near && near.has(d.source.id) && near.has(d.target.id) ? 'var(--accent)' : 'var(--line)')
+      .attr('opacity', d => !near ? 0.75 : (near.has(d.source.id) && near.has(d.target.id) ? 1 : 0.1))
+      .attr('marker-end', ui('fArrow').checked ? 'url(#arrow)' : null);
+    paintLabels();
+  }
+
+  // Obsidian's "text fade threshold": names appear as you zoom past it.
+  function paintLabels() {
+    const t = val('fade');
+    nodeSel.select('text').attr('opacity', d =>
+      scale >= t ? Math.min(1, (scale - t) * 2 + 0.25) : 0);
+  }
+
+  function tick() {
+    linkSel.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+           .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+    nodeSel.attr('transform', d => `translate(${d.x},${d.y})`);
+  }
+
+  function applyForces() {
+    sim.force('charge').strength(-val('repel'));
+    sim.force('link').strength(val('linkf')).distance(val('dist'));
+    sim.force('x').strength(val('center'));
+    sim.force('y').strength(val('center'));
+    sim.force('collide').radius(d => radius(d) + 2);
+    sim.alpha(0.4).restart();
+  }
+
+  function showDetail(d) {
+    const out = links.filter(l => (l.source.id || l.source) === d.id).map(l => l.target.id || l.target);
+    const inn = links.filter(l => (l.target.id || l.target) === d.id).map(l => l.source.id || l.source);
+    const list = ids => ids.length
+      ? `<ul>${ids.sort().map(id => {
+          const n = byId.get(id);
+          const cls = n && n.exists ? 'jump' : 'jump missing';
+          return `<li><button class="${cls}" data-go="${esc(id)}">${esc(id)}${n && !n.exists ? ' (없음)' : ''}</button></li>`;
+        }).join('')}</ul>`
+      : '<div class="m">없음</div>';
+    const file = d.path
+      ? `<div class="m"><a href="file://${encodeURI(d.path)}">${esc(d.path)}</a></div>`
+      : '<div class="m">아직 만들어지지 않은 페이지 — 링크만 존재합니다.</div>';
+    ui('detail').innerHTML =
+      `<div class="t">${esc(d.title)}</div>
+       <div class="m">${esc(d.topic)} · ${d.mtime || '-'} · ${d.bytes ? d.bytes + 'B' : ''}</div>
+       ${file}
+       <h2>이 페이지가 가리키는 곳 (${out.length})</h2>${list(out)}
+       <h2>이 페이지를 가리키는 곳 (${inn.length})</h2>${list(inn)}`;
+    ui('detail').querySelectorAll('[data-go]').forEach(b => b.onclick = () => {
+      const n = byId.get(b.dataset.go);
+      if (!n) return;
+      selected = n.id; showDetail(n); render(); centerOn(n);
+    });
+  }
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+  function centerOn(n) {
+    if (n.x == null) return;
+    const w = svg.node().clientWidth, h = svg.node().clientHeight;
+    svg.transition().duration(400).call(zoom.transform,
+      d3.zoomIdentity.translate(w / 2, h / 2).scale(Math.max(scale, 1)).translate(-n.x, -n.y));
+  }
+
+  function fit() {
+    const vn = nodeSel.data();
+    if (!vn.length) return;
+    const xs = vn.map(d => d.x), ys = vn.map(d => d.y);
+    const w = svg.node().clientWidth, h = svg.node().clientHeight;
+    const dx = Math.max(1, d3.max(xs) - d3.min(xs)), dy = Math.max(1, d3.max(ys) - d3.min(ys));
+    const k = Math.min(2, 0.85 / Math.max(dx / w, dy / h));
+    svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity
+      .translate(w / 2, h / 2).scale(k)
+      .translate(-(d3.min(xs) + dx / 2), -(d3.min(ys) + dy / 2)));
+  }
+
+  // --- wiring
+  const labels = { size: 'vSize', thick: 'vThick', fade: 'vFade', center: 'vCenter',
+                   repel: 'vRepel', linkf: 'vLink', dist: 'vDist', depth: 'vDepth' };
+  function syncLabels() {
+    for (const k in labels) {
+      const v = val(k);
+      ui(labels[k]).textContent = (k === 'repel' || k === 'dist' || k === 'depth') ? v : v.toFixed(2).replace(/0$/, '');
+    }
+  }
+  ['size', 'thick'].forEach(id => ui(id).oninput = () => { syncLabels(); render(); });
+  ui('fade').oninput = () => { syncLabels(); paintLabels(); };
+  ['center', 'repel', 'linkf', 'dist'].forEach(id => ui(id).oninput = () => { syncLabels(); applyForces(); });
+  ui('depth').oninput = () => { syncLabels(); render(); };
+  ['q'].forEach(id => ui(id).oninput = render);
+  ['fOrphan', 'fMissing', 'fLocal'].forEach(id => ui(id).onchange = render);
+  ui('fArrow').onchange = paint;
+  ui('refit').onclick = fit;
+  ui('reset').onclick = () => {
+    for (const k in DEFAULTS) ui(k).value = DEFAULTS[k];
+    ui('q').value = '';
+    ui('fOrphan').checked = ui('fMissing').checked = true;
+    ui('fArrow').checked = ui('fLocal').checked = false;
+    syncLabels(); applyForces(); render(); fit();
+  };
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { selected = null; ui('fLocal').checked = false; render(); }
+  });
+
+  syncLabels();
+  applyForces();
+  render();
+  sim.tick(60);
+  fit();
+})();
+</script>
+</body>
+</html>

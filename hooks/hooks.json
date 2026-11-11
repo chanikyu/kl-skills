@@ -28,6 +28,15 @@
             "timeout": 5,
             "description": "Warn when a page written under ~/llm-wiki-docs/<topic>/wiki/ is not listed in that wiki's index.md. Warns only; never blocks.",
             "id": "post-write:wiki-index-check"
+          },
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" wiki-graph",
+            "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\run.ps1\" wiki-graph",
+            "timeout": 60,
+            "statusMessage": "Updating wiki graph...",
+            "description": "A page under ~/llm-wiki-docs/<topic>/wiki/ was written: rebuild the graph db so the graph view is never behind the wiki. Exits immediately for every other file.",
+            "id": "post-write:wiki-graph"
           }
         ]
       }
