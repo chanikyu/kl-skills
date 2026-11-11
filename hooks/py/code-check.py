@@ -15,6 +15,8 @@ import os
 import subprocess
 import sys
 
+from _hook_output import tell_model
+
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CHECKER = os.path.join(PLUGIN_ROOT, "skills", "readable-code", "scripts", "check_code.py")
 # 내 코드가 아닌 자리. 여기까지 지적하면 게이트가 꺼진다.
@@ -59,8 +61,8 @@ def main():
     report = (finished.stdout or b"").decode("utf-8", "replace").strip()
     # 마지막 줄은 집계다. 그 줄만 남았으면 지적이 없다는 뜻이므로 아무 말도 하지 않는다.
     if finished.returncode == 0 and len(report.splitlines()) > 1:
-        print(report)
-        print("(readable-code: 이름과 설명을 다시 볼 자리다. 막지는 않는다)")
+        tell_model("PostToolUse",
+                   report + "\n(readable-code: 이름과 설명을 다시 볼 자리다. 막지는 않는다)")
     return 0
 
 

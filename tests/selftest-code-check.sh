@@ -47,6 +47,9 @@ case "$out" in
   *"막지는 않는다"*) ok "막지 않는다고 분명히 밝힌다" ;;
   *)                 bad "막지 않는다는 말이 없다" ;;
 esac
+printf '%s' "$out" | "$PY" -c "import json,sys; d=json.load(sys.stdin); assert d['hookSpecificOutput']['hookEventName']=='PostToolUse'; assert d['hookSpecificOutput']['additionalContext'].strip()" 2>/dev/null \
+  && ok "출력이 모델에게 닿는 모양(additionalContext JSON)이다" \
+  || bad "출력이 JSON 이 아니다 — 기록에만 남고 모델은 못 받는다: $out"
 
 out="$(gate "$TMP/good.py")"
 [ -z "$out" ] && ok "스킬대로 쓴 파일에는 조용하다" || bad "잘 쓴 파일에 말했다: $out"

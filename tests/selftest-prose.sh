@@ -151,6 +151,10 @@ case "$out" in
   *natural-answering*) ok "훅이 위키 페이지를 검사했다" ;;
   *)                   bad "훅이 위키 페이지에서 아무 말도 안 했다" ;;
 esac
+# 그냥 글로 찍으면 디버그 기록에만 남고 모델에게 안 간다. 문서가 정한 JSON 이어야 닿는다.
+printf '%s' "$out" | "$PY" -c "import json,sys; d=json.load(sys.stdin); assert d['hookSpecificOutput']['hookEventName']=='PostToolUse'; assert d['hookSpecificOutput']['additionalContext'].strip()" 2>/dev/null \
+  && ok "출력이 모델에게 닿는 모양(additionalContext JSON)이다" \
+  || bad "출력이 JSON 이 아니다 — 기록에만 남고 모델은 못 받는다: $out"
 
 out="$(hook "$(payload "$TMP/wiki-root/topic-a/wiki/clean.md")")"
 [ -z "$out" ] && ok "잘 쓴 페이지에는 조용하다" || bad "잘 쓴 페이지에 말을 했다: $out"

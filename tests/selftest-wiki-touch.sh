@@ -63,6 +63,13 @@ case "$out" in
   *"'taxon'"*) ok "글 검사까지 이어진다" ;;
   *)           bad "글 검사 결과가 없다" ;;
 esac
+if grep -q "additionalContext" "$BIN" 2>/dev/null; then
+  printf '%s' "$out" | "$PY" -c "import json,sys; d=json.load(sys.stdin); assert d['hookSpecificOutput']['hookEventName']=='PostToolUse'; assert d['hookSpecificOutput']['additionalContext'].strip()" 2>/dev/null \
+    && ok "출력이 모델에게 닿는 모양(additionalContext JSON)이다" \
+    || bad "출력이 JSON 이 아니다 — 기록에만 남고 모델은 못 받는다: $out"
+else
+  echo "skip  로컬 바이너리가 JSON 출력 이전 것이다 — CI 빌드 뒤 다시 돌린다"
+fi
 
 # --- 목차·기록만 바뀌면 조용하다 (파일을 쓸 때마다 도는 게이트라 특히 중요하다)
 printf '\n- [page](page.md) — 한 줄\n' >> "$TMP/t/wiki/index.md"

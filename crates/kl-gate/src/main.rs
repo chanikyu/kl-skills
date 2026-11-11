@@ -4,7 +4,9 @@
 //! and the event payload as JSON on stdin.
 //!
 //! Exit codes (Claude Code contract):
-//!   0 = allow; stdout is handed to the model as context
+//!   0 = allow. Plain stdout reaches the model only on SessionStart; on
+//!       PostToolUse and Stop it goes to the debug log. Use `model_note` for text
+//!       the model must see.
 //!   2 = block; stderr is shown to the model
 //! A gate that cannot decide exits 0. Erroring out on an unexpected payload
 //! would break every session that triggers the event, which is a far worse
@@ -87,6 +89,27 @@ fn indexed(index_text: &str, page: &str) -> bool {
     index_text.lines().any(|l| l.trim_start().starts_with("- ") && l.contains(&needle))
 }
 
+/// The JSON a hook must print for its text to reach the model.
+///
+/// On PostToolUse, plain stdout only lands in Claude Code's debug log; the model
+/// never sees it. The documented route is `hookSpecificOutput.additionalContext`,
+/// which is attached next to the tool result. Until 2026-11-11 these gates printed
+/// plain text, so their warnings were recorded and read by nobody. Kept pure so the
+/// shape is tested rather than assumed.
+fn model_note(event: &str, text: &str) -> String {
+    serde_json::json!({
+        "hookSpecificOutput": {
+            "hookEventName": event,
+            "additionalContext": text,
+        }
+    })
+    .to_string()
+}
+
+fn tell_model(text: &str) {
+    println!("{}", model_note("PostToolUse", text));
+}
+
 fn wiki_index_check(payload: &str) {
     let Some(root) = wiki_root() else { return };
     let Ok(v) = serde_json::from_str::<serde_json::Value>(payload) else { return };
@@ -96,11 +119,11 @@ fn wiki_index_check(payload: &str) {
     let index = root.join(&topic).join("wiki").join("index.md");
     // No index at all is a different problem, and new-topic.sh is the fix for it.
     let Ok(text) = std::fs::read_to_string(&index) else {
-        println!(
+        tell_model(&format!(
             "! {topic}/wiki/index.md is missing, so nothing written here can be found.\n  \
              refill it:  sh \"{}\" {topic}",
             script("new-topic.sh")
-        );
+        ));
         return;
     };
 
@@ -108,12 +131,12 @@ fn wiki_index_check(payload: &str) {
         return;
     }
 
-    println!(
+    tell_model(&format!(
         "! {page} is not listed in {topic}/wiki/index.md — a page missing from the \
          index is a page nobody finds.\n  add it:  python3 \"{}\" {topic} {page} \
          <category> \"one line on what it holds\"",
         script("index-add.py")
-    );
+    ));
 }
 
 /// Path to one of the skill's scripts, taken from the environment rather than
@@ -238,7 +261,7 @@ fn run_wiki_sync() {
             let text = String::from_utf8_lossy(&out.stdout);
             let text = text.trim_end();
             if !text.is_empty() {
-                println!("{text}");
+                tell_model(text);
             }
             return;
         }
@@ -251,6 +274,20 @@ mod tests {
 
     fn root() -> PathBuf {
         PathBuf::from("/home/u/llm-wiki-docs")
+    }
+
+    #[test]
+    fn model_note_has_the_shape_claude_code_reads() {
+        let note = model_note("PostToolUse", "줄 하나\n줄 둘 \"따옴표\"");
+        let parsed: serde_json::Value = serde_json::from_str(&note).expect("JSON 이어야 한다");
+        assert_eq!(parsed["hookSpecificOutput"]["hookEventName"], "PostToolUse");
+        // 줄바꿈과 따옴표가 섞여도 원문 그대로 돌아와야 한다. 깨지면 모델이 받는 글이 달라진다.
+        assert_eq!(
+            parsed["hookSpecificOutput"]["additionalContext"],
+            "줄 하나\n줄 둘 \"따옴표\""
+        );
+        // 출력은 JSON 한 줄뿐이어야 한다. 앞뒤에 다른 글이 섞이면 통째로 버려진다.
+        assert!(!note.contains('\n'), "JSON 이 여러 줄로 찍혔다");
     }
 
     #[test]

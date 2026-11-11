@@ -17,6 +17,8 @@ import os
 import subprocess
 import sys
 
+from _hook_output import tell_model
+
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CHECKER = os.path.join(PLUGIN_ROOT, "skills", "natural-answering", "scripts", "check_prose.py")
 SKIP = {"index.md", "log.md"}
@@ -63,8 +65,8 @@ def main():
     text = (out.stdout or b"").decode("utf-8", "replace").strip()
     # 마지막 줄은 집계다. 그 줄만 남았으면 경고가 없다는 뜻이므로 아무 말도 하지 않는다.
     if out.returncode == 0 and len(text.splitlines()) > 1:
-        print(text)
-        print("(natural-answering: 다시 읽어 볼 자리다. 막지는 않는다)")
+        tell_model("PostToolUse",
+                   text + "\n(natural-answering: 다시 읽어 볼 자리다. 막지는 않는다)")
     return 0
 
 

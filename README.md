@@ -163,7 +163,14 @@ Python으로 시작해서 느리면 Rust로 옮기는 게 기본 경로다. `hoo
 ### 두 언어가 공유하는 규약
 
 - 게이트 이름은 `argv[1]`, 사건 내용(JSON)은 표준입력
-- 종료 코드: `0` = 통과(stdout은 모델에 전달됨), `2` = 차단(stderr가 모델에 보임)
+- 종료 코드: `0` = 통과, `2` = 차단(stderr가 모델에 보임)
+- **그냥 찍은 stdout(= 프로그램이 화면으로 내보내는 출력)은 대부분 모델에게 가지 않는다.** `SessionStart` 는 가지만, `PostToolUse` 와
+  `Stop` 의 stdout 은 디버그 기록에만 남는다. 모델에게 알리려면 JSON 한 덩어리를 찍는다:
+  `{"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": "..."}}`.
+  Python 은 `hooks/py/_hook_output.py` 의 `tell_model`, Rust 는 `model_note` 를 쓴다.
+  막아야 할 때(Stop)는 `{"decision": "block", "reason": "..."}` 이다
+- 이 규약을 몰라서 2026-11-11 까지 게이트 넷의 지적이 **기록에만 쌓이고 아무도 못 읽었다.**
+  예전 판의 이 README 가 "stdout 은 모델에 전달됨" 이라고 적고 있었다
 - **판단이 안 서면 반드시 0.** 훅이 터지면 그 사건이 걸린 모든 세션이 깨진다.
   런처(`run.sh`/`run.ps1`)도 같은 원칙이라, 실행할 게 없으면 조용히 0으로 빠진다
 
