@@ -55,6 +55,15 @@
             "statusMessage": "Checking names and comments...",
             "description": "A python file was written: report vague names, missing docstrings and long functions with no comment inside. Caches, virtualenvs and scratch paths are skipped. Reports; never blocks.",
             "id": "post-write:code-check"
+          },
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" plan-drift",
+            "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\run.ps1\" plan-drift",
+            "timeout": 60,
+            "statusMessage": "Checking the plan...",
+            "description": "A plan (a document defining L1-style goals) was written: check its frame and whether recorded work follows it. Reports; never blocks.",
+            "id": "post-write:plan-drift"
           }
         ]
       },
@@ -63,11 +72,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" wiki-touch",
-            "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\run.ps1\" wiki-touch",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" after-bash",
+            "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\run.ps1\" after-bash",
             "timeout": 120,
-            "description": "A wiki page may have been written by a shell command rather than Write/Edit. Rust compares mtimes first (nothing changed = a few ms, no output) and only a real change pays for the Python sync. Reports; never blocks.",
-            "id": "post-bash:wiki-touch"
+            "description": "After every Bash call, two cheap checks in Rust: was a wiki page changed by the shell, and was this a git commit. Only a real change pays for the Python work (wiki sync, plan drift). One gate, so the launcher cost is paid once per Bash call. Reports; never blocks.",
+            "id": "post-bash:after-bash"
           }
         ]
       }
@@ -92,6 +101,20 @@
             "statusMessage": "Checking the answer...",
             "description": "Read the answer just given and block once if it misses: the same question asked again, an answer past one screen, or prose findings. Blocking is capped by stop_hook_active so it cannot loop.",
             "id": "stop:answer-check"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" wiki-recall",
+            "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\run.ps1\" wiki-recall",
+            "timeout": 20,
+            "description": "Every message: search the wiki and attach the paths and key lines of clearly related pages (at least two shared words and 40% weighted coverage). Silent when nothing is clearly related.",
+            "id": "prompt:wiki-recall"
           }
         ]
       }

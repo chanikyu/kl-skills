@@ -79,7 +79,11 @@ skills/              스킬. 한 폴더에 SKILL.md 하나
     references/        domains.md (여덟 분야의 출발 질문·산출물·분석 틀·함정)
     assets/            plan-template.md (기획서 틀)
     scripts/           check_plan.py (빠진 단계, 부모 없는 목표, 기준 없는 목표, 목표 없는 기능)
+                       check_drift.py (진행 기록·커밋이 계획에서 벗어나는지)
     data/              필수 절 목록 · 분야 이름
+  wiki-recall/       위키에서 찾아 답에 쓴다. 작으면 통째로(CAG), 크면 골라서(RAG)
+    scripts/           recall.py (두 글자 조각 + BM25 + 질문을 덮는 비율 + 그래프 이웃)
+    data/              말버릇 낱말 · 조사 · 흔한 조각 (코드 아님)
   readable-code/     이름과 주석 규칙. 코드를 쓰거나 고칠 때
     scripts/           check_code.py (파이썬 이름·설명문 검사, ast 로 정확히)
     data/              허용할 짧은 이름 · 모호하다고 볼 이름 (코드 아님)
@@ -91,9 +95,10 @@ hooks/
   hooks.json         어떤 사건에 어떤 명령을 돌릴지 적은 표
                      SessionStart → 배너
                      PostToolUse(Write|Edit) → wiki-index-check · wiki-graph
-                                               prose-check · code-check
-                     PostToolUse(Bash) → wiki-touch
+                                               prose-check · code-check · plan-drift
+                     PostToolUse(Bash) → after-bash (위키 변경 + 커밋 이탈)
                      Stop → wiki-sync · answer-check
+                     UserPromptSubmit → wiki-recall
   run.sh             mac·리눅스: Python 훅이 있으면 그걸, 없으면 Rust 실행파일을 고름
   run.ps1            윈도우용 같은 역할
   py/<게이트>.py      Python 훅. 파일을 두면 그 게이트는 Python으로 돈다
@@ -115,7 +120,8 @@ tests/selftest*.sh   셀프테스트. CI가 이 패턴 전부를 돌린다
   selftest-code-check.sh 그 검사를 훅으로 걸었을 때 조용해야 할 경우에 조용한지
   selftest-answer-check.sh 되물었을 때 막고, 한 번 막은 뒤에는 안 막는지(무한 반복 방지)
   selftest-pipeline-debug.sh 세 단계 중 둘째에서 생긴 빈 칸이 숫자로 드러나는지
-  selftest-planner.sh    잘 쓴 기획서는 깨끗하고, 목표 연결이 끊긴 기획서는 이름대로 걸리는지
+  selftest-planner.sh    잘 쓴 기획서는 깨끗하고, 목표 연결이 끊긴 기획서·계획 밖 일은 이름대로 걸리는지
+  selftest-wiki-recall.sh 맞는 페이지가 먼저 나오고, 무관한 메시지에는 훅이 조용한지
   selftest-graph.sh      그래프 DB 집계가 맞는지 + 뷰어가 실제로 그려지는지
                          (크롬이 있으면 헤드리스로 띄워서 노드가 그려졌는지 센다.
                           없으면 그 검사만 건너뛴다)
@@ -201,7 +207,9 @@ claude plugin validate .                          # 플러그인·스킬 형식 
 | `PostToolUse` (`Write\|Edit\|MultiEdit`) | `wiki-index-check` | `~/llm-wiki-docs/<주제>/wiki/` 에 쓴 페이지가 `index.md` 에 없으면 경고. **막지 않는다** | Rust |
 | `PostToolUse` (`Write\|Edit\|MultiEdit`) | `wiki-graph` | 위키 페이지를 쓰면 그래프 DB(`<루트>/.graph/`)를 다시 만든다. 위키 밖 파일이면 즉시 끝 | Python |
 | `PostToolUse` (`Write\|Edit\|MultiEdit`) | `prose-check` | 위키 페이지에서 읽는 사람이 걸릴 자리(뜻 없는 용어, 기준 없는 숫자, 빠진 주어)를 알려 준다. **막지 않는다** | Python |
-| `PostToolUse` (`Bash`) | `wiki-touch` | 쉘로 위키를 고쳤는지 수정 시각으로 본다. 안 바뀌었으면 몇 ms 로 끝나고, 바뀌었을 때만 `wiki-sync` 를 부른다 | Rust |
+| `PostToolUse` (`Write\|Edit\|MultiEdit`) | `plan-drift` | 목표 번호가 정의된 계획서를 쓰면 틀과 이탈을 같이 알린다. **막지 않는다** | Python |
+| `PostToolUse` (`Bash`) | `after-bash` | Bash 뒤에 두 가지를 본다 — 쉘로 위키를 고쳤나(수정 시각), 커밋했나(명령어). 둘 다 아니면 아무것도 띄우지 않는다. 커밋이면 계획 이탈을 알린다. 한 게이트로 묶어 런처 비용을 한 번만 낸다 | Rust |
+| `UserPromptSubmit` | `wiki-recall` | 사용자가 말할 때마다 위키를 검색해 관련 페이지의 경로와 핵심 줄을 붙인다. 낱말 둘 이상이 겹치고 질문을 40% 이상 덮을 때만 붙인다 | Python |
 | `PostToolUse` (`Write\|Edit\|MultiEdit`) | `code-check` | 쓴 `.py` 파일의 이름과 설명문을 바로 지적한다. 캐시·가상환경·임시 경로는 건너뛴다. **막지 않는다** | Python |
 | `Stop` | `answer-check` | 방금 한 답변을 읽는다. 같은 질문이 다시 왔거나, 답이 화면 하나를 넘거나, 글 검사에 걸리면 **한 번 막는다**. 두 번은 막지 않는다 | Python |
 | `Stop` | `wiki-sync` | 세션당 한 번. 수정 시각을 비교해 **어떤 방법으로 쓴 변경이든** 찾아내 그래프를 맞추고 바뀐 페이지를 검사한다. **막지 않는다** | Python |

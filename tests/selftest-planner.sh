@@ -106,6 +106,104 @@ out="$("$PY" "$CHECK" "$REPO/skills/planner/assets/plan-template.md" 2>&1)"
 case "$out" in *empty-section*) ok "틀만 복사한 기획서는 비었다고 알린다" ;; *) bad "빈 틀을 통과시켰다" ;; esac
 case "$out" in *no-domain*)     ok "틀의 분야 목록을 '고른 것'으로 보지 않는다" ;; *) bad "자리표시 안의 분야 목록을 선택으로 셌다" ;; esac
 
+# --- 계획 이탈: 진행 기록과 git 커밋을 섞은 실제 저장소. 이탈을 종류별로 하나씩 넣는다.
+DRIFT="$REPO/skills/planner/scripts/check_drift.py"
+PROJ="$TMP/proj"; mkdir -p "$PROJ"
+day() { "$PY" -c "import datetime,sys; print((datetime.date.today()-datetime.timedelta(days=int(sys.argv[1]))).isoformat())" "$1"; }
+D1=$(day 1); D3=$(day 3); PAST=$(day 40)
+cat > "$PROJ/plan.md" <<EOF
+# 검색 개선
+
+## 1-2. 목표·타깃 설정
+
+- [L1] 첫 검색 성공률 80% — 기준: 로그
+- [L2] 검색 속도 1초 이내 — 기준: 측정
+- [M1.1] 동의어 300쌍 — 기준: 300쌍
+- [S1.1.1] 실패 로그 100건 분류 — 기준: $PAST 까지
+
+## 3. 진행 기록
+
+- [$D3] S1.1.1 실패 로그 40건 분류
+- [$D3] (계획 밖) 로그인 장애 긴급 수정 — 이유: 운영 장애
+- [$D1] 회의록 정리
+- [$D1] M9.9 뭔가 했다
+EOF
+git -C "$PROJ" init -q
+git -C "$PROJ" config user.name "tester"; git -C "$PROJ" config user.email "t@example.invalid"
+commit_on() { GIT_AUTHOR_DATE="$1T12:00:00" GIT_COMMITTER_DATE="$1T12:00:00" \
+              git -C "$PROJ" commit -q --allow-empty -m "$2"; }
+git -C "$PROJ" add plan.md
+commit_on "$D3" "S1.1.1 실패 로그 분류 스크립트"
+commit_on "$D1" "README 오타"
+
+out="$("$PY" "$DRIFT" --all --latest-commit "$PROJ/plan.md" 2>&1)"
+drift_has() { case "$out" in *"$1"*) ok "이탈: $2" ;; *) bad "놓침: $2 ($1)" ;; esac; }
+drift_has "회의록 정리"        "목표 번호 없는 진행 기록을 계획 밖으로 잡는다"
+drift_has "커밋"               "목표 번호 없는 커밋을 계획 밖으로 잡는다"
+drift_has "방금 커밋"          "마지막 커밋이 계획 밖이면 맨 앞에 따로 알린다"
+drift_has "[unknown-goal]"     "없는 목표 M9.9 를 가리킨 일을 잡는다"
+drift_has "[overdue-goal]"     "기한이 지났는데 완료가 없는 목표를 잡는다"
+drift_has "[drifting]"         "계획 안 비율이 기준보다 낮다고 알린다"
+drift_has "L2 아래로 한 일이 없다" "손 안 댄 장기 목표를 알린다"
+case "$out" in
+  *"계획 안 1건"*) ok "같은 날 같은 목표의 진행 기록과 커밋을 한 건으로 센다" ;;
+  *)               bad "같은 일을 두 번 셌다: $out" ;;
+esac
+case "$out" in
+  *"로그인 장애"*"어느 목표"*|*"어느 목표"*"로그인 장애"*) bad "이유를 밝힌 계획 밖 일을 이탈로 셌다" ;;
+  *)                                                       ok "'(계획 밖)' 과 이유를 쓴 일은 이탈로 세지 않는다" ;;
+esac
+
+# --- '완료' 를 적으면 기한 지난 목표가 사라져야 한다
+printf -- '- [%s] S1.1.1 완료\n' "$D1" >> "$PROJ/plan.md"
+out="$("$PY" "$DRIFT" --all "$PROJ/plan.md" 2>&1)"
+case "$out" in *overdue-goal*) bad "완료를 적었는데 아직 기한 지남으로 본다" ;; *) ok "완료를 적으면 기한 지남이 사라진다" ;; esac
+
+# --- 커밋을 보지 않으면 커밋 쪽 이탈은 없어야 한다
+out="$("$PY" "$DRIFT" --all --no-git "$PROJ/plan.md" 2>&1)"
+case "$out" in *"README 오타"*) bad "--no-git 인데 커밋을 읽었다" ;; *) ok "--no-git 이면 커밋을 보지 않는다" ;; esac
+
+# --- 이탈 훅, 계획서를 쓸 때: 목표가 정의된 문서를 쓰면 구조와 이탈을 같이 알린다
+export CLAUDE_PLUGIN_ROOT="$REPO"
+out="$(printf '{"tool_name":"Write","tool_input":{"file_path":"%s"}}' "$PROJ/plan.md" \
+       | sh "$REPO/hooks/run.sh" plan-drift 2>/dev/null)"
+printf '%s' "$out" | "$PY" -c "import json,sys; d=json.load(sys.stdin)['hookSpecificOutput']; assert d['hookEventName']=='PostToolUse'; assert 'off-plan-work' in d['additionalContext']" 2>/dev/null \
+  && ok "계획서를 쓰면 이탈을 모델에게 닿는 모양으로 알린다" \
+  || bad "계획서를 썼는데 이탈 알림이 없거나 JSON 이 아니다: $out"
+
+out="$(printf '{"tool_name":"Write","tool_input":{"file_path":"%s"}}' "$TMP/good.md" \
+       | sh "$REPO/hooks/run.sh" plan-drift 2>/dev/null)"
+[ -z "$out" ] && ok "깨끗한 계획서에는 조용하다" || bad "깨끗한 계획서에 말했다: $out"
+
+printf '# 그냥 메모\n\n목표 번호가 없는 문서.\n' > "$TMP/memo.md"
+out="$(printf '{"tool_name":"Write","tool_input":{"file_path":"%s"}}' "$TMP/memo.md" \
+       | sh "$REPO/hooks/run.sh" plan-drift 2>/dev/null)"
+[ -z "$out" ] && ok "계획서가 아닌 문서는 건너뛴다" || bad "계획서가 아닌데 검사했다: $out"
+
+# --- 이탈 훅, 커밋했을 때 (Rust 가 부르는 경로를 직접 흉내 낸다): 방금 커밋이 계획 밖이면 알린다
+out="$(printf '{"tool_input":{"command":"git commit -m x"},"cwd":"%s"}' "$PROJ" \
+       | "$PY" "$REPO/hooks/py/plan-drift.py" --plain 2>/dev/null)"
+case "$out" in
+  *"방금 커밋"*) ok "커밋하면 저장소의 계획서를 찾아 방금 커밋의 이탈을 알린다" ;;
+  *)             bad "커밋 경로에서 이탈을 못 찾았다: $out" ;;
+esac
+
+# --- Bash 뒤 Rust 게이트: 새 바이너리일 때만 (커밋 감지는 Rust 쪽에 있다)
+T="$(sh "$REPO/hooks/run.sh" --print-target)"
+BIN="$REPO/bin/kl-gate-$T"
+if [ -x "$BIN" ] && grep -q "after-bash" "$BIN" 2>/dev/null; then
+  out="$(printf '{"tool_input":{"command":"git commit -m x"},"cwd":"%s"}' "$PROJ" \
+         | sh "$REPO/hooks/run.sh" after-bash 2>/dev/null)"
+  printf '%s' "$out" | "$PY" -c "import json,sys; d=json.load(sys.stdin)['hookSpecificOutput']; assert '방금 커밋' in d['additionalContext']" 2>/dev/null \
+    && ok "Bash 뒤 게이트가 커밋을 알아보고 이탈을 JSON 하나로 알린다" \
+    || bad "Bash 뒤 게이트의 커밋 경로: $out"
+  out="$(printf '{"tool_input":{"command":"ls -la"},"cwd":"%s"}' "$PROJ" \
+         | LLM_WIKI_ROOT="$TMP/no-wiki" sh "$REPO/hooks/run.sh" after-bash 2>/dev/null)"
+  [ -z "$out" ] && ok "커밋이 아닌 명령에는 조용하다" || bad "커밋이 아닌데 말했다: $out"
+else
+  echo "skip  로컬 바이너리가 after-bash 이전 것이다 — CI 빌드 뒤 다시 돌린다"
+fi
+
 echo
 if [ "$fails" -eq 0 ]; then
   echo "all planner checks passed"

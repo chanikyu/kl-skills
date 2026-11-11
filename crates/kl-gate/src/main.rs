@@ -13,7 +13,7 @@
 //! outcome than a rule going unenforced once.
 
 use std::fs;
-use std::io::Read;
+use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use std::time::SystemTime;
@@ -34,13 +34,14 @@ fn main() {
             // when wiki-graph and prose-check arrived. tests/selftest-banner.sh compares
             // this string against hooks.json so the drift fails a test instead of shipping.
             println!(
-                "KL-SKILLS GATES v{VERSION} — loaded, 7 rules enforced \
-                 (wiki-index-check, wiki-graph, prose-check, code-check, \
-                  wiki-sync, wiki-touch, answer-check)"
+                "KL-SKILLS GATES v{VERSION} — loaded, 9 rules enforced \
+                 (wiki-index-check, wiki-graph, prose-check, code-check, plan-drift, \
+                  after-bash, wiki-sync, answer-check, wiki-recall)"
             );
         }
         "wiki-index-check" => wiki_index_check(&payload),
-        "wiki-touch" => wiki_touch(),
+        // "wiki-touch" 는 예전 이름이다. 설치된 hooks.json 이 아직 그 이름을 부를 수 있다.
+        "wiki-touch" | "after-bash" => after_bash(&payload),
         // Unknown or not-yet-implemented gate: allow, say nothing.
         _ => {}
     }
@@ -219,53 +220,95 @@ fn walk_pages(dir: &Path, newest: &mut Option<SystemTime>, depth: usize) {
     }
 }
 
-/// PostToolUse(Bash) gate: catch a wiki page written by something other than
-/// Write/Edit — a heredoc, `sed`, a small python call.
+/// PostToolUse(Bash) gate: two cheap questions after every shell command.
 ///
-/// Bash is the most-used tool, so this runs hundreds of times a session and has
-/// to be nearly free. It is: the usual answer is "nothing changed", reached by
-/// comparing mtimes and spawning nothing. Only a real change pays for the Python
-/// work, and then it is the same wiki-sync script the Stop gate runs, so there is
-/// one implementation of "bring the wiki up to date" rather than two.
-fn wiki_touch() {
-    let root = match wiki_root() {
-        Some(r) => r,
-        None => return,
-    };
+/// 1. Was a wiki page changed by the shell rather than by Write/Edit? (mtime check)
+/// 2. Was this a commit? If so, does the work still follow the plan?
+///
+/// Bash is the most-used tool, so this runs hundreds of times a session. Both
+/// questions are answered here without spawning anything in the usual case; only
+/// a real change pays for the Python work. They share one gate so the launcher
+/// cost (about 20 ms, measured) is paid once per Bash call, not twice.
+///
+/// Whatever both checks found leaves as **one** JSON object. Two objects on stdout
+/// cannot be parsed, and Claude Code then drops the lot.
+fn after_bash(payload: &str) {
+    let mut notes: Vec<String> = Vec::new();
+    if let Some(text) = wiki_touch() {
+        notes.push(text);
+    }
+    if made_a_commit(payload) {
+        // ponytail: 실패한 커밋(바뀐 것 없음)에서도 돈다. 그때는 직전 커밋을 다시 본다 — 같은
+        // 알림이 한 번 더 나올 뿐이라 놔둔다. 거슬리면 tool_response 의 실패 여부를 본다.
+        if let Some(text) = run_python("plan-drift.py", &["--plain"], payload) {
+            notes.push(text);
+        }
+    }
+    if !notes.is_empty() {
+        tell_model(&notes.join("\n\n"));
+    }
+}
+
+/// A wiki page newer than the graph means the wiki changed outside Write/Edit.
+fn wiki_touch() -> Option<String> {
+    let root = wiki_root()?;
     if !root.is_dir() {
-        return;
+        return None;
     }
     let graph = fs::metadata(root.join(".graph").join("graph.json"))
         .and_then(|m| m.modified())
         .ok();
     if !stale(newest_page_mtime(&root), graph) {
-        return;
+        return None;
     }
-    run_wiki_sync();
+    run_python("wiki-sync.py", &[], "")
 }
 
-fn run_wiki_sync() {
+/// Did this Bash call run a commit? Read from the payload, never guessed.
+fn made_a_commit(payload: &str) -> bool {
+    serde_json::from_str::<serde_json::Value>(payload)
+        .ok()
+        .and_then(|event| {
+            event["tool_input"]["command"]
+                .as_str()
+                .map(|command| command.contains(COMMIT_COMMAND))
+        })
+        .unwrap_or(false)
+}
+
+/// The command text that marks a commit.
+const COMMIT_COMMAND: &str = "git commit";
+
+/// Run one of the plugin's Python scripts and return what it printed, if anything.
+/// `stdin_text` is handed over as the script's input — the hook payload, usually.
+fn run_python(script_name: &str, args: &[&str], stdin_text: &str) -> Option<String> {
     let base = std::env::var("CLAUDE_PLUGIN_ROOT").unwrap_or_else(|_| ".".into());
-    let path = Path::new(&base).join("hooks").join("py").join("wiki-sync.py");
+    let path = Path::new(&base).join("hooks").join("py").join(script_name);
     if !path.is_file() {
-        return;
+        return None;
     }
-    for py in ["python3", "python"] {
-        let run = Command::new(py)
+    for interpreter in ["python3", "python"] {
+        let spawned = Command::new(interpreter)
             .arg(&path)
-            .stdin(Stdio::null())
+            .args(args)
+            .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::null())
-            .output();
-        if let Ok(out) = run {
-            let text = String::from_utf8_lossy(&out.stdout);
-            let text = text.trim_end();
-            if !text.is_empty() {
-                tell_model(text);
-            }
-            return;
+            .spawn();
+        let mut child = match spawned {
+            Ok(child) => child,
+            // 이 이름의 인터프리터가 없으면 다음 이름으로 넘어간다.
+            Err(_) => continue,
+        };
+        if let Some(mut input) = child.stdin.take() {
+            // 쓰기가 실패해도 스크립트는 빈 입력으로 돌 수 있다. 여기서 멈추지 않는다.
+            let _ = input.write_all(stdin_text.as_bytes());
         }
+        let finished = child.wait_with_output().ok()?;
+        let text = String::from_utf8_lossy(&finished.stdout).trim_end().to_string();
+        return if text.is_empty() { None } else { Some(text) };
     }
+    None
 }
 
 #[cfg(test)]
@@ -274,6 +317,16 @@ mod tests {
 
     fn root() -> PathBuf {
         PathBuf::from("/home/u/llm-wiki-docs")
+    }
+
+    #[test]
+    fn a_commit_is_read_from_the_command_not_guessed() {
+        assert!(made_a_commit(r#"{"tool_input":{"command":"git commit -m x"}}"#));
+        assert!(made_a_commit(r#"{"tool_input":{"command":"cd a && git commit -q -m y"}}"#));
+        assert!(!made_a_commit(r#"{"tool_input":{"command":"git status"}}"#));
+        // 명령이 없는 사건, 깨진 입력은 커밋이 아니다. 터지지도 않는다.
+        assert!(!made_a_commit(r#"{"tool_input":{}}"#));
+        assert!(!made_a_commit("not json"));
     }
 
     #[test]
