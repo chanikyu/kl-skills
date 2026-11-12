@@ -5,7 +5,7 @@
 set -u
 
 REPO="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
-RELEASE="$REPO/skills/plugin-release/scripts/release.py"
+RELEASE="$REPO/.claude/skills/plugin-release/scripts/release.py"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 fails=0

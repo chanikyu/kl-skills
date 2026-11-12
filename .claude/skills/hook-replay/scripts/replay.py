@@ -28,7 +28,23 @@ import sys
 import tempfile
 import time
 
-PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+def find_plugin_root(start):
+    """훅 런처(hooks/run.sh)가 있는 폴더를 위로 올라가며 찾는다. 스크립트 위치가 바뀌어도 맞게 찾는다.
+
+    이 스킬은 플러그인 관리자용이라 2026-11-12 에 skills/ 에서 저장소 전용 .claude/skills/ 로 옮겼다.
+    "네 칸 위" 처럼 깊이를 박아 두면 옮길 때마다 틀린다.
+    """
+    folder = os.path.dirname(os.path.abspath(start))
+    while True:
+        if os.path.isfile(os.path.join(folder, "hooks", "run.sh")):
+            return folder
+        parent = os.path.dirname(folder)
+        if parent == folder:
+            return os.getcwd()
+        folder = parent
+
+
+PLUGIN_ROOT = find_plugin_root(__file__)
 GATE_TIMEOUT_SECONDS = 60   # hooks.json 에서 가장 긴 제한(120초)의 절반. 넘으면 그 시점만 timeout 으로 적는다
 EXCERPT_CHARS = 200         # 결과 표 한 칸에 담는 글자 수. 더 길면 표가 읽히지 않는다
 EVENT_NAMES = {"stop": "Stop", "prompt": "UserPromptSubmit"}

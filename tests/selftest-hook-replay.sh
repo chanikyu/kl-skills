@@ -4,7 +4,7 @@
 set -u
 
 REPO="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
-REPLAY="$REPO/skills/hook-replay/scripts/replay.py"
+REPLAY="$REPO/.claude/skills/hook-replay/scripts/replay.py"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 fails=0

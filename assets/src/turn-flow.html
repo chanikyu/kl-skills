@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" data-radius="sharp" data-type="software">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1200">
+<title>One turn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,400..700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/system.css">
+<link rel="stylesheet" href="assets/icons/icon.css">
+<!-- <html lang="en" data-radius="sharp">; keep this <style> after the links: layout.css resets --ly-scale -->
+<style>
+:root {
+  --p-bg: #ffffff; --p-surface: #f4f4f4; --p-ink: #111111; --p-muted: #6b6b6b;
+  --p-accent: #1a4be0; --p-accent-ink: #ffffff; --p-action: #1a4be0; --p-action-ink: #ffffff;
+  --p-inv-bg: #111111; --p-inv-surface: #1e1e1e; --p-inv-ink: #ffffff; --p-inv-muted: #9a9a9a;
+  --p-inv-accent: #ffffff; --p-inv-accent-ink: #111111; --p-inv-action: #ffffff; --p-inv-action-ink: #111111;
+  --font-display: "Instrument Sans", system-ui, sans-serif;
+  --font-text: "Instrument Sans", system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --display-weight: 500;
+  --display-tracking: -0.028em;
+  --display-tracking-xl: -0.036em;
+  --display-stretch: 96%;
+  --ly-scale: 1.04;
+}
+</style>
+<link rel="stylesheet" href="assets/diagrams/diagram.css">
+
+<style>
+  html, body { margin: 0; background: var(--p-bg); }
+  body { width: 1200px; height: 300px; overflow: hidden; font-family: var(--font-text); color: var(--p-ink); }
+  
+  .panel { box-sizing: border-box; width: 100%; height: 100%; border: 1px solid #e4e4e4; background: var(--p-bg); padding: 8px; }
+  .dg { width: 100%; height: 100%; }
+
+</style>
+</head>
+<body>
+<div class="panel"><div class="dg" data-diagram><script type="application/json">{"layout": "timeline", "orient": "h", "ground": "none", "motion": {"pulse": "none"}, "alt": "One turn: the session starts, a message comes in, files are written, Bash runs, the answer ends. Each moment has its hook gates.", "steps": [{"label": "Session start", "sub": "session-start", "icon": "ui:power"}, {"label": "Message in", "sub": "wiki-recall", "icon": "ui:message-square"}, {"label": "File written", "sub": "prose \u00b7 code \u00b7 wiki \u00b7 plan", "icon": "ui:file-pen"}, {"label": "Bash run", "sub": "after-bash", "icon": "ui:terminal"}, {"label": "Answer ends", "sub": "answer-check \u00b7 wiki-sync", "icon": "ui:shield-check"}]}</script></div></div>
+<script type="module" src="assets/diagrams/mount.js"></script>
+</body>
+</html>
