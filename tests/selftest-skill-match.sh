@@ -48,6 +48,9 @@ silent "README 이름 좀 정리해줘"
 silent "그래"
 silent "오늘 저녁 메뉴는 무엇으로 할지 고민이다"
 
+# 작업 끝 알림은 사람이 쓴 메시지가 아니다 (2026-11-13: 알림 속 "crash, error" 로 pipeline-debug 를 권했다)
+silent "$(printf '<task-notification>\n<summary>Agent finished: no crash, no error, checklist ok</summary>\n</task-notification>')"
+
 # 이미 훅이 매번 적용하는 스킬은 알리지 않는다
 case "$(ask "작업 보고를 쉽게 설명해줘, 결과 정리도")" in
   *"natural-answering"*) bad "늘 적용되는 스킬까지 알렸다" ;;

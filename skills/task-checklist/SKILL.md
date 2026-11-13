@@ -38,7 +38,8 @@ description: Turn every instruction into a checklist before working, keep it up 
 ## 훅이 하는 일
 
 - `checklist-start` (메시지를 받을 때): 지난 지시의 목록을 `<세션>.prev.md` 로 치우고, 새 목록을 쓸
-  경로를 알린다. 지난 턴의 미완료 항목이 이번 답을 막지 않게 하려는 것이다
+  경로를 알린다. 지난 턴의 미완료 항목이 이번 답을 막지 않게 하려는 것이다. 작업 끝 알림처럼 기계가
+  보낸 글(`hooks/data/machine-prompt-starts.txt`)은 새 지시가 아니라서 목록을 그대로 둔다
 - `checklist-check` (답이 끝날 때): 목록이 없거나 `- [ ]` 가 남았으면 **한 번** 돌려보낸다. 돌려받으면
   남은 항목을 마저 하거나 `[~]` 로 닫는다. 두 번째에는 막지 않고 남은 것을 알리기만 한다
 

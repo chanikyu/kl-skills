@@ -34,6 +34,16 @@ start "다음 지시" >/dev/null
 out="$(start "")"
 [ -z "$out" ] && ok "빈 메시지에는 조용하다" || bad "빈 메시지에 말했다"
 
+# --- 기계가 보낸 알림은 지시가 아니다: 하던 목록을 치우지 않는다
+# (2026-11-13: 백그라운드 작업 알림이 UserPromptSubmit 로 들어와 작업 중인 목록을 .prev 로 치웠다)
+printf -- '- [ ] 하던 일\n' > "$LIST"; rm -f "$KL_CHECKLIST_DIR/s1.prev.md"
+out="$("$PY" -c 'import json,sys; print(json.dumps({"session_id":"s1","prompt":sys.argv[1]}))' \
+  "$(printf '<task-notification>\n<task-id>b1</task-id>\n<status>completed</status>\n</task-notification>')" \
+  | sh "$REPO/hooks/run.sh" checklist-start 2>/dev/null)"
+[ -f "$LIST" ] && [ ! -f "$KL_CHECKLIST_DIR/s1.prev.md" ] && [ -z "$out" ] && ok "작업 알림은 지시가 아니라 목록을 그대로 둔다" \
+  || bad "작업 알림에 목록을 치웠다: $out"
+rm -f "$LIST"
+
 # --- 답이 끝날 때: 목록이 없으면 한 번 막는다
 out="$(check)"
 case "$out" in *'"decision": "block"'*"체크리스트가 없다"*) ok "체크리스트가 없으면 막는다" ;; *) bad "목록 없이 넘겼다: $out" ;; esac

@@ -281,6 +281,21 @@ case "$out" in
   *"작업 보고"*) bad "임시 폴더만 쓴 턴에 작업 보고를 요구했다: $out" ;;
   *)            ok "임시 폴더만 쓴 턴은 작업 보고 대상이 아니다" ;;
 esac
+# 체크리스트는 checklist-check 가 매 턴 쓰라고 하는 파일이다. 그걸 쓴 것만으로 작업 보고를
+# 요구하면 질문에 답한 턴도 막힌다 (2026-11-13: 두 게이트가 부딪혔다)
+export KL_CHECKLIST_DIR="$TMP/checklists"
+mkdir -p "$KL_CHECKLIST_DIR"; printf -- '- [x] 질문에 답한다\n' > "$KL_CHECKLIST_DIR/s1.md"
+out="$(report_case work-checklist "[\"tool\", \"Write\", {\"file_path\": \"$KL_CHECKLIST_DIR/s1.md\"}]," "질문에 대한 답입니다.")"
+case "$out" in
+  *"작업 보고"*) bad "체크리스트만 쓴 턴에 작업 보고를 요구했다: $out" ;;
+  *)            ok "체크리스트만 쓴 턴은 작업 보고 대상이 아니다" ;;
+esac
+out="$(report_case work-checklist-and-code "[\"tool\", \"Write\", {\"file_path\": \"$KL_CHECKLIST_DIR/s1.md\"}], $EDIT_CODE" "고쳤습니다.")"
+case "$out" in
+  *"작업 보고"*) ok "체크리스트와 코드를 같이 고친 턴은 여전히 작업 보고를 요구한다" ;;
+  *)            bad "코드를 고친 턴을 체크리스트 때문에 놓쳤다: $out" ;;
+esac
+unset KL_CHECKLIST_DIR
 out="$(report_case work-none '' "질문에 대한 답입니다.")"
 case "$out" in
   *"작업 보고"*) bad "아무것도 안 고친 턴에 작업 보고를 요구했다: $out" ;;

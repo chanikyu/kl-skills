@@ -12,7 +12,12 @@ PostToolUse 와 Stop 훅이 그냥 글로 찍은 것은 Claude Code 의 디버�
 """
 
 import json
+import os
 import sys
+
+# 사람이 쓴 지시가 아닌데 UserPromptSubmit 로 들어오는 글(작업 끝 알림 등)의 첫머리 목록
+MACHINE_PROMPT_STARTS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                                     "data", "machine-prompt-starts.txt")
 
 
 def read_payload():
@@ -22,6 +27,21 @@ def read_payload():
     게이트가 죽으면 그 이벤트가 걸린 세션 전체가 흔들리므로, 읽기에서부터 막는다.
     """
     return sys.stdin.buffer.read().decode("utf-8", "replace")
+
+
+def is_machine_prompt(prompt):
+    """사람이 아니라 기계가 보낸 글인가(작업 끝 알림 같은 것). 첫머리 목록은 데이터 파일에 있다.
+
+    메시지를 받는 게이트(wiki-recall, skill-match, checklist-start)가 모두 이것으로 거른다.
+    2026-11-13: 작업 끝 알림을 사람 메시지로 알고 체크리스트를 치우고, 알림 글로 스킬·위키를 찾았다.
+    """
+    try:
+        with open(MACHINE_PROMPT_STARTS, encoding="utf-8") as handle:
+            starts = [line.rstrip("\n") for line in handle if line.strip() and not line.startswith("#")]
+    except OSError:
+        return False
+    head = prompt.lstrip()
+    return any(head.startswith(start) for start in starts)
 
 
 def tell_model(event_name, text):

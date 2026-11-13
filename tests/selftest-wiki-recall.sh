@@ -79,6 +79,9 @@ out="$(prompt_hook '{"prompt":"그래"}')"
 [ -z "$out" ] && ok "짧은 말에는 조용하다" || bad "짧은 말에 붙였다: $out"
 out="$(prompt_hook '{"prompt":"오늘 저녁 메뉴는 무엇으로 할지 고민이다"}')"
 [ -z "$out" ] && ok "위키와 무관한 메시지에는 조용하다" || bad "무관한 메시지에 붙였다: $out"
+# 작업 끝 알림은 사람이 쓴 메시지가 아니다 (2026-11-13: 알림 글로 위키·스킬을 찾았다)
+out="$(prompt_hook '{"prompt":"<task-notification>\n<summary>플러그인을 업데이트했는데 훅이 그대로야</summary>\n</task-notification>"}')"
+[ -z "$out" ] && ok "작업 알림에는 조용하다" || bad "작업 알림에 위키를 붙였다: $out"
 out="$(prompt_hook '{"prompt":"/clear 하고 다시 시작"}')"
 [ -z "$out" ] && ok "/ 명령에는 조용하다" || bad "명령에 붙였다: $out"
 # --- 2026-11-11 오탐: 한 글자 낱말('손', '위')을 다른 낱말 속("손상", "무작위")에서 찾아

@@ -114,8 +114,8 @@ the selftests yourself.
 ## README images
 
 `assets/*.png` are drawn in VectorCraft by `assets/src/figures.py` (layout) and `assets/src/figures.json` (words,
-colours, fonts); gate names, skill names and the version come from the repo. The hero shows the banner with the
-version, so redraw it when releasing. How: `assets/src/README.md`. Do not edit the PNGs by hand.
+colours, fonts); gate names and skill names come from the repo. The hero's banner leaves out the version number,
+so a release needs no redraw; adding a gate or a skill does. How: `assets/src/README.md`. Do not edit the PNGs by hand.
 
 ## File map
 
@@ -141,7 +141,8 @@ hooks/
   hooks.json         which gate runs on which event
   run.sh · run.ps1   launchers: the Python gate if present, else the Rust binary
   py/                Python gates and shared modules (_transcript · _work_files · _hook_output · _checklist)
-  data/              skill-match word lists: skill-match-generic.txt (too common to count) · skill-match-skip.txt
+  data/              skill-match word lists: skill-match-generic.txt (too common to count) · skill-match-skip.txt ·
+                     machine-prompt-starts.txt (prompts that are notifications, not instructions: the three message gates skip them)
 crates/kl-gate/      the Rust gate
 bin/                 five prebuilt binaries — CI fills it
 version-files.txt    other files that carry the version

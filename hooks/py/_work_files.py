@@ -7,6 +7,8 @@ cannot disagree about what a scratch path is.
 
 import os
 
+from _checklist import checklist_dir
+
 # 내 작업이 아닌 자리. 캐시·가상환경·남의 패키지·임시 폴더. 여기까지 지적하면 게이트가 꺼진다.
 SKIP_PARTS = ("__pycache__", "/.venv/", "/venv/", "/site-packages/", "/node_modules/",
               "/.git/", "/scratchpad/", "/.tox/", "/build/", "/dist/")
@@ -24,12 +26,13 @@ def is_skipped(path):
 
 
 def is_work_file(path):
-    """작업 보고를 해야 하는 파일인가. 임시 자리와 위키 페이지는 빼고 나머지는 다 작업이다.
+    """작업 보고를 해야 하는 파일인가. 임시 자리, 위키 페이지, 체크리스트는 빼고 나머지는 다 작업이다.
 
-    위키 페이지는 문서라서 llm-wiki-docs 규약대로 보고한다. 작업 보고 6단계는 코드·설정·
-    프로젝트 문서를 바꾼 턴에 쓴다.
+    위키 페이지는 문서라서 llm-wiki-docs 규약대로 보고한다. 체크리스트는 checklist-check 가
+    매 턴 쓰라고 하는 파일이라, 그걸 쓴 것만으로 작업 보고를 요구하면 질문에 답한 턴까지
+    막힌다(2026-11-13 두 게이트가 부딪혔다). 작업 보고 6단계는 코드·설정·프로젝트 문서를 바꾼 턴에 쓴다.
     """
     if not path or is_skipped(path):
         return False
-    root = os.path.realpath(wiki_root())
-    return not os.path.realpath(path).startswith(root + os.sep)
+    real_path = os.path.realpath(path)
+    return not any(real_path.startswith(os.path.realpath(root) + os.sep) for root in (wiki_root(), checklist_dir()))

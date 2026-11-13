@@ -7,8 +7,9 @@ server. Start an instance with the control server on and an automation root that
 
     VectorCraft --control 7991 --automation-read-root OUT --automation-write-root OUT
 
-The gate names come from hooks/hooks.json, the skill names from skills/*/ and the version
-from .claude-plugin/plugin.json, so a figure redrawn after a change says what the repo says.
+The gate names come from hooks/hooks.json and the skill names from skills/*/, so a figure
+redrawn after a change says what the repo says. The banner in the hero leaves out the version
+number on purpose: a picture cannot follow releases, and a stale number misleads.
 Words, colours and fonts are in figures.json next to this file. Each figure is written to
 --out as <name>.vectorcraft (the editable original), .svg (text as outlines), .pdf and .png.
 """
@@ -121,7 +122,7 @@ class Canvas:
 
 
 def repo_facts():
-    """Gate names by hook event, skill names and the plugin version, read from the repo."""
+    """Gate names by hook event and skill names, read from the repo."""
     with open(os.path.join(REPO, "hooks", "hooks.json"), encoding="utf-8") as handle:
         hooks = json.load(handle)["hooks"]
     gates = {}
@@ -131,9 +132,7 @@ def repo_facts():
             gates[(event, group.get("matcher"))] = names
     skills = sorted(name for name in os.listdir(os.path.join(REPO, "skills"))
                     if os.path.isfile(os.path.join(REPO, "skills", name, "SKILL.md")))
-    with open(os.path.join(REPO, ".claude-plugin", "plugin.json"), encoding="utf-8") as handle:
-        version = json.load(handle)["version"]
-    return gates, skills, version
+    return gates, skills
 
 
 def stage_gates(gates, stage):
@@ -148,7 +147,7 @@ def gate_count(gates):
     return sum(len(names) for (event, _), names in gates.items() if event != "SessionStart")
 
 
-def draw_hero(canvas, words, gates, skills, version):
+def draw_hero(canvas, words, gates, skills):
     """Name, one-line pitch and three counts on the left; the real install commands and banner on the right."""
     colors, height = canvas.color, 412
     ids = [canvas.card(height)]
@@ -180,7 +179,8 @@ def draw_hero(canvas, words, gates, skills, version):
         term.append(canvas.text(term_left + 50, baseline, command, 15, colors["terminal_ink"], mono=True))
         baseline += 32
     term.append(canvas.text(term_left + 28, baseline + 26, words["restart"], 14, colors["terminal_dim"], mono=True))
-    banner = "KL-SKILLS GATES v%s — loaded, %d rules enforced" % (version, gate_count(gates))
+    # 버전 번호는 넣지 않는다: 그림은 배포를 따라가지 못해서, 다음 배포부터 틀린 번호가 된다(2026-11-13)
+    banner = "KL-SKILLS GATES — loaded, %d rules enforced" % gate_count(gates)
     term.append(canvas.text(term_left + 28, baseline + 60, banner, 14, colors["terminal_banner"], mono=True))
     canvas.group(term, "terminal")
     return height
@@ -305,11 +305,11 @@ def main():
     with open(os.path.join(HERE, "figures.json"), encoding="utf-8") as handle:
         style = json.load(handle)
     style["parts"]["parts_cards"] = style["parts"].pop("cards")
-    gates, skills, version = repo_facts()
+    gates, skills = repo_facts()
     out_dir = os.path.abspath(args.out)
     app = VectorCraft(args.port, args.timeout)
     figures = {
-        "hero": lambda canvas: draw_hero(canvas, style["hero"], gates, skills, version),
+        "hero": lambda canvas: draw_hero(canvas, style["hero"], gates, skills),
         "turn-flow": lambda canvas: draw_turn_flow(canvas, style["turn_flow"], gates),
         "parts": lambda canvas: draw_parts(canvas, style["parts"], gates, skills),
     }

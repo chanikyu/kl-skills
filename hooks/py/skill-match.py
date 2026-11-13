@@ -26,7 +26,7 @@ import os
 import re
 import sys
 
-from _hook_output import read_payload, tell_model
+from _hook_output import is_machine_prompt, read_payload, tell_model
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DATA_DIR = os.path.join(PLUGIN_ROOT, "hooks", "data")
@@ -113,7 +113,7 @@ def main():
     except ValueError:
         return 0
     prompt = str(event.get("prompt") or "").strip() if isinstance(event, dict) else ""
-    if len(prompt) < MIN_PROMPT_CHARS:
+    if len(prompt) < MIN_PROMPT_CHARS or is_machine_prompt(prompt):   # 작업 끝 알림 등은 사람 말이 아니다
         return 0
     found = suggestions(prompt)
     if not found:

@@ -15,7 +15,7 @@ import os
 import sys
 
 from _checklist import checklist_path
-from _hook_output import read_payload, tell_model
+from _hook_output import is_machine_prompt, read_payload, tell_model
 
 
 def main():
@@ -26,6 +26,9 @@ def main():
     except ValueError:
         return 0
     if not isinstance(event, dict) or not str(event.get("prompt") or "").strip():
+        return 0
+    # 작업 끝 알림처럼 기계가 보낸 글은 새 지시가 아니다. 목록을 치우면 하던 일의 목록이 사라진다.
+    if is_machine_prompt(str(event["prompt"])):
         return 0
     path = checklist_path(event.get("session_id"))
     if not path:

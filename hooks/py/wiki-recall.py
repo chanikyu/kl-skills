@@ -19,7 +19,7 @@ import os
 import subprocess
 import sys
 
-from _hook_output import tell_model
+from _hook_output import is_machine_prompt, tell_model
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 RECALL = os.path.join(PLUGIN_ROOT, "skills", "wiki-recall", "scripts", "recall.py")
@@ -36,8 +36,9 @@ def main():
     except ValueError:
         return 0
     prompt = (event.get("prompt") or "").strip()
-    # 짧은 말과 / 로 시작하는 명령은 검색할 내용이 아니다.
-    if len(prompt) < MIN_PROMPT_CHARS or prompt.startswith("/") or not os.path.isfile(RECALL):
+    # 짧은 말, / 로 시작하는 명령, 작업 끝 알림 같은 기계 글은 검색할 내용이 아니다.
+    if (len(prompt) < MIN_PROMPT_CHARS or prompt.startswith("/") or is_machine_prompt(prompt)
+            or not os.path.isfile(RECALL)):
         return 0
 
     try:
