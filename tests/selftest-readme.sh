@@ -72,6 +72,12 @@ check_readme() {  # $1 파일, $2 스킬 개수 정규식, $3 게이트 개수 �
     [ -f "$folder/$target" ] || missing="$missing $target"
   done
   [ -z "$missing" ] && ok "$readme: 가리키는 그림·문서가 모두 있다" || bad "$readme: 없는 파일:$missing"
+  # 위키 탭 주소(…/wiki/<페이지>)는 원본 docs/wiki/<페이지>.md 가 있어야 한다. 주소만 있으면 Home 이다
+  missing=""
+  for page in $(grep -oE 'github\.com/[^/]+/[^/]+/wiki(/[A-Za-z0-9._-]+)?' "$readme" | sed -E 's|^github\.com/[^/]+/[^/]+/wiki/?||; s|^$|Home|' | sort -u); do
+    [ -f "$REPO/docs/wiki/$page.md" ] || missing="$missing $page"
+  done
+  [ -z "$missing" ] && ok "$readme: 위키 탭 링크마다 원본 페이지가 있다" || bad "$readme: 원본 없는 위키 링크:$missing"
 }
 
 # 언어별 README 와 그 언어의 개수 표 모양. 언어를 더하면 여기 한 줄과, 각 README 의 언어 선택 줄을 더한다.

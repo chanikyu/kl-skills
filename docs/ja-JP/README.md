@@ -7,11 +7,11 @@
 <img src="https://img.shields.io/badge/Claude%20Code-plugin-D97757?logo=anthropic&logoColor=white" alt="Claude Code plugin" />
 <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license" />
 <img src="https://img.shields.io/badge/macOS%20·%20Linux%20·%20Windows-supported-57606A" alt="macOS, Linux, Windows" />
-<a href="../wiki/Home-ja.md"><img src="https://img.shields.io/badge/docs-wiki-2F6FEB" alt="ドキュメント wiki" /></a>
+<a href="https://github.com/chanikyu/kl-skills/wiki/Home-ja"><img src="https://img.shields.io/badge/docs-wiki-2F6FEB" alt="ドキュメント wiki" /></a>
 
 [English](../../README.md) · [한국어](../ko-KR/README.md) · **日本語** · [简体中文](../zh-CN/README.md) · [Español](../es/README.md)
 
-[インストール](#インストール) · [スキル](#スキル) · [フックゲート](#フックゲート) · [wiki](../wiki/Home-ja.md)
+[インストール](#インストール) · [スキル](#スキル) · [フックゲート](#フックゲート) · [wiki](https://github.com/chanikyu/kl-skills/wiki/Home-ja)
 
 </div>
 
@@ -51,7 +51,7 @@ KL-SKILLS GATES v<version> — loaded, 12 rules enforced
 > [!NOTE]
 > ゲートのメッセージと文章のルールは韓国語が基準。日本語の文章は、定義のない略語と長すぎる文だけが検査される。
 
-必要なもの、更新、アンインストール: [インストール](../wiki/Installation-ja.md)。
+必要なもの、更新、アンインストール: [インストール](https://github.com/chanikyu/kl-skills/wiki/Installation-ja)。
 
 <br />
 
@@ -63,16 +63,16 @@ KL-SKILLS GATES v<version> — loaded, 12 rules enforced
 
 | スキル | 内容 |
 | --- | --- |
-| [`llm-wiki-docs`](../wiki/llm-wiki-docs-ja.md) | 学んだことを 1 トピック 1 ページで wiki に残す |
-| [`wiki-recall`](../wiki/wiki-recall-ja.md) | 関連する wiki ページを探して回答に使う |
-| [`graph-doc-memory`](../wiki/graph-doc-memory-ja.md) | wiki 全体をブラウザでグラフとして描く |
-| [`research-to-wiki`](../wiki/research-to-wiki-ja.md) | 調査を、出典ごとの研究の種類とどこまで読んだかを付けて記録する |
-| [`natural-answering`](../wiki/natural-answering-ja.md) | 用語、比較基準、結論への一歩を省かずに書く |
-| [`readable-code`](../wiki/readable-code-ja.md) | 名前は中身を表し、コメントは理由を表す |
-| [`no-hardcoding`](../wiki/no-hardcoding-ja.md) | リスト、パス、しきい値をコードに書き込まない |
-| [`task-checklist`](../wiki/task-checklist-ja.md) | すべての指示をチェックリストにし、全項目が終わったときだけ完了する |
-| [`planner`](../wiki/planner-ja.md) | 分野と期間に沿って計画し、計画から外れた作業を指摘する |
-| [`pipeline-debug`](../wiki/pipeline-debug-ja.md) | 失敗した行ではなく、最初に誤った段階を見つける |
+| [`llm-wiki-docs`](https://github.com/chanikyu/kl-skills/wiki/llm-wiki-docs-ja) | 学んだことを 1 トピック 1 ページで wiki に残す |
+| [`wiki-recall`](https://github.com/chanikyu/kl-skills/wiki/wiki-recall-ja) | 関連する wiki ページを探して回答に使う |
+| [`graph-doc-memory`](https://github.com/chanikyu/kl-skills/wiki/graph-doc-memory-ja) | wiki 全体をブラウザでグラフとして描く |
+| [`research-to-wiki`](https://github.com/chanikyu/kl-skills/wiki/research-to-wiki-ja) | 調査を、出典ごとの研究の種類とどこまで読んだかを付けて記録する |
+| [`natural-answering`](https://github.com/chanikyu/kl-skills/wiki/natural-answering-ja) | 用語、比較基準、結論への一歩を省かずに書く |
+| [`readable-code`](https://github.com/chanikyu/kl-skills/wiki/readable-code-ja) | 名前は中身を表し、コメントは理由を表す |
+| [`no-hardcoding`](https://github.com/chanikyu/kl-skills/wiki/no-hardcoding-ja) | リスト、パス、しきい値をコードに書き込まない |
+| [`task-checklist`](https://github.com/chanikyu/kl-skills/wiki/task-checklist-ja) | すべての指示をチェックリストにし、全項目が終わったときだけ完了する |
+| [`planner`](https://github.com/chanikyu/kl-skills/wiki/planner-ja) | 分野と期間に沿って計画し、計画から外れた作業を指摘する |
+| [`pipeline-debug`](https://github.com/chanikyu/kl-skills/wiki/pipeline-debug-ja) | 失敗した行ではなく、最初に誤った段階を見つける |
 
 スキルは、会話が説明に合うと Claude が判断したときに読み込まれる。必ず読み込まれる保証はない。`skill-match` ゲートがメッセージごとに合うスキルの名前を挙げ、名前を自分で言ってもよい。
 
@@ -96,7 +96,7 @@ KL-SKILLS GATES v<version> — loaded, 12 rules enforced
 | 回答が終わったとき | `answer-check` | 回答を検査し、必要なら 1 回だけ差し戻す |
 | 回答が終わったとき | `checklist-check` | チェックリストに未完了の項目があれば 1 回だけ差し戻す |
 
-ゲートが回答を差し戻すと、Claude Code に `Stop hook feedback:` と理由が表示される。詳しくは [仕組み](../wiki/How-it-works-ja.md)。
+ゲートが回答を差し戻すと、Claude Code に `Stop hook feedback:` と理由が表示される。詳しくは [仕組み](https://github.com/chanikyu/kl-skills/wiki/How-it-works-ja)。
 
 <br />
 

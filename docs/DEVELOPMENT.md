@@ -117,6 +117,17 @@ the selftests yourself.
 colours, fonts); gate names and skill names come from the repo. The hero's banner leaves out the version number,
 so a release needs no redraw; adding a gate or a skill does. How: `assets/src/README.md`. Do not edit the PNGs by hand.
 
+## Wiki
+
+`docs/wiki/` is the source; the GitHub Wiki tab is a copy. Edit pages here, where `selftest-readme` checks every
+link and all five languages, then publish:
+
+```sh
+python3 scripts/publish_wiki.py --push    # rewrites links for the Wiki tab, replaces its pages, commits, pushes
+```
+
+Do not edit pages in the Wiki tab itself: the next publish replaces them.
+
 ## File map
 
 ```text
@@ -124,7 +135,7 @@ so a release needs no redraw; adding a gate or a skill does. How: `assets/src/RE
 .claude/skills/      maintainers only, not shipped: plugin-release (release.py — bump · ship · verify) · hook-replay (replay.py)
 assets/              README images; assets/src/ holds figures.py · figures.json and each figure's .vectorcraft · .svg · .pdf
 docs/                DEVELOPMENT.md (this file) · <language>/README.md (ko-KR, ja-JP, zh-CN, es)
-  wiki/              the documentation wiki: Home, Installation, How-it-works, one page per skill,
+  wiki/              source of the GitHub Wiki tab: Home, Installation, How-it-works, one page per skill,
                      each in five languages (<page>.md and <page>-ko/-ja/-zh/-es.md) · _Sidebar · _Footer
 skills/
   llm-wiki-docs/     wiki convention — new-topic.sh · index-add.py · log-append.py · lint.py
@@ -147,7 +158,7 @@ hooks/
 crates/kl-gate/      the Rust gate
 bin/                 five prebuilt binaries — CI fills it
 version-files.txt    other files that carry the version
-scripts/ · results/  hook start-up benchmark and its results
+scripts/ · results/  hook start-up benchmark and its results · publish_wiki.py (docs/wiki → the Wiki tab)
 tests/
   selftest.sh                  the launcher picks the binary or the interpreter
   selftest-readme.sh           README and wiki counts, lists and links match the repo, in every language
@@ -171,4 +182,5 @@ tests/
   selftest-checklist.sh        an open item sends the answer back once; a finished list passes
   selftest-skill-match.sh      a message names its skill; everyday messages stay silent
   selftest-terms.sh            a word the field does not use is caught, in text, .pptx and .docx
+  selftest-publish-wiki.sh     wiki pages become Wiki-tab pages: links without .md, full addresses outside
 ```

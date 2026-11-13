@@ -7,11 +7,11 @@
 <img src="https://img.shields.io/badge/Claude%20Code-plugin-D97757?logo=anthropic&logoColor=white" alt="Claude Code plugin" />
 <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license" />
 <img src="https://img.shields.io/badge/macOS%20·%20Linux%20·%20Windows-supported-57606A" alt="macOS, Linux, Windows" />
-<a href="../wiki/Home-ko.md"><img src="https://img.shields.io/badge/docs-wiki-2F6FEB" alt="문서 위키" /></a>
+<a href="https://github.com/chanikyu/kl-skills/wiki/Home-ko"><img src="https://img.shields.io/badge/docs-wiki-2F6FEB" alt="문서 위키" /></a>
 
 [English](../../README.md) · **한국어** · [日本語](../ja-JP/README.md) · [简体中文](../zh-CN/README.md) · [Español](../es/README.md)
 
-[설치](#설치) · [스킬](#스킬) · [훅 게이트](#훅-게이트) · [위키](../wiki/Home-ko.md)
+[설치](#설치) · [스킬](#스킬) · [훅 게이트](#훅-게이트) · [위키](https://github.com/chanikyu/kl-skills/wiki/Home-ko)
 
 </div>
 
@@ -48,7 +48,7 @@ KL-SKILLS GATES v<버전> — loaded, 12 rules enforced
 > [!IMPORTANT]
 > 게이트 대부분이 Python 이다. `python3` 가 없으면 그 게이트들은 조용히 건너뛴다.
 
-필요한 것, 업데이트, 지우기: [설치](../wiki/Installation-ko.md).
+필요한 것, 업데이트, 지우기: [설치](https://github.com/chanikyu/kl-skills/wiki/Installation-ko).
 
 <br />
 
@@ -60,16 +60,16 @@ KL-SKILLS GATES v<버전> — loaded, 12 rules enforced
 
 | 스킬 | 하는 일 |
 | --- | --- |
-| [`llm-wiki-docs`](../wiki/llm-wiki-docs-ko.md) | 알게 된 것을 한 주제 한 페이지로 위키에 모은다 |
-| [`wiki-recall`](../wiki/wiki-recall-ko.md) | 관련 위키 페이지를 찾아 답에 쓴다 |
-| [`graph-doc-memory`](../wiki/graph-doc-memory-ko.md) | 위키 전체를 그래프로 그려 브라우저에 띄운다 |
-| [`research-to-wiki`](../wiki/research-to-wiki-ko.md) | 출처마다 연구 종류와 읽은 수준을 적어 조사를 남긴다 |
-| [`natural-answering`](../wiki/natural-answering-ko.md) | 용어·비교 기준·결론까지의 중간 단계를 생략하지 않게 쓴다 |
-| [`readable-code`](../wiki/readable-code-ko.md) | 이름은 담긴 것대로, 주석에는 왜 그렇게 했는지 |
-| [`no-hardcoding`](../wiki/no-hardcoding-ko.md) | 목록·경로·임계값을 코드에 박지 않는다 |
-| [`task-checklist`](../wiki/task-checklist-ko.md) | 지시를 체크리스트로 쪼개고, 모든 항목이 끝나야 마친다 |
-| [`planner`](../wiki/planner-ko.md) | 분야·기간에 맞춰 기획하고, 계획에서 벗어난 일을 알린다 |
-| [`pipeline-debug`](../wiki/pipeline-debug-ko.md) | 에러가 난 줄이 아니라 처음 틀어진 단계를 찾는다 |
+| [`llm-wiki-docs`](https://github.com/chanikyu/kl-skills/wiki/llm-wiki-docs-ko) | 알게 된 것을 한 주제 한 페이지로 위키에 모은다 |
+| [`wiki-recall`](https://github.com/chanikyu/kl-skills/wiki/wiki-recall-ko) | 관련 위키 페이지를 찾아 답에 쓴다 |
+| [`graph-doc-memory`](https://github.com/chanikyu/kl-skills/wiki/graph-doc-memory-ko) | 위키 전체를 그래프로 그려 브라우저에 띄운다 |
+| [`research-to-wiki`](https://github.com/chanikyu/kl-skills/wiki/research-to-wiki-ko) | 출처마다 연구 종류와 읽은 수준을 적어 조사를 남긴다 |
+| [`natural-answering`](https://github.com/chanikyu/kl-skills/wiki/natural-answering-ko) | 용어·비교 기준·결론까지의 중간 단계를 생략하지 않게 쓴다 |
+| [`readable-code`](https://github.com/chanikyu/kl-skills/wiki/readable-code-ko) | 이름은 담긴 것대로, 주석에는 왜 그렇게 했는지 |
+| [`no-hardcoding`](https://github.com/chanikyu/kl-skills/wiki/no-hardcoding-ko) | 목록·경로·임계값을 코드에 박지 않는다 |
+| [`task-checklist`](https://github.com/chanikyu/kl-skills/wiki/task-checklist-ko) | 지시를 체크리스트로 쪼개고, 모든 항목이 끝나야 마친다 |
+| [`planner`](https://github.com/chanikyu/kl-skills/wiki/planner-ko) | 분야·기간에 맞춰 기획하고, 계획에서 벗어난 일을 알린다 |
+| [`pipeline-debug`](https://github.com/chanikyu/kl-skills/wiki/pipeline-debug-ko) | 에러가 난 줄이 아니라 처음 틀어진 단계를 찾는다 |
 
 스킬은 Claude 가 "대화가 설명과 맞다"고 판단할 때 읽힌다. 그래서 늘 읽힌다는 보장은 없다. `skill-match` 게이트가 메시지마다 맞는 스킬 이름을 알려 주고, 사용자가 이름을 직접 말해도 된다.
 
@@ -93,7 +93,7 @@ KL-SKILLS GATES v<버전> — loaded, 12 rules enforced
 | 답 끝 | `answer-check` | 답을 검사하고, 필요하면 한 번 돌려보낸다 |
 | 답 끝 | `checklist-check` | 체크리스트에 안 끝난 항목이 있으면 한 번 돌려보낸다 |
 
-게이트가 답을 돌려보내면 대화에 `Stop hook feedback:` 과 이유가 뜬다. 자세한 것은 [작동 방식](../wiki/How-it-works-ko.md).
+게이트가 답을 돌려보내면 대화에 `Stop hook feedback:` 과 이유가 뜬다. 자세한 것은 [작동 방식](https://github.com/chanikyu/kl-skills/wiki/How-it-works-ko).
 
 <br />
 

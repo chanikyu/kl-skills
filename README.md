@@ -7,11 +7,11 @@
 <img src="https://img.shields.io/badge/Claude%20Code-plugin-D97757?logo=anthropic&logoColor=white" alt="Claude Code plugin" />
 <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license" />
 <img src="https://img.shields.io/badge/macOS%20·%20Linux%20·%20Windows-supported-57606A" alt="macOS, Linux, Windows" />
-<a href="docs/wiki/Home.md"><img src="https://img.shields.io/badge/docs-wiki-2F6FEB" alt="Documentation wiki" /></a>
+<a href="https://github.com/chanikyu/kl-skills/wiki"><img src="https://img.shields.io/badge/docs-wiki-2F6FEB" alt="Documentation wiki" /></a>
 
 **English** · [한국어](docs/ko-KR/README.md) · [日本語](docs/ja-JP/README.md) · [简体中文](docs/zh-CN/README.md) · [Español](docs/es/README.md)
 
-[Install](#install) · [Skills](#skills) · [Hook gates](#hook-gates) · [Wiki](docs/wiki/Home.md)
+[Install](#install) · [Skills](#skills) · [Hook gates](#hook-gates) · [Wiki](https://github.com/chanikyu/kl-skills/wiki)
 
 </div>
 
@@ -51,7 +51,7 @@ KL-SKILLS GATES v<version> — loaded, 12 rules enforced
 > [!NOTE]
 > The gates' messages and the writing rules are Korean-first. English text is checked for undefined acronyms and long sentences only.
 
-Requirements, update and uninstall: [Installation](docs/wiki/Installation.md).
+Requirements, update and uninstall: [Installation](https://github.com/chanikyu/kl-skills/wiki/Installation).
 
 <br />
 
@@ -63,16 +63,16 @@ Each name opens its wiki page: when it applies, what to say, and what it does.
 
 | Skill | What it does |
 | --- | --- |
-| [`llm-wiki-docs`](docs/wiki/llm-wiki-docs.md) | Keeps what you learn in a wiki, one page per topic |
-| [`wiki-recall`](docs/wiki/wiki-recall.md) | Finds related wiki pages and uses them in the answer |
-| [`graph-doc-memory`](docs/wiki/graph-doc-memory.md) | Draws the whole wiki as a graph in the browser |
-| [`research-to-wiki`](docs/wiki/research-to-wiki.md) | Records research with each source's study type and how much of it was read |
-| [`natural-answering`](docs/wiki/natural-answering.md) | Writes without skipping terms, baselines or the step to the conclusion |
-| [`readable-code`](docs/wiki/readable-code.md) | Names say what they hold; comments say why |
-| [`no-hardcoding`](docs/wiki/no-hardcoding.md) | Keeps lists, paths and thresholds out of the code |
-| [`task-checklist`](docs/wiki/task-checklist.md) | Turns every instruction into a checklist and finishes only when every item is done |
-| [`planner`](docs/wiki/planner.md) | Plans by field and horizon, and flags work that drifts from the plan |
-| [`pipeline-debug`](docs/wiki/pipeline-debug.md) | Finds the first stage that went wrong, not the line that failed |
+| [`llm-wiki-docs`](https://github.com/chanikyu/kl-skills/wiki/llm-wiki-docs) | Keeps what you learn in a wiki, one page per topic |
+| [`wiki-recall`](https://github.com/chanikyu/kl-skills/wiki/wiki-recall) | Finds related wiki pages and uses them in the answer |
+| [`graph-doc-memory`](https://github.com/chanikyu/kl-skills/wiki/graph-doc-memory) | Draws the whole wiki as a graph in the browser |
+| [`research-to-wiki`](https://github.com/chanikyu/kl-skills/wiki/research-to-wiki) | Records research with each source's study type and how much of it was read |
+| [`natural-answering`](https://github.com/chanikyu/kl-skills/wiki/natural-answering) | Writes without skipping terms, baselines or the step to the conclusion |
+| [`readable-code`](https://github.com/chanikyu/kl-skills/wiki/readable-code) | Names say what they hold; comments say why |
+| [`no-hardcoding`](https://github.com/chanikyu/kl-skills/wiki/no-hardcoding) | Keeps lists, paths and thresholds out of the code |
+| [`task-checklist`](https://github.com/chanikyu/kl-skills/wiki/task-checklist) | Turns every instruction into a checklist and finishes only when every item is done |
+| [`planner`](https://github.com/chanikyu/kl-skills/wiki/planner) | Plans by field and horizon, and flags work that drifts from the plan |
+| [`pipeline-debug`](https://github.com/chanikyu/kl-skills/wiki/pipeline-debug) | Finds the first stage that went wrong, not the line that failed |
 
 A skill loads when Claude judges the conversation matches it, which is not guaranteed. The `skill-match` gate names the fitting skill on every message, and you can always name it yourself.
 
@@ -96,7 +96,7 @@ A skill loads when Claude judges the conversation matches it, which is not guara
 | The answer ends | `answer-check` | Checks the answer and sends it back once if needed |
 | The answer ends | `checklist-check` | Sends the answer back once if a checklist item is open |
 
-When a gate sends an answer back, Claude Code shows `Stop hook feedback:` with the reason. More in [How it works](docs/wiki/How-it-works.md).
+When a gate sends an answer back, Claude Code shows `Stop hook feedback:` with the reason. More in [How it works](https://github.com/chanikyu/kl-skills/wiki/How-it-works).
 
 <br />
 

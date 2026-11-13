@@ -73,7 +73,8 @@ def main():
     print(f"\ngap (python - rust, medians): {gap:.1f} ms per hook invocation")
     print(f"n={args.n} per variant, target={target}")
     print(f"python={sys.version.split()[0]}  machine={os.uname().sysname}/{os.uname().machine}")
-    print(f"root={root}")
+    # 홈 폴더는 ~ 로 줄인다: 결과 파일을 커밋하면 컴퓨터 사용자 이름이 공개 저장소에 남는다(2026-11-13)
+    print(f"root={str(root).replace(os.path.expanduser('~'), '~', 1)}")
 
 
 if __name__ == "__main__":

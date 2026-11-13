@@ -7,11 +7,11 @@
 <img src="https://img.shields.io/badge/Claude%20Code-plugin-D97757?logo=anthropic&logoColor=white" alt="Claude Code plugin" />
 <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license" />
 <img src="https://img.shields.io/badge/macOS%20·%20Linux%20·%20Windows-supported-57606A" alt="macOS, Linux, Windows" />
-<a href="../wiki/Home-es.md"><img src="https://img.shields.io/badge/docs-wiki-2F6FEB" alt="Wiki de documentación" /></a>
+<a href="https://github.com/chanikyu/kl-skills/wiki/Home-es"><img src="https://img.shields.io/badge/docs-wiki-2F6FEB" alt="Wiki de documentación" /></a>
 
 [English](../../README.md) · [한국어](../ko-KR/README.md) · [日本語](../ja-JP/README.md) · [简体中文](../zh-CN/README.md) · **Español**
 
-[Instalación](#instalación) · [Skills](#skills) · [Hook gates](#hook-gates) · [Wiki](../wiki/Home-es.md)
+[Instalación](#instalación) · [Skills](#skills) · [Hook gates](#hook-gates) · [Wiki](https://github.com/chanikyu/kl-skills/wiki/Home-es)
 
 </div>
 
@@ -51,7 +51,7 @@ KL-SKILLS GATES v<version> — loaded, 12 rules enforced
 > [!NOTE]
 > Los mensajes de los gates y las reglas de escritura están pensados primero para el coreano. En español solo se revisan siglas sin definir y frases demasiado largas.
 
-Requisitos, actualizar y desinstalar: [Instalación](../wiki/Installation-es.md).
+Requisitos, actualizar y desinstalar: [Instalación](https://github.com/chanikyu/kl-skills/wiki/Installation-es).
 
 <br />
 
@@ -63,16 +63,16 @@ Cada nombre abre su página de la wiki: cuándo se aplica, qué decir y qué hac
 
 | Skill | Qué hace |
 | --- | --- |
-| [`llm-wiki-docs`](../wiki/llm-wiki-docs-es.md) | Guarda lo que aprendes en una wiki, una página por tema |
-| [`wiki-recall`](../wiki/wiki-recall-es.md) | Busca páginas relacionadas de la wiki y las usa en la respuesta |
-| [`graph-doc-memory`](../wiki/graph-doc-memory-es.md) | Dibuja toda la wiki como un grafo en el navegador |
-| [`research-to-wiki`](../wiki/research-to-wiki-es.md) | Registra la investigación con el tipo de estudio de cada fuente y cuánto se leyó |
-| [`natural-answering`](../wiki/natural-answering-es.md) | Escribe sin saltarse términos, puntos de comparación ni el paso hasta la conclusión |
-| [`readable-code`](../wiki/readable-code-es.md) | Los nombres dicen qué contienen; los comentarios, por qué |
-| [`no-hardcoding`](../wiki/no-hardcoding-es.md) | Mantiene listas, rutas y umbrales fuera del código |
-| [`task-checklist`](../wiki/task-checklist-es.md) | Convierte cada instrucción en una lista de comprobación y solo termina cuando todos los puntos están hechos |
-| [`planner`](../wiki/planner-es.md) | Planifica según el campo y el horizonte, y avisa del trabajo que se desvía del plan |
-| [`pipeline-debug`](../wiki/pipeline-debug-es.md) | Busca la primera etapa que salió mal, no la línea que falló |
+| [`llm-wiki-docs`](https://github.com/chanikyu/kl-skills/wiki/llm-wiki-docs-es) | Guarda lo que aprendes en una wiki, una página por tema |
+| [`wiki-recall`](https://github.com/chanikyu/kl-skills/wiki/wiki-recall-es) | Busca páginas relacionadas de la wiki y las usa en la respuesta |
+| [`graph-doc-memory`](https://github.com/chanikyu/kl-skills/wiki/graph-doc-memory-es) | Dibuja toda la wiki como un grafo en el navegador |
+| [`research-to-wiki`](https://github.com/chanikyu/kl-skills/wiki/research-to-wiki-es) | Registra la investigación con el tipo de estudio de cada fuente y cuánto se leyó |
+| [`natural-answering`](https://github.com/chanikyu/kl-skills/wiki/natural-answering-es) | Escribe sin saltarse términos, puntos de comparación ni el paso hasta la conclusión |
+| [`readable-code`](https://github.com/chanikyu/kl-skills/wiki/readable-code-es) | Los nombres dicen qué contienen; los comentarios, por qué |
+| [`no-hardcoding`](https://github.com/chanikyu/kl-skills/wiki/no-hardcoding-es) | Mantiene listas, rutas y umbrales fuera del código |
+| [`task-checklist`](https://github.com/chanikyu/kl-skills/wiki/task-checklist-es) | Convierte cada instrucción en una lista de comprobación y solo termina cuando todos los puntos están hechos |
+| [`planner`](https://github.com/chanikyu/kl-skills/wiki/planner-es) | Planifica según el campo y el horizonte, y avisa del trabajo que se desvía del plan |
+| [`pipeline-debug`](https://github.com/chanikyu/kl-skills/wiki/pipeline-debug-es) | Busca la primera etapa que salió mal, no la línea que falló |
 
 Una skill se carga cuando Claude juzga que la conversación encaja con su descripción, y eso no está garantizado. El gate `skill-match` nombra la skill adecuada en cada mensaje, y siempre puedes nombrarla tú.
 
@@ -96,7 +96,7 @@ Una skill se carga cuando Claude juzga que la conversación encaja con su descri
 | Termina la respuesta | `answer-check` | Revisa la respuesta y la devuelve una vez si hace falta |
 | Termina la respuesta | `checklist-check` | Devuelve la respuesta una vez si queda un punto abierto en la lista |
 
-Cuando un gate devuelve una respuesta, Claude Code muestra `Stop hook feedback:` con el motivo. Más en [Cómo funciona](../wiki/How-it-works-es.md).
+Cuando un gate devuelve una respuesta, Claude Code muestra `Stop hook feedback:` con el motivo. Más en [Cómo funciona](https://github.com/chanikyu/kl-skills/wiki/How-it-works-es).
 
 <br />
 

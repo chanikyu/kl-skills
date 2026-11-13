@@ -7,11 +7,11 @@
 <img src="https://img.shields.io/badge/Claude%20Code-plugin-D97757?logo=anthropic&logoColor=white" alt="Claude Code plugin" />
 <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license" />
 <img src="https://img.shields.io/badge/macOS%20·%20Linux%20·%20Windows-supported-57606A" alt="macOS, Linux, Windows" />
-<a href="../wiki/Home-zh.md"><img src="https://img.shields.io/badge/docs-wiki-2F6FEB" alt="文档 wiki" /></a>
+<a href="https://github.com/chanikyu/kl-skills/wiki/Home-zh"><img src="https://img.shields.io/badge/docs-wiki-2F6FEB" alt="文档 wiki" /></a>
 
 [English](../../README.md) · [한국어](../ko-KR/README.md) · [日本語](../ja-JP/README.md) · **简体中文** · [Español](../es/README.md)
 
-[安装](#安装) · [技能](#技能) · [钩子检查](#钩子检查) · [wiki](../wiki/Home-zh.md)
+[安装](#安装) · [技能](#技能) · [钩子检查](#钩子检查) · [wiki](https://github.com/chanikyu/kl-skills/wiki/Home-zh)
 
 </div>
 
@@ -51,7 +51,7 @@ KL-SKILLS GATES v<version> — loaded, 12 rules enforced
 > [!NOTE]
 > 检查的提示信息和写作规则以韩语为准。中文文本只检查未定义的缩写和过长的句子。
 
-环境要求、更新和卸载：[安装](../wiki/Installation-zh.md)。
+环境要求、更新和卸载：[安装](https://github.com/chanikyu/kl-skills/wiki/Installation-zh)。
 
 <br />
 
@@ -63,16 +63,16 @@ KL-SKILLS GATES v<version> — loaded, 12 rules enforced
 
 | 技能 | 作用 |
 | --- | --- |
-| [`llm-wiki-docs`](../wiki/llm-wiki-docs-zh.md) | 把学到的东西存进 wiki，一个主题一页 |
-| [`wiki-recall`](../wiki/wiki-recall-zh.md) | 找到相关的 wiki 页面并用在回答里 |
-| [`graph-doc-memory`](../wiki/graph-doc-memory-zh.md) | 把整个 wiki 画成浏览器里的图 |
-| [`research-to-wiki`](../wiki/research-to-wiki-zh.md) | 记录调研结果，并注明每个来源的研究类型和读了多少 |
-| [`natural-answering`](../wiki/natural-answering-zh.md) | 写作时不跳过术语、比较基准，也不跳过通向结论的那一步 |
-| [`readable-code`](../wiki/readable-code-zh.md) | 名字说明它装的是什么；注释说明为什么 |
-| [`no-hardcoding`](../wiki/no-hardcoding-zh.md) | 不让列表、路径和阈值写死在代码里 |
-| [`task-checklist`](../wiki/task-checklist-zh.md) | 把每条指令变成清单，只有每一项都完成才结束 |
-| [`planner`](../wiki/planner-zh.md) | 按领域和时间跨度做计划，并标出偏离计划的工作 |
-| [`pipeline-debug`](../wiki/pipeline-debug-zh.md) | 找出第一个出错的阶段，而不是报错的那一行 |
+| [`llm-wiki-docs`](https://github.com/chanikyu/kl-skills/wiki/llm-wiki-docs-zh) | 把学到的东西存进 wiki，一个主题一页 |
+| [`wiki-recall`](https://github.com/chanikyu/kl-skills/wiki/wiki-recall-zh) | 找到相关的 wiki 页面并用在回答里 |
+| [`graph-doc-memory`](https://github.com/chanikyu/kl-skills/wiki/graph-doc-memory-zh) | 把整个 wiki 画成浏览器里的图 |
+| [`research-to-wiki`](https://github.com/chanikyu/kl-skills/wiki/research-to-wiki-zh) | 记录调研结果，并注明每个来源的研究类型和读了多少 |
+| [`natural-answering`](https://github.com/chanikyu/kl-skills/wiki/natural-answering-zh) | 写作时不跳过术语、比较基准，也不跳过通向结论的那一步 |
+| [`readable-code`](https://github.com/chanikyu/kl-skills/wiki/readable-code-zh) | 名字说明它装的是什么；注释说明为什么 |
+| [`no-hardcoding`](https://github.com/chanikyu/kl-skills/wiki/no-hardcoding-zh) | 不让列表、路径和阈值写死在代码里 |
+| [`task-checklist`](https://github.com/chanikyu/kl-skills/wiki/task-checklist-zh) | 把每条指令变成清单，只有每一项都完成才结束 |
+| [`planner`](https://github.com/chanikyu/kl-skills/wiki/planner-zh) | 按领域和时间跨度做计划，并标出偏离计划的工作 |
+| [`pipeline-debug`](https://github.com/chanikyu/kl-skills/wiki/pipeline-debug-zh) | 找出第一个出错的阶段，而不是报错的那一行 |
 
 技能在 Claude 判断对话与其描述相符时才会加载，并不保证每次都加载。`skill-match` 检查会在每条消息上指出合适的技能，你也可以直接说出技能名。
 
@@ -96,7 +96,7 @@ KL-SKILLS GATES v<version> — loaded, 12 rules enforced
 | 回答结束时 | `answer-check` | 检查回答，必要时退回一次 |
 | 回答结束时 | `checklist-check` | 清单里还有未完成的项时退回一次 |
 
-检查退回回答时，Claude Code 会显示 `Stop hook feedback:` 和原因。详见 [工作原理](../wiki/How-it-works-zh.md)。
+检查退回回答时，Claude Code 会显示 `Stop hook feedback:` 和原因。详见 [工作原理](https://github.com/chanikyu/kl-skills/wiki/How-it-works-zh)。
 
 <br />
 
