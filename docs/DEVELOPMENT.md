@@ -113,16 +113,19 @@ the selftests yourself.
 
 ## README images
 
-`assets/*.png` are screenshots of the pages in `assets/src/`, made with the `design-taste-frontend` skill.
-How to change and shoot them again: `assets/src/README.md`. Do not edit the PNGs by hand.
+`assets/*.png` are drawn in VectorCraft by `assets/src/figures.py` (layout) and `assets/src/figures.json` (words,
+colours, fonts); gate names, skill names and the version come from the repo. The hero shows the banner with the
+version, so redraw it when releasing. How: `assets/src/README.md`. Do not edit the PNGs by hand.
 
 ## File map
 
 ```text
 .claude-plugin/      plugin.json · marketplace.json
 .claude/skills/      maintainers only, not shipped: plugin-release (release.py — bump · ship · verify) · hook-replay (replay.py)
-assets/              README images; assets/src/ holds their source pages
+assets/              README images; assets/src/ holds figures.py · figures.json and each figure's .vectorcraft · .svg · .pdf
 docs/                DEVELOPMENT.md (this file) · <language>/README.md (ko-KR, ja-JP, zh-CN, es)
+  wiki/              the documentation wiki: Home, Installation, How-it-works, one page per skill,
+                     each in five languages (<page>.md and <page>-ko/-ja/-zh/-es.md) · _Sidebar · _Footer
 skills/
   llm-wiki-docs/     wiki convention — new-topic.sh · index-add.py · log-append.py · lint.py
   graph-doc-memory/  graph DB and viewer — build_graph.py · open-graph.sh · viewer.html
@@ -133,17 +136,19 @@ skills/
   readable-code/     check_code.py — Python names and docstrings
   natural-answering/ check_prose.py · data/ (rules) · references/ (work report, document skeletons)
   research-to-wiki/  check_research.py · data/ (evidence and reading levels) · page template
+  task-checklist/    the checklist procedure the checklist gates point to
 hooks/
   hooks.json         which gate runs on which event
   run.sh · run.ps1   launchers: the Python gate if present, else the Rust binary
-  py/                Python gates and shared modules (_transcript · _work_files · _hook_output)
+  py/                Python gates and shared modules (_transcript · _work_files · _hook_output · _checklist)
+  data/              skill-match word lists: skill-match-generic.txt (too common to count) · skill-match-skip.txt
 crates/kl-gate/      the Rust gate
 bin/                 five prebuilt binaries — CI fills it
 version-files.txt    other files that carry the version
 scripts/ · results/  hook start-up benchmark and its results
 tests/
   selftest.sh                  the launcher picks the binary or the interpreter
-  selftest-readme.sh           README counts and lists match the repo, in every language
+  selftest-readme.sh           README and wiki counts, lists and links match the repo, in every language
   selftest-banner.sh           the banner's gate count matches hooks.json
   selftest-new-topic.sh        creating a wiki topic never overwrites
   selftest-wiki-scripts.sh     index, log and lint scripts
@@ -161,4 +166,6 @@ tests/
   selftest-plugin-release.sh   no install when CI fails
   release_paths_check.py       (called by the test above) CI decisions per workflow shape
   selftest-research-to-wiki.sh source labels on research pages
+  selftest-checklist.sh        an open item sends the answer back once; a finished list passes
+  selftest-skill-match.sh      a message names its skill; everyday messages stay silent
 ```

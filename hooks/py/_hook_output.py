@@ -12,6 +12,16 @@ PostToolUse 와 Stop 훅이 그냥 글로 찍은 것은 Claude Code 의 디버�
 """
 
 import json
+import sys
+
+
+def read_payload():
+    """훅 입력(stdin)을 글로 읽는다. UTF-8 이 아닌 바이트가 와도 터지지 않고 대체 글자로 읽는다.
+
+    sys.stdin.read() 는 깨진 바이트에서 UnicodeDecodeError 로 죽는다(2026-11-13 리뷰가 재현).
+    게이트가 죽으면 그 이벤트가 걸린 세션 전체가 흔들리므로, 읽기에서부터 막는다.
+    """
+    return sys.stdin.buffer.read().decode("utf-8", "replace")
 
 
 def tell_model(event_name, text):

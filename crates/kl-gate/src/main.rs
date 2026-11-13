@@ -34,9 +34,10 @@ fn main() {
             // when wiki-graph and prose-check arrived. tests/selftest-banner.sh compares
             // this string against hooks.json so the drift fails a test instead of shipping.
             println!(
-                "KL-SKILLS GATES v{VERSION} — loaded, 9 rules enforced \
+                "KL-SKILLS GATES v{VERSION} — loaded, 12 rules enforced \
                  (wiki-index-check, wiki-graph, prose-check, code-check, plan-drift, \
-                  after-bash, wiki-sync, answer-check, wiki-recall)"
+                  after-bash, wiki-sync, answer-check, checklist-check, wiki-recall, \
+                  skill-match, checklist-start)"
             );
         }
         "wiki-index-check" => wiki_index_check(&payload),

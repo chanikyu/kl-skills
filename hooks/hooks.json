@@ -101,6 +101,15 @@
             "statusMessage": "Checking the answer...",
             "description": "Read the answer just given and block once if it misses: the same question asked again, a turn that changed files without the six-step work report, an answer past one screen, or prose findings. Blocking is capped by stop_hook_active so it cannot loop.",
             "id": "stop:answer-check"
+          },
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" checklist-check",
+            "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\run.ps1\" checklist-check",
+            "timeout": 10,
+            "description": "Block the answer once if this instruction's checklist is missing or still has open '- [ ]' items, so the rest gets done before the answer reaches the person. Capped by stop_hook_active.",
+            "id": "stop:checklist-check",
+            "statusMessage": "Checking the checklist..."
           }
         ]
       }
@@ -115,6 +124,22 @@
             "timeout": 20,
             "description": "Every message: search the wiki and attach the paths and key lines of clearly related pages (at least two shared words and 40% weighted coverage). Silent when nothing is clearly related.",
             "id": "prompt:wiki-recall"
+          },
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" skill-match",
+            "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\run.ps1\" skill-match",
+            "timeout": 20,
+            "description": "Every message: match it against each kl-skills skill's own trigger list (from its SKILL.md) and, when a skill clearly matches, attach 'use this skill'. Common words and always-on skills are skipped (hooks/data). Silent otherwise.",
+            "id": "prompt:skill-match"
+          },
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" checklist-start",
+            "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\run.ps1\" checklist-start",
+            "timeout": 20,
+            "description": "Every message: move the last instruction's checklist aside and tell the model where to write this instruction's checklist (~/.claude/checklists/<session>.md).",
+            "id": "prompt:checklist-start"
           }
         ]
       }

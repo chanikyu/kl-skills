@@ -51,10 +51,12 @@ check_readme() {  # $1 파일, $2 스킬 개수 정규식, $3 게이트 개수 �
   [ -f "$readme" ] || { bad "README 가 없다: $readme"; return; }
   check_count "$readme" "스킬" "$skill_count" "$2"
   check_count "$readme" "훅 게이트" "$gate_count" "$3"
+  check_count "$readme" "배너의 규칙" "$gate_count" '(\d+) rules enforced'
   missing=""
   for dir in "$REPO"/skills/*/; do
     name="$(basename "$dir")"
-    grep -q "| \`$name\` |" "$readme" || missing="$missing $name"
+    # 스킬 이름은 그대로 쓰거나 위키 링크로 감싼다: | `name` | 또는 | [`name`](…) |
+    grep -qE "^\| \[?\`$name\`" "$readme" || missing="$missing $name"
   done
   [ -z "$missing" ] && ok "$readme: 스킬 ${skill_count}개가 모두 스킬 표에 있다" || bad "$readme: 스킬 표에 없는 스킬:$missing"
   missing=""
@@ -85,6 +87,45 @@ for readme in "$REPO/README.md" "$REPO"/docs/*/README.md; do
   others="$(grep -oE '\]\([^)]*README\.md\)' "$readme" | sort -u | wc -l | tr -d ' ')"
   [ "$others" -eq $((language_count - 1)) ] && ok "${readme#$REPO/}: 언어 선택 줄이 나머지 $((language_count - 1))개 판을 가리킨다" \
     || bad "${readme#$REPO/}: 언어 선택 줄이 $others 개 판만 가리킨다"
+done
+
+# 위키(docs/wiki): 스킬마다 페이지가 있고, 모든 페이지가 다섯 언어로 있고, 가리키는 파일이 모두 있다
+WIKI="$REPO/docs/wiki"
+wiki_languages="ko ja zh es"
+missing=""
+for dir in "$REPO"/skills/*/; do
+  name="$(basename "$dir")"
+  [ -f "$WIKI/$name.md" ] || missing="$missing $name"
+done
+[ -z "$missing" ] && ok "위키: 스킬마다 페이지가 있다" || bad "위키 페이지가 없는 스킬:$missing"
+missing=""
+for page in "$WIKI"/*.md; do
+  base="$(basename "$page" .md)"
+  case "$base" in _*|*-ko|*-ja|*-zh|*-es) continue ;; esac
+  for lang in $wiki_languages; do
+    [ -f "$WIKI/$base-$lang.md" ] || missing="$missing $base-$lang"
+  done
+done
+[ -z "$missing" ] && ok "위키: 모든 페이지가 다섯 언어로 있다" || bad "위키에 없는 번역:$missing"
+missing=""
+for page in "$WIKI"/*.md; do
+  # 백틱 안의 예시(`[text](page.md)`)는 링크가 아니다
+  for target in $(sed 's/`[^`]*`//g' "$page" | grep -oE '(src|href)="[^"#:]+\.(png|svg|md)"|\]\([^)#:]+\.md\)' \
+                  | sed -E 's/^(src|href)="//; s/"$//; s/^\]\(//; s/\)$//'); do
+    [ -f "$WIKI/$target" ] || missing="$missing $(basename "$page"):$target"
+  done
+done
+[ -z "$missing" ] && ok "위키: 가리키는 그림·문서가 모두 있다" || bad "위키에서 없는 파일을 가리킨다:$missing"
+# 게이트 표(How-it-works)와 설치 페이지의 배너 숫자도 hooks.json 과 맞아야 한다
+for page in "$WIKI"/How-it-works*.md; do
+  missing=""
+  for gate in $gates; do
+    grep -q "| \`$gate\` |" "$page" || missing="$missing $gate"
+  done
+  [ -z "$missing" ] && ok "위키 $(basename "$page"): 게이트가 모두 표에 있다" || bad "위키 $(basename "$page"): 표에 없는 게이트:$missing"
+done
+for page in "$WIKI"/Installation*.md; do
+  check_count "$page" "배너의 규칙" "$gate_count" '(\d+) rules enforced'
 done
 
 # 개발 문서의 파일 지도는 셀프테스트를 하나도 빠뜨리지 않는다

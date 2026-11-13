@@ -1,0 +1,4385 @@
+{
+  "format": "vectorcraft",
+  "version": 4,
+  "generator": "VectorCraft 0.24.1",
+  "pdfCompatible": true,
+  "pdf": {
+    "mime": "application/pdf",
+    "blob": [
+      0,
+      26792
+    ]
+  },
+  "document": {
+    "version": 3,
+    "title": "parts",
+    "units": "Points",
+    "rulers": "artboard",
+    "color_mode": "Rgb",
+    "artboards": [
+      {
+        "id": 1,
+        "name": "Artboard 1",
+        "rect": {
+          "x0": 0.0,
+          "y0": 0.0,
+          "x1": 1200.0,
+          "y1": 500.0
+        },
+        "show_center_mark": false,
+        "show_cross_hairs": false
+      }
+    ],
+    "layers": [
+      {
+        "id": 1,
+        "name": "Layer 1",
+        "kind": {
+          "type": "layer",
+          "color": {
+            "Preset": 0
+          },
+          "template": false,
+          "printable": true,
+          "children": [
+            {
+              "id": 5,
+              "name": "title",
+              "kind": {
+                "type": "group",
+                "children": [
+                  {
+                    "id": 2,
+                    "appearance": {
+                      "items": [
+                        {
+                          "kind": "fill",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 1.0,
+                              "g": 1.0,
+                              "b": 1.0
+                            }
+                          }
+                        },
+                        {
+                          "kind": "stroke",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 0.84705883,
+                              "g": 0.87058824,
+                              "b": 0.89411765
+                            }
+                          },
+                          "width": 1.0
+                        }
+                      ]
+                    },
+                    "kind": {
+                      "type": "path",
+                      "path": {
+                        "subpaths": [
+                          {
+                            "anchors": [
+                              {
+                                "p": [
+                                  16.500000000000004,
+                                  0.5
+                                ],
+                                "in": [
+                                  7.6634440027073065,
+                                  0.5
+                                ]
+                              },
+                              {
+                                "p": [
+                                  1183.5,
+                                  0.5
+                                ],
+                                "out": [
+                                  1192.3365559972926,
+                                  0.5
+                                ]
+                              },
+                              {
+                                "p": [
+                                  1199.5,
+                                  16.5
+                                ],
+                                "in": [
+                                  1199.5,
+                                  7.663444002707305
+                                ]
+                              },
+                              {
+                                "p": [
+                                  1199.5,
+                                  483.5
+                                ],
+                                "out": [
+                                  1199.5,
+                                  492.3365559972927
+                                ]
+                              },
+                              {
+                                "p": [
+                                  1183.5,
+                                  499.5
+                                ],
+                                "in": [
+                                  1192.3365559972926,
+                                  499.5
+                                ]
+                              },
+                              {
+                                "p": [
+                                  16.500000000000004,
+                                  499.5
+                                ],
+                                "out": [
+                                  7.6634440027073065,
+                                  499.5
+                                ]
+                              },
+                              {
+                                "p": [
+                                  0.5,
+                                  483.5
+                                ],
+                                "in": [
+                                  0.5,
+                                  492.3365559972927
+                                ]
+                              },
+                              {
+                                "p": [
+                                  0.5,
+                                  16.5
+                                ],
+                                "out": [
+                                  0.5,
+                                  7.663444002707305
+                                ]
+                              }
+                            ],
+                            "closed": true
+                          }
+                        ]
+                      },
+                      "live": {
+                        "shape": "rectangle",
+                        "w": 1199.0,
+                        "h": 499.0,
+                        "radii": [
+                          16.0,
+                          16.0,
+                          16.0,
+                          16.0
+                        ],
+                        "xf": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          1.0,
+                          0.5,
+                          0.5
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "id": 3,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        48.0,
+                        60.0
+                      ],
+                      "runs": [
+                        {
+                          "text": "How the parts fit",
+                          "style": {
+                            "font_family": "Inter",
+                            "font_style": "SemiBold",
+                            "size": 22.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.12156863,
+                                "g": 0.13725491,
+                                "b": 0.15686275
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Left",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  },
+                  {
+                    "id": 4,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        48.0,
+                        88.0
+                      ],
+                      "runs": [
+                        {
+                          "text": "Skills say how a job is done. Hook gates check that it was done. The wiki keeps what was learned.",
+                          "style": {
+                            "font_family": "Inter",
+                            "font_style": "Regular",
+                            "size": 15.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.34901962,
+                                "g": 0.3882353,
+                                "b": 0.43137255
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Left",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  }
+                ],
+                "clip": false
+              }
+            },
+            {
+              "id": 9,
+              "name": "message",
+              "kind": {
+                "type": "group",
+                "children": [
+                  {
+                    "id": 6,
+                    "appearance": {
+                      "items": [
+                        {
+                          "kind": "fill",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 1.0,
+                              "g": 1.0,
+                              "b": 1.0
+                            }
+                          }
+                        },
+                        {
+                          "kind": "stroke",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 0.84705883,
+                              "g": 0.87058824,
+                              "b": 0.89411765
+                            }
+                          },
+                          "width": 1.0
+                        }
+                      ]
+                    },
+                    "kind": {
+                      "type": "path",
+                      "path": {
+                        "subpaths": [
+                          {
+                            "anchors": [
+                              {
+                                "p": [
+                                  60.0,
+                                  256.0
+                                ],
+                                "in": [
+                                  53.37258300203048,
+                                  256.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  272.0,
+                                  256.0
+                                ],
+                                "out": [
+                                  278.62741699796953,
+                                  256.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  284.0,
+                                  268.0
+                                ],
+                                "in": [
+                                  284.0,
+                                  261.37258300203047
+                                ]
+                              },
+                              {
+                                "p": [
+                                  284.0,
+                                  324.0
+                                ],
+                                "out": [
+                                  284.0,
+                                  330.62741699796953
+                                ]
+                              },
+                              {
+                                "p": [
+                                  272.0,
+                                  336.0
+                                ],
+                                "in": [
+                                  278.62741699796953,
+                                  336.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  60.0,
+                                  336.0
+                                ],
+                                "out": [
+                                  53.37258300203048,
+                                  336.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  48.0,
+                                  324.0
+                                ],
+                                "in": [
+                                  48.0,
+                                  330.62741699796953
+                                ]
+                              },
+                              {
+                                "p": [
+                                  48.0,
+                                  268.0
+                                ],
+                                "out": [
+                                  48.0,
+                                  261.37258300203047
+                                ]
+                              }
+                            ],
+                            "closed": true
+                          }
+                        ]
+                      },
+                      "live": {
+                        "shape": "rectangle",
+                        "w": 236.0,
+                        "h": 80.0,
+                        "radii": [
+                          12.0,
+                          12.0,
+                          12.0,
+                          12.0
+                        ],
+                        "xf": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          1.0,
+                          48.0,
+                          256.0
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "id": 7,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        76.0,
+                        292.0
+                      ],
+                      "runs": [
+                        {
+                          "text": "Your message",
+                          "style": {
+                            "font_family": "Inter",
+                            "font_style": "SemiBold",
+                            "size": 17.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.12156863,
+                                "g": 0.13725491,
+                                "b": 0.15686275
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Left",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  },
+                  {
+                    "id": 8,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        76.0,
+                        316.0
+                      ],
+                      "runs": [
+                        {
+                          "text": "a request or a question",
+                          "style": {
+                            "font_family": "JetBrains Mono",
+                            "font_style": "Regular",
+                            "size": 13.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.34901962,
+                                "g": 0.3882353,
+                                "b": 0.43137255
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Left",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  }
+                ],
+                "clip": false
+              }
+            },
+            {
+              "id": 13,
+              "name": "claude code",
+              "kind": {
+                "type": "group",
+                "children": [
+                  {
+                    "id": 10,
+                    "appearance": {
+                      "items": [
+                        {
+                          "kind": "fill",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 0.12156863,
+                              "g": 0.13725491,
+                              "b": 0.15686275
+                            }
+                          }
+                        },
+                        {
+                          "kind": "stroke",
+                          "paint": {
+                            "type": "none"
+                          },
+                          "width": 0.0
+                        }
+                      ]
+                    },
+                    "kind": {
+                      "type": "path",
+                      "path": {
+                        "subpaths": [
+                          {
+                            "anchors": [
+                              {
+                                "p": [
+                                  394.0,
+                                  240.0
+                                ],
+                                "in": [
+                                  386.2680135023689,
+                                  240.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  602.0,
+                                  240.0
+                                ],
+                                "out": [
+                                  609.7319864976312,
+                                  240.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  616.0,
+                                  254.0
+                                ],
+                                "in": [
+                                  616.0,
+                                  246.2680135023689
+                                ]
+                              },
+                              {
+                                "p": [
+                                  616.0,
+                                  338.0
+                                ],
+                                "out": [
+                                  616.0,
+                                  345.7319864976311
+                                ]
+                              },
+                              {
+                                "p": [
+                                  602.0,
+                                  352.0
+                                ],
+                                "in": [
+                                  609.7319864976312,
+                                  352.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  394.0,
+                                  352.0
+                                ],
+                                "out": [
+                                  386.2680135023689,
+                                  352.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  380.0,
+                                  338.0
+                                ],
+                                "in": [
+                                  380.0,
+                                  345.7319864976311
+                                ]
+                              },
+                              {
+                                "p": [
+                                  380.0,
+                                  254.0
+                                ],
+                                "out": [
+                                  380.0,
+                                  246.2680135023689
+                                ]
+                              }
+                            ],
+                            "closed": true
+                          }
+                        ]
+                      },
+                      "live": {
+                        "shape": "rectangle",
+                        "w": 236.0,
+                        "h": 112.0,
+                        "radii": [
+                          14.0,
+                          14.0,
+                          14.0,
+                          14.0
+                        ],
+                        "xf": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          1.0,
+                          380.0,
+                          240.0
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "id": 11,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        498.0,
+                        291.56
+                      ],
+                      "runs": [
+                        {
+                          "text": "Claude Code",
+                          "style": {
+                            "font_family": "Inter",
+                            "font_style": "SemiBold",
+                            "size": 21.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 1.0,
+                                "g": 1.0,
+                                "b": 1.0
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Center",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  },
+                  {
+                    "id": 12,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        498.0,
+                        320.68
+                      ],
+                      "runs": [
+                        {
+                          "text": "reads ¬∑ is checked ¬∑ keeps",
+                          "style": {
+                            "font_family": "JetBrains Mono",
+                            "font_style": "Regular",
+                            "size": 13.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.54901963,
+                                "g": 0.58431375,
+                                "b": 0.62352943
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Center",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  }
+                ],
+                "clip": false
+              }
+            },
+            {
+              "id": 14,
+              "appearance": {
+                "items": [
+                  {
+                    "kind": "fill",
+                    "paint": {
+                      "type": "none"
+                    }
+                  },
+                  {
+                    "kind": "stroke",
+                    "paint": {
+                      "type": "solid",
+                      "color": {
+                        "model": "rgb",
+                        "r": 0.03529412,
+                        "g": 0.4117647,
+                        "b": 0.85490197
+                      }
+                    },
+                    "width": 2.0,
+                    "cap": "Round",
+                    "join": "Round",
+                    "end_arrow": "Triangle",
+                    "arrow_align": "Tip"
+                  }
+                ]
+              },
+              "kind": {
+                "type": "path",
+                "path": {
+                  "subpaths": [
+                    {
+                      "anchors": [
+                        {
+                          "p": [
+                            284.0,
+                            296.0
+                          ]
+                        },
+                        {
+                          "p": [
+                            376.0,
+                            296.0
+                          ]
+                        }
+                      ],
+                      "closed": false
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": 24,
+              "name": "skills",
+              "kind": {
+                "type": "group",
+                "children": [
+                  {
+                    "id": 15,
+                    "appearance": {
+                      "items": [
+                        {
+                          "kind": "fill",
+                          "paint": {
+                            "type": "none"
+                          }
+                        },
+                        {
+                          "kind": "stroke",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 0.8156863,
+                              "g": 0.84313726,
+                              "b": 0.87058824
+                            }
+                          },
+                          "width": 1.5,
+                          "cap": "Round",
+                          "join": "Round"
+                        }
+                      ]
+                    },
+                    "kind": {
+                      "type": "path",
+                      "path": {
+                        "subpaths": [
+                          {
+                            "anchors": [
+                              {
+                                "p": [
+                                  616.0,
+                                  296.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  664.0,
+                                  296.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  664.0,
+                                  170.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  808.0,
+                                  170.0
+                                ]
+                              }
+                            ],
+                            "closed": false
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "id": 16,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        674.0,
+                        162.0
+                      ],
+                      "runs": [
+                        {
+                          "text": "reads",
+                          "style": {
+                            "font_family": "JetBrains Mono",
+                            "font_style": "Regular",
+                            "size": 13.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.34901962,
+                                "g": 0.3882353,
+                                "b": 0.43137255
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Left",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  },
+                  {
+                    "id": 17,
+                    "appearance": {
+                      "items": [
+                        {
+                          "kind": "fill",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 1.0,
+                              "g": 1.0,
+                              "b": 1.0
+                            }
+                          }
+                        },
+                        {
+                          "kind": "stroke",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 0.84705883,
+                              "g": 0.87058824,
+                              "b": 0.89411765
+                            }
+                          },
+                          "width": 1.0
+                        }
+                      ]
+                    },
+                    "kind": {
+                      "type": "path",
+                      "path": {
+                        "subpaths": [
+                          {
+                            "anchors": [
+                              {
+                                "p": [
+                                  820.0,
+                                  118.0
+                                ],
+                                "in": [
+                                  813.3725830020305,
+                                  118.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  1140.0,
+                                  118.0
+                                ],
+                                "out": [
+                                  1146.6274169979695,
+                                  118.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  1152.0,
+                                  130.0
+                                ],
+                                "in": [
+                                  1152.0,
+                                  123.37258300203048
+                                ]
+                              },
+                              {
+                                "p": [
+                                  1152.0,
+                                  210.0
+                                ],
+                                "out": [
+                                  1152.0,
+                                  216.62741699796953
+                                ]
+                              },
+                              {
+                                "p": [
+                                  1140.0,
+                                  222.0
+                                ],
+                                "in": [
+                                  1146.6274169979695,
+                                  222.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  820.0,
+                                  222.0
+                                ],
+                                "out": [
+                                  813.3725830020305,
+                                  222.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  808.0,
+                                  210.0
+                                ],
+                                "in": [
+                                  808.0,
+                                  216.62741699796953
+                                ]
+                              },
+                              {
+                                "p": [
+                                  808.0,
+                                  130.0
+                                ],
+                                "out": [
+                                  808.0,
+                                  123.37258300203048
+                                ]
+                              }
+                            ],
+                            "closed": true
+                          }
+                        ]
+                      },
+                      "live": {
+                        "shape": "rectangle",
+                        "w": 344.0,
+                        "h": 104.0,
+                        "radii": [
+                          12.0,
+                          12.0,
+                          12.0,
+                          12.0
+                        ],
+                        "xf": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          1.0,
+                          808.0,
+                          118.0
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "id": 18,
+                    "appearance": {
+                      "items": [
+                        {
+                          "kind": "fill",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 1.0,
+                              "g": 1.0,
+                              "b": 1.0
+                            }
+                          }
+                        },
+                        {
+                          "kind": "stroke",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 0.54901963,
+                              "g": 0.58431375,
+                              "b": 0.62352943
+                            }
+                          },
+                          "width": 1.5
+                        }
+                      ]
+                    },
+                    "kind": {
+                      "type": "path",
+                      "path": {
+                        "subpaths": [
+                          {
+                            "anchors": [
+                              {
+                                "p": [
+                                  804.5,
+                                  170.0
+                                ],
+                                "in": [
+                                  804.5,
+                                  171.93299662440776
+                                ],
+                                "out": [
+                                  804.5,
+                                  168.06700337559224
+                                ],
+                                "kind": "Smooth"
+                              },
+                              {
+                                "p": [
+                                  808.0,
+                                  166.5
+                                ],
+                                "in": [
+                                  806.0670033755922,
+                                  166.5
+                                ],
+                                "out": [
+                                  809.9329966244078,
+                                  166.5
+                                ],
+                                "kind": "Smooth"
+                              },
+                              {
+                                "p": [
+                                  811.5,
+                                  170.0
+                                ],
+                                "in": [
+                                  811.5,
+                                  168.06700337559224
+                                ],
+                                "out": [
+                                  811.5,
+                                  171.93299662440776
+                                ],
+                                "kind": "Smooth"
+                              },
+                              {
+                                "p": [
+                                  808.0,
+                                  173.5
+                                ],
+                                "in": [
+                                  809.9329966244078,
+                                  173.5
+                                ],
+                                "out": [
+                                  806.0670033755922,
+                                  173.5
+                                ],
+                                "kind": "Smooth"
+                              }
+                            ],
+                            "closed": true
+                          }
+                        ]
+                      },
+                      "live": {
+                        "shape": "ellipse",
+                        "w": 7.0,
+                        "h": 7.0,
+                        "pie": [
+                          0.0,
+                          360.0
+                        ],
+                        "xf": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          1.0,
+                          804.5,
+                          166.5
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "id": 19,
+                    "appearance": {
+                      "items": [
+                        {
+                          "kind": "fill",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 0.8666667,
+                              "g": 0.95686275,
+                              "b": 1.0
+                            }
+                          }
+                        },
+                        {
+                          "kind": "stroke",
+                          "paint": {
+                            "type": "none"
+                          },
+                          "width": 0.0
+                        }
+                      ]
+                    },
+                    "kind": {
+                      "type": "path",
+                      "path": {
+                        "subpaths": [
+                          {
+                            "anchors": [
+                              {
+                                "p": [
+                                  838.0,
+                                  140.0
+                                ],
+                                "in": [
+                                  832.4771525016921,
+                                  140.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  862.0,
+                                  140.0
+                                ],
+                                "out": [
+                                  867.5228474983079,
+                                  140.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  872.0,
+                                  150.0
+                                ],
+                                "in": [
+                                  872.0,
+                                  144.47715250169207
+                                ]
+                              },
+                              {
+                                "p": [
+                                  872.0,
+                                  174.0
+                                ],
+                                "out": [
+                                  872.0,
+                                  179.52284749830795
+                                ]
+                              },
+                              {
+                                "p": [
+                                  862.0,
+                                  184.0
+                                ],
+                                "in": [
+                                  867.5228474983079,
+                                  184.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  838.0,
+                                  184.0
+                                ],
+                                "out": [
+                                  832.4771525016921,
+                                  184.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  828.0,
+                                  174.0
+                                ],
+                                "in": [
+                                  828.0,
+                                  179.52284749830795
+                                ]
+                              },
+                              {
+                                "p": [
+                                  828.0,
+                                  150.0
+                                ],
+                                "out": [
+                                  828.0,
+                                  144.47715250169207
+                                ]
+                              }
+                            ],
+                            "closed": true
+                          }
+                        ]
+                      },
+                      "live": {
+                        "shape": "rectangle",
+                        "w": 44.0,
+                        "h": 44.0,
+                        "radii": [
+                          10.0,
+                          10.0,
+                          10.0,
+                          10.0
+                        ],
+                        "xf": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          1.0,
+                          828.0,
+                          140.0
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "id": 20,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        850.0,
+                        168.12
+                      ],
+                      "runs": [
+                        {
+                          "text": "10",
+                          "style": {
+                            "font_family": "Inter",
+                            "font_style": "SemiBold",
+                            "size": 17.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.03529412,
+                                "g": 0.4117647,
+                                "b": 0.85490197
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Center",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  },
+                  {
+                    "id": 21,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        888.0,
+                        154.0
+                      ],
+                      "runs": [
+                        {
+                          "text": "Skills",
+                          "style": {
+                            "font_family": "Inter",
+                            "font_style": "SemiBold",
+                            "size": 17.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.12156863,
+                                "g": 0.13725491,
+                                "b": 0.15686275
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Left",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  },
+                  {
+                    "id": 22,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        888.0,
+                        176.0
+                      ],
+                      "runs": [
+                        {
+                          "text": "say how a job is done",
+                          "style": {
+                            "font_family": "Inter",
+                            "font_style": "Regular",
+                            "size": 14.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.34901962,
+                                "g": 0.3882353,
+                                "b": 0.43137255
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Left",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  },
+                  {
+                    "id": 23,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        888.0,
+                        200.0
+                      ],
+                      "runs": [
+                        {
+                          "text": "llm-wiki-docs ¬∑ task-checklist ‚Ä¶",
+                          "style": {
+                            "font_family": "JetBrains Mono",
+                            "font_style": "Regular",
+                            "size": 12.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.54901963,
+                                "g": 0.58431375,
+                                "b": 0.62352943
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Left",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  }
+                ],
+                "clip": false
+              }
+            },
+            {
+              "id": 34,
+              "name": "gates",
+              "kind": {
+                "type": "group",
+                "children": [
+                  {
+                    "id": 25,
+                    "appearance": {
+                      "items": [
+                        {
+                          "kind": "fill",
+                          "paint": {
+                            "type": "none"
+                          }
+                        },
+                        {
+                          "kind": "stroke",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 0.8156863,
+                              "g": 0.84313726,
+                              "b": 0.87058824
+                            }
+                          },
+                          "width": 1.5,
+                          "cap": "Round",
+                          "join": "Round"
+                        }
+                      ]
+                    },
+                    "kind": {
+                      "type": "path",
+                      "path": {
+                        "subpaths": [
+                          {
+                            "anchors": [
+                              {
+                                "p": [
+                                  616.0,
+                                  296.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  664.0,
+                                  296.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  664.0,
+                                  296.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  808.0,
+                                  296.0
+                                ]
+                              }
+                            ],
+                            "closed": false
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "id": 26,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        674.0,
+                        288.0
+                      ],
+                      "runs": [
+                        {
+                          "text": "checked by",
+                          "style": {
+                            "font_family": "JetBrains Mono",
+                            "font_style": "Regular",
+                            "size": 13.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.34901962,
+                                "g": 0.3882353,
+                                "b": 0.43137255
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Left",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  },
+                  {
+                    "id": 27,
+                    "appearance": {
+                      "items": [
+                        {
+                          "kind": "fill",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 1.0,
+                              "g": 1.0,
+                              "b": 1.0
+                            }
+                          }
+                        },
+                        {
+                          "kind": "stroke",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 0.84705883,
+                              "g": 0.87058824,
+                              "b": 0.89411765
+                            }
+                          },
+                          "width": 1.0
+                        }
+                      ]
+                    },
+                    "kind": {
+                      "type": "path",
+                      "path": {
+                        "subpaths": [
+                          {
+                            "anchors": [
+                              {
+                                "p": [
+                                  820.0,
+                                  244.0
+                                ],
+                                "in": [
+                                  813.3725830020305,
+                                  244.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  1140.0,
+                                  244.0
+                                ],
+                                "out": [
+                                  1146.6274169979695,
+                                  244.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  1152.0,
+                                  256.0
+                                ],
+                                "in": [
+                                  1152.0,
+                                  249.37258300203047
+                                ]
+                              },
+                              {
+                                "p": [
+                                  1152.0,
+                                  336.0
+                                ],
+                                "out": [
+                                  1152.0,
+                                  342.62741699796953
+                                ]
+                              },
+                              {
+                                "p": [
+                                  1140.0,
+                                  348.0
+                                ],
+                                "in": [
+                                  1146.6274169979695,
+                                  348.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  820.0,
+                                  348.0
+                                ],
+                                "out": [
+                                  813.3725830020305,
+                                  348.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  808.0,
+                                  336.0
+                                ],
+                                "in": [
+                                  808.0,
+                                  342.62741699796953
+                                ]
+                              },
+                              {
+                                "p": [
+                                  808.0,
+                                  256.0
+                                ],
+                                "out": [
+                                  808.0,
+                                  249.37258300203047
+                                ]
+                              }
+                            ],
+                            "closed": true
+                          }
+                        ]
+                      },
+                      "live": {
+                        "shape": "rectangle",
+                        "w": 344.0,
+                        "h": 104.0,
+                        "radii": [
+                          12.0,
+                          12.0,
+                          12.0,
+                          12.0
+                        ],
+                        "xf": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          1.0,
+                          808.0,
+                          244.0
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "id": 28,
+                    "appearance": {
+                      "items": [
+                        {
+                          "kind": "fill",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 1.0,
+                              "g": 1.0,
+                              "b": 1.0
+                            }
+                          }
+                        },
+                        {
+                          "kind": "stroke",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 0.54901963,
+                              "g": 0.58431375,
+                              "b": 0.62352943
+                            }
+                          },
+                          "width": 1.5
+                        }
+                      ]
+                    },
+                    "kind": {
+                      "type": "path",
+                      "path": {
+                        "subpaths": [
+                          {
+                            "anchors": [
+                              {
+                                "p": [
+                                  804.5,
+                                  296.0
+                                ],
+                                "in": [
+                                  804.5,
+                                  297.9329966244078
+                                ],
+                                "out": [
+                                  804.5,
+                                  294.0670033755922
+                                ],
+                                "kind": "Smooth"
+                              },
+                              {
+                                "p": [
+                                  808.0,
+                                  292.5
+                                ],
+                                "in": [
+                                  806.0670033755922,
+                                  292.5
+                                ],
+                                "out": [
+                                  809.9329966244078,
+                                  292.5
+                                ],
+                                "kind": "Smooth"
+                              },
+                              {
+                                "p": [
+                                  811.5,
+                                  296.0
+                                ],
+                                "in": [
+                                  811.5,
+                                  294.0670033755922
+                                ],
+                                "out": [
+                                  811.5,
+                                  297.9329966244078
+                                ],
+                                "kind": "Smooth"
+                              },
+                              {
+                                "p": [
+                                  808.0,
+                                  299.5
+                                ],
+                                "in": [
+                                  809.9329966244078,
+                                  299.5
+                                ],
+                                "out": [
+                                  806.0670033755922,
+                                  299.5
+                                ],
+                                "kind": "Smooth"
+                              }
+                            ],
+                            "closed": true
+                          }
+                        ]
+                      },
+                      "live": {
+                        "shape": "ellipse",
+                        "w": 7.0,
+                        "h": 7.0,
+                        "pie": [
+                          0.0,
+                          360.0
+                        ],
+                        "xf": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          1.0,
+                          804.5,
+                          292.5
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "id": 29,
+                    "appearance": {
+                      "items": [
+                        {
+                          "kind": "fill",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 0.85490197,
+                              "g": 0.9843137,
+                              "b": 0.88235295
+                            }
+                          }
+                        },
+                        {
+                          "kind": "stroke",
+                          "paint": {
+                            "type": "none"
+                          },
+                          "width": 0.0
+                        }
+                      ]
+                    },
+                    "kind": {
+                      "type": "path",
+                      "path": {
+                        "subpaths": [
+                          {
+                            "anchors": [
+                              {
+                                "p": [
+                                  838.0,
+                                  266.0
+                                ],
+                                "in": [
+                                  832.4771525016921,
+                                  266.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  862.0,
+                                  266.0
+                                ],
+                                "out": [
+                                  867.5228474983079,
+                                  266.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  872.0,
+                                  276.0
+                                ],
+                                "in": [
+                                  872.0,
+                                  270.47715250169205
+                                ]
+                              },
+                              {
+                                "p": [
+                                  872.0,
+                                  300.0
+                                ],
+                                "out": [
+                                  872.0,
+                                  305.52284749830795
+                                ]
+                              },
+                              {
+                                "p": [
+                                  862.0,
+                                  310.0
+                                ],
+                                "in": [
+                                  867.5228474983079,
+                                  310.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  838.0,
+                                  310.0
+                                ],
+                                "out": [
+                                  832.4771525016921,
+                                  310.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  828.0,
+                                  300.0
+                                ],
+                                "in": [
+                                  828.0,
+                                  305.52284749830795
+                                ]
+                              },
+                              {
+                                "p": [
+                                  828.0,
+                                  276.0
+                                ],
+                                "out": [
+                                  828.0,
+                                  270.47715250169205
+                                ]
+                              }
+                            ],
+                            "closed": true
+                          }
+                        ]
+                      },
+                      "live": {
+                        "shape": "rectangle",
+                        "w": 44.0,
+                        "h": 44.0,
+                        "radii": [
+                          10.0,
+                          10.0,
+                          10.0,
+                          10.0
+                        ],
+                        "xf": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          1.0,
+                          828.0,
+                          266.0
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "id": 30,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        850.0,
+                        294.12
+                      ],
+                      "runs": [
+                        {
+                          "text": "12",
+                          "style": {
+                            "font_family": "Inter",
+                            "font_style": "SemiBold",
+                            "size": 17.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.101960786,
+                                "g": 0.49803922,
+                                "b": 0.21568628
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Center",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  },
+                  {
+                    "id": 31,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        888.0,
+                        280.0
+                      ],
+                      "runs": [
+                        {
+                          "text": "Hook gates",
+                          "style": {
+                            "font_family": "Inter",
+                            "font_style": "SemiBold",
+                            "size": 17.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.12156863,
+                                "g": 0.13725491,
+                                "b": 0.15686275
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Left",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  },
+                  {
+                    "id": 32,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        888.0,
+                        302.0
+                      ],
+                      "runs": [
+                        {
+                          "text": "check that it was done",
+                          "style": {
+                            "font_family": "Inter",
+                            "font_style": "Regular",
+                            "size": 14.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.34901962,
+                                "g": 0.3882353,
+                                "b": 0.43137255
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Left",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  },
+                  {
+                    "id": 33,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        888.0,
+                        326.0
+                      ],
+                      "runs": [
+                        {
+                          "text": "skill-match ¬∑ answer-check ‚Ä¶",
+                          "style": {
+                            "font_family": "JetBrains Mono",
+                            "font_style": "Regular",
+                            "size": 12.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.54901963,
+                                "g": 0.58431375,
+                                "b": 0.62352943
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Left",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  }
+                ],
+                "clip": false
+              }
+            },
+            {
+              "id": 44,
+              "name": "wiki",
+              "kind": {
+                "type": "group",
+                "children": [
+                  {
+                    "id": 35,
+                    "appearance": {
+                      "items": [
+                        {
+                          "kind": "fill",
+                          "paint": {
+                            "type": "none"
+                          }
+                        },
+                        {
+                          "kind": "stroke",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 0.8156863,
+                              "g": 0.84313726,
+                              "b": 0.87058824
+                            }
+                          },
+                          "width": 1.5,
+                          "cap": "Round",
+                          "join": "Round"
+                        }
+                      ]
+                    },
+                    "kind": {
+                      "type": "path",
+                      "path": {
+                        "subpaths": [
+                          {
+                            "anchors": [
+                              {
+                                "p": [
+                                  616.0,
+                                  296.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  664.0,
+                                  296.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  664.0,
+                                  422.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  808.0,
+                                  422.0
+                                ]
+                              }
+                            ],
+                            "closed": false
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "id": 36,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        674.0,
+                        414.0
+                      ],
+                      "runs": [
+                        {
+                          "text": "writes ¬∑ recalls",
+                          "style": {
+                            "font_family": "JetBrains Mono",
+                            "font_style": "Regular",
+                            "size": 13.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.34901962,
+                                "g": 0.3882353,
+                                "b": 0.43137255
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Left",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  },
+                  {
+                    "id": 37,
+                    "appearance": {
+                      "items": [
+                        {
+                          "kind": "fill",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 1.0,
+                              "g": 1.0,
+                              "b": 1.0
+                            }
+                          }
+                        },
+                        {
+                          "kind": "stroke",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 0.84705883,
+                              "g": 0.87058824,
+                              "b": 0.89411765
+                            }
+                          },
+                          "width": 1.0
+                        }
+                      ]
+                    },
+                    "kind": {
+                      "type": "path",
+                      "path": {
+                        "subpaths": [
+                          {
+                            "anchors": [
+                              {
+                                "p": [
+                                  820.0,
+                                  370.0
+                                ],
+                                "in": [
+                                  813.3725830020305,
+                                  370.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  1140.0,
+                                  370.0
+                                ],
+                                "out": [
+                                  1146.6274169979695,
+                                  370.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  1152.0,
+                                  382.0
+                                ],
+                                "in": [
+                                  1152.0,
+                                  375.37258300203047
+                                ]
+                              },
+                              {
+                                "p": [
+                                  1152.0,
+                                  462.0
+                                ],
+                                "out": [
+                                  1152.0,
+                                  468.62741699796953
+                                ]
+                              },
+                              {
+                                "p": [
+                                  1140.0,
+                                  474.0
+                                ],
+                                "in": [
+                                  1146.6274169979695,
+                                  474.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  820.0,
+                                  474.0
+                                ],
+                                "out": [
+                                  813.3725830020305,
+                                  474.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  808.0,
+                                  462.0
+                                ],
+                                "in": [
+                                  808.0,
+                                  468.62741699796953
+                                ]
+                              },
+                              {
+                                "p": [
+                                  808.0,
+                                  382.0
+                                ],
+                                "out": [
+                                  808.0,
+                                  375.37258300203047
+                                ]
+                              }
+                            ],
+                            "closed": true
+                          }
+                        ]
+                      },
+                      "live": {
+                        "shape": "rectangle",
+                        "w": 344.0,
+                        "h": 104.0,
+                        "radii": [
+                          12.0,
+                          12.0,
+                          12.0,
+                          12.0
+                        ],
+                        "xf": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          1.0,
+                          808.0,
+                          370.0
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "id": 38,
+                    "appearance": {
+                      "items": [
+                        {
+                          "kind": "fill",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 1.0,
+                              "g": 1.0,
+                              "b": 1.0
+                            }
+                          }
+                        },
+                        {
+                          "kind": "stroke",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 0.54901963,
+                              "g": 0.58431375,
+                              "b": 0.62352943
+                            }
+                          },
+                          "width": 1.5
+                        }
+                      ]
+                    },
+                    "kind": {
+                      "type": "path",
+                      "path": {
+                        "subpaths": [
+                          {
+                            "anchors": [
+                              {
+                                "p": [
+                                  804.5,
+                                  422.0
+                                ],
+                                "in": [
+                                  804.5,
+                                  423.9329966244078
+                                ],
+                                "out": [
+                                  804.5,
+                                  420.0670033755922
+                                ],
+                                "kind": "Smooth"
+                              },
+                              {
+                                "p": [
+                                  808.0,
+                                  418.5
+                                ],
+                                "in": [
+                                  806.0670033755922,
+                                  418.5
+                                ],
+                                "out": [
+                                  809.9329966244078,
+                                  418.5
+                                ],
+                                "kind": "Smooth"
+                              },
+                              {
+                                "p": [
+                                  811.5,
+                                  422.0
+                                ],
+                                "in": [
+                                  811.5,
+                                  420.0670033755922
+                                ],
+                                "out": [
+                                  811.5,
+                                  423.9329966244078
+                                ],
+                                "kind": "Smooth"
+                              },
+                              {
+                                "p": [
+                                  808.0,
+                                  425.5
+                                ],
+                                "in": [
+                                  809.9329966244078,
+                                  425.5
+                                ],
+                                "out": [
+                                  806.0670033755922,
+                                  425.5
+                                ],
+                                "kind": "Smooth"
+                              }
+                            ],
+                            "closed": true
+                          }
+                        ]
+                      },
+                      "live": {
+                        "shape": "ellipse",
+                        "w": 7.0,
+                        "h": 7.0,
+                        "pie": [
+                          0.0,
+                          360.0
+                        ],
+                        "xf": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          1.0,
+                          804.5,
+                          418.5
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "id": 39,
+                    "appearance": {
+                      "items": [
+                        {
+                          "kind": "fill",
+                          "paint": {
+                            "type": "solid",
+                            "color": {
+                              "model": "rgb",
+                              "r": 1.0,
+                              "g": 0.972549,
+                              "b": 0.77254903
+                            }
+                          }
+                        },
+                        {
+                          "kind": "stroke",
+                          "paint": {
+                            "type": "none"
+                          },
+                          "width": 0.0
+                        }
+                      ]
+                    },
+                    "kind": {
+                      "type": "path",
+                      "path": {
+                        "subpaths": [
+                          {
+                            "anchors": [
+                              {
+                                "p": [
+                                  838.0,
+                                  392.0
+                                ],
+                                "in": [
+                                  832.4771525016921,
+                                  392.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  862.0,
+                                  392.0
+                                ],
+                                "out": [
+                                  867.5228474983079,
+                                  392.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  872.0,
+                                  402.0
+                                ],
+                                "in": [
+                                  872.0,
+                                  396.47715250169205
+                                ]
+                              },
+                              {
+                                "p": [
+                                  872.0,
+                                  426.0
+                                ],
+                                "out": [
+                                  872.0,
+                                  431.52284749830795
+                                ]
+                              },
+                              {
+                                "p": [
+                                  862.0,
+                                  436.0
+                                ],
+                                "in": [
+                                  867.5228474983079,
+                                  436.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  838.0,
+                                  436.0
+                                ],
+                                "out": [
+                                  832.4771525016921,
+                                  436.0
+                                ]
+                              },
+                              {
+                                "p": [
+                                  828.0,
+                                  426.0
+                                ],
+                                "in": [
+                                  828.0,
+                                  431.52284749830795
+                                ]
+                              },
+                              {
+                                "p": [
+                                  828.0,
+                                  402.0
+                                ],
+                                "out": [
+                                  828.0,
+                                  396.47715250169205
+                                ]
+                              }
+                            ],
+                            "closed": true
+                          }
+                        ]
+                      },
+                      "live": {
+                        "shape": "rectangle",
+                        "w": 44.0,
+                        "h": 44.0,
+                        "radii": [
+                          10.0,
+                          10.0,
+                          10.0,
+                          10.0
+                        ],
+                        "xf": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          1.0,
+                          828.0,
+                          392.0
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "id": 40,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        850.0,
+                        420.12
+                      ],
+                      "runs": [
+                        {
+                          "text": "md",
+                          "style": {
+                            "font_family": "Inter",
+                            "font_style": "SemiBold",
+                            "size": 17.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.6039216,
+                                "g": 0.40392157,
+                                "b": 0.0
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Center",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  },
+                  {
+                    "id": 41,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        888.0,
+                        406.0
+                      ],
+                      "runs": [
+                        {
+                          "text": "Wiki",
+                          "style": {
+                            "font_family": "Inter",
+                            "font_style": "SemiBold",
+                            "size": 17.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.12156863,
+                                "g": 0.13725491,
+                                "b": 0.15686275
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Left",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  },
+                  {
+                    "id": 42,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        888.0,
+                        428.0
+                      ],
+                      "runs": [
+                        {
+                          "text": "keeps what was learned",
+                          "style": {
+                            "font_family": "Inter",
+                            "font_style": "Regular",
+                            "size": 14.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.34901962,
+                                "g": 0.3882353,
+                                "b": 0.43137255
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Left",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  },
+                  {
+                    "id": 43,
+                    "kind": {
+                      "type": "text",
+                      "kind": {
+                        "kind": "point"
+                      },
+                      "xf": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        888.0,
+                        452.0
+                      ],
+                      "runs": [
+                        {
+                          "text": "~/llm-wiki-docs/<topic>/wiki/",
+                          "style": {
+                            "font_family": "JetBrains Mono",
+                            "font_style": "Regular",
+                            "size": 12.0,
+                            "tracking": 0.0,
+                            "baseline_shift": 0.0,
+                            "h_scale": 100.0,
+                            "v_scale": 100.0,
+                            "rotation": 0.0,
+                            "fill": {
+                              "type": "solid",
+                              "color": {
+                                "model": "rgb",
+                                "r": 0.54901963,
+                                "g": 0.58431375,
+                                "b": 0.62352943
+                              }
+                            },
+                            "stroke": {
+                              "type": "none"
+                            },
+                            "stroke_width": 0.0,
+                            "underline": false,
+                            "strikethrough": false,
+                            "all_caps": false
+                          }
+                        }
+                      ],
+                      "para": {
+                        "justify": "Left",
+                        "left_indent": 0.0,
+                        "right_indent": 0.0,
+                        "first_line_indent": 0.0,
+                        "space_before": 0.0,
+                        "space_after": 0.0,
+                        "hyphenate": false,
+                        "mojikumi": "lineEndHalf",
+                        "burasagari": "standard"
+                      }
+                    }
+                  }
+                ],
+                "clip": false
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "swatches": [
+      {
+        "name": "[None]",
+        "paint": {
+          "type": "none"
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "White",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Black",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.0,
+            "g": 0.0,
+            "b": 0.0
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Red",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.92941177,
+            "g": 0.10980392,
+            "b": 0.14117648
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Orange Red",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.94509804,
+            "g": 0.3529412,
+            "b": 0.14117648
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Orange",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.96862745,
+            "g": 0.5764706,
+            "b": 0.11764706
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Amber",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.9843137,
+            "g": 0.6901961,
+            "b": 0.23137255
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Yellow",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.9882353,
+            "g": 0.93333334,
+            "b": 0.12941177
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Yellow Green",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.8509804,
+            "g": 0.8784314,
+            "b": 0.12941177
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Lime",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.54901963,
+            "g": 0.7764706,
+            "b": 0.24705882
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Green",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.22352941,
+            "g": 0.70980394,
+            "b": 0.2901961
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Emerald",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.0,
+            "g": 0.57254905,
+            "b": 0.27058825
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Teal",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.0,
+            "g": 0.40784314,
+            "b": 0.21568628
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Aqua",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.13333334,
+            "g": 0.70980394,
+            "b": 0.4509804
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Cyan Green",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.0,
+            "g": 0.6627451,
+            "b": 0.6156863
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Cyan",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.16078432,
+            "g": 0.67058825,
+            "b": 0.8862745
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Azure",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.0,
+            "g": 0.44313726,
+            "b": 0.7372549
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Blue",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.18039216,
+            "g": 0.19215687,
+            "b": 0.57254905
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Indigo",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.105882354,
+            "g": 0.078431375,
+            "b": 0.39215687
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Violet",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.4,
+            "g": 0.1764706,
+            "b": 0.5686275
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Purple",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.5764706,
+            "g": 0.15294118,
+            "b": 0.56078434
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Magenta",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.61960787,
+            "g": 0.0,
+            "b": 0.3647059
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Rose",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.83137256,
+            "g": 0.078431375,
+            "b": 0.3529412
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Pink",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.92941177,
+            "g": 0.11764706,
+            "b": 0.4745098
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Brown",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.78039217,
+            "g": 0.69803923,
+            "b": 0.6
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Tan",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.6,
+            "g": 0.5254902,
+            "b": 0.45882353
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Coffee",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.4509804,
+            "g": 0.3882353,
+            "b": 0.34117648
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Chocolate",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.3254902,
+            "g": 0.2784314,
+            "b": 0.25490198
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Sand",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.7764706,
+            "g": 0.6117647,
+            "b": 0.42745098
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Copper",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.6509804,
+            "g": 0.4862745,
+            "b": 0.32156864
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Rust",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.54901963,
+            "g": 0.38431373,
+            "b": 0.22352941
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Walnut",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.45882353,
+            "g": 0.29803923,
+            "b": 0.14117648
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Espresso",
+        "paint": {
+          "type": "solid",
+          "color": {
+            "model": "rgb",
+            "r": 0.3764706,
+            "g": 0.21960784,
+            "b": 0.07450981
+          }
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "White, Black",
+        "paint": {
+          "type": "gradient",
+          "gradient": {
+            "kind": "Linear",
+            "stops": [
+              {
+                "offset": 0.0,
+                "color": {
+                  "model": "rgb",
+                  "r": 1.0,
+                  "g": 1.0,
+                  "b": 1.0
+                },
+                "opacity": 1.0,
+                "midpoint": 0.5
+              },
+              {
+                "offset": 1.0,
+                "color": {
+                  "model": "rgb",
+                  "r": 0.0,
+                  "g": 0.0,
+                  "b": 0.0
+                },
+                "opacity": 1.0,
+                "midpoint": 0.5
+              }
+            ]
+          },
+          "angle": 0.0
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Radial White, Black",
+        "paint": {
+          "type": "gradient",
+          "gradient": {
+            "kind": "Radial",
+            "stops": [
+              {
+                "offset": 0.0,
+                "color": {
+                  "model": "rgb",
+                  "r": 1.0,
+                  "g": 1.0,
+                  "b": 1.0
+                },
+                "opacity": 1.0,
+                "midpoint": 0.5
+              },
+              {
+                "offset": 1.0,
+                "color": {
+                  "model": "rgb",
+                  "r": 0.0,
+                  "g": 0.0,
+                  "b": 0.0
+                },
+                "opacity": 1.0,
+                "midpoint": 0.5
+              }
+            ]
+          },
+          "angle": 0.0
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Sunset",
+        "paint": {
+          "type": "gradient",
+          "gradient": {
+            "kind": "Linear",
+            "stops": [
+              {
+                "offset": 0.0,
+                "color": {
+                  "model": "rgb",
+                  "r": 0.9843137,
+                  "g": 0.6901961,
+                  "b": 0.23137255
+                },
+                "opacity": 1.0,
+                "midpoint": 0.5
+              },
+              {
+                "offset": 1.0,
+                "color": {
+                  "model": "rgb",
+                  "r": 0.83137256,
+                  "g": 0.078431375,
+                  "b": 0.3529412
+                },
+                "opacity": 1.0,
+                "midpoint": 0.5
+              }
+            ]
+          },
+          "angle": 0.0
+        },
+        "global": false,
+        "spot": false
+      },
+      {
+        "name": "Ocean",
+        "paint": {
+          "type": "gradient",
+          "gradient": {
+            "kind": "Linear",
+            "stops": [
+              {
+                "offset": 0.0,
+                "color": {
+                  "model": "rgb",
+                  "r": 0.16078432,
+                  "g": 0.67058825,
+                  "b": 0.8862745
+                },
+                "opacity": 1.0,
+                "midpoint": 0.5
+              },
+              {
+                "offset": 1.0,
+                "color": {
+                  "model": "rgb",
+                  "r": 0.18039216,
+                  "g": 0.19215687,
+                  "b": 0.57254905
+                },
+                "opacity": 1.0,
+                "midpoint": 0.5
+              }
+            ]
+          },
+          "angle": 0.0
+        },
+        "global": false,
+        "spot": false
+      }
+    ],
+    "swatch_groups": [
+      {
+        "name": "Grays",
+        "swatches": [
+          {
+            "name": "K=90",
+            "paint": {
+              "type": "solid",
+              "color": {
+                "model": "gray",
+                "k": 0.9
+              }
+            },
+            "global": false,
+            "spot": false
+          },
+          {
+            "name": "K=80",
+            "paint": {
+              "type": "solid",
+              "color": {
+                "model": "gray",
+                "k": 0.8
+              }
+            },
+            "global": false,
+            "spot": false
+          },
+          {
+            "name": "K=70",
+            "paint": {
+              "type": "solid",
+              "color": {
+                "model": "gray",
+                "k": 0.7
+              }
+            },
+            "global": false,
+            "spot": false
+          },
+          {
+            "name": "K=60",
+            "paint": {
+              "type": "solid",
+              "color": {
+                "model": "gray",
+                "k": 0.6
+              }
+            },
+            "global": false,
+            "spot": false
+          },
+          {
+            "name": "K=50",
+            "paint": {
+              "type": "solid",
+              "color": {
+                "model": "gray",
+                "k": 0.5
+              }
+            },
+            "global": false,
+            "spot": false
+          },
+          {
+            "name": "K=40",
+            "paint": {
+              "type": "solid",
+              "color": {
+                "model": "gray",
+                "k": 0.4
+              }
+            },
+            "global": false,
+            "spot": false
+          },
+          {
+            "name": "K=30",
+            "paint": {
+              "type": "solid",
+              "color": {
+                "model": "gray",
+                "k": 0.3
+              }
+            },
+            "global": false,
+            "spot": false
+          },
+          {
+            "name": "K=20",
+            "paint": {
+              "type": "solid",
+              "color": {
+                "model": "gray",
+                "k": 0.2
+              }
+            },
+            "global": false,
+            "spot": false
+          },
+          {
+            "name": "K=10",
+            "paint": {
+              "type": "solid",
+              "color": {
+                "model": "gray",
+                "k": 0.1
+              }
+            },
+            "global": false,
+            "spot": false
+          }
+        ]
+      },
+      {
+        "name": "Brights",
+        "swatches": [
+          {
+            "name": "Bright Red",
+            "paint": {
+              "type": "solid",
+              "color": {
+                "model": "rgb",
+                "r": 1.0,
+                "g": 0.11372549,
+                "b": 0.14509805
+              }
+            },
+            "global": false,
+            "spot": false
+          },
+          {
+            "name": "Bright Yellow",
+            "paint": {
+              "type": "solid",
+              "color": {
+                "model": "rgb",
+                "r": 1.0,
+                "g": 0.9019608,
+                "b": 0.0
+              }
+            },
+            "global": false,
+            "spot": false
+          },
+          {
+            "name": "Bright Green",
+            "paint": {
+              "type": "solid",
+              "color": {
+                "model": "rgb",
+                "r": 0.0,
+                "g": 0.9019608,
+                "b": 0.4627451
+              }
+            },
+            "global": false,
+            "spot": false
+          },
+          {
+            "name": "Bright Blue",
+            "paint": {
+              "type": "solid",
+              "color": {
+                "model": "rgb",
+                "r": 0.16078432,
+                "g": 0.4745098,
+                "b": 1.0
+              }
+            },
+            "global": false,
+            "spot": false
+          },
+          {
+            "name": "Bright Violet",
+            "paint": {
+              "type": "solid",
+              "color": {
+                "model": "rgb",
+                "r": 0.8352941,
+                "g": 0.0,
+                "b": 0.9764706
+              }
+            },
+            "global": false,
+            "spot": false
+          }
+        ]
+      }
+    ],
+    "graphic_styles": [
+      {
+        "name": "Default Graphic Style",
+        "appearance": {
+          "items": [
+            {
+              "kind": "fill",
+              "paint": {
+                "type": "solid",
+                "color": {
+                  "model": "rgb",
+                  "r": 1.0,
+                  "g": 1.0,
+                  "b": 1.0
+                }
+              }
+            },
+            {
+              "kind": "stroke",
+              "paint": {
+                "type": "solid",
+                "color": {
+                  "model": "rgb",
+                  "r": 0.0,
+                  "g": 0.0,
+                  "b": 0.0
+                }
+              },
+              "width": 1.0
+            }
+          ]
+        },
+        "id": 1,
+        "unit_box": true
+      },
+      {
+        "name": "Black Outline",
+        "appearance": {
+          "items": [
+            {
+              "kind": "fill",
+              "paint": {
+                "type": "none"
+              }
+            },
+            {
+              "kind": "stroke",
+              "paint": {
+                "type": "solid",
+                "color": {
+                  "model": "rgb",
+                  "r": 0.0,
+                  "g": 0.0,
+                  "b": 0.0
+                }
+              },
+              "width": 1.0
+            }
+          ]
+        },
+        "id": 2,
+        "unit_box": true
+      },
+      {
+        "name": "Heavy Ink",
+        "appearance": {
+          "items": [
+            {
+              "kind": "fill",
+              "paint": {
+                "type": "solid",
+                "color": {
+                  "model": "rgb",
+                  "r": 0.105882354,
+                  "g": 0.078431375,
+                  "b": 0.39215687
+                }
+              }
+            },
+            {
+              "kind": "stroke",
+              "paint": {
+                "type": "solid",
+                "color": {
+                  "model": "rgb",
+                  "r": 0.0,
+                  "g": 0.0,
+                  "b": 0.0
+                }
+              },
+              "width": 4.0
+            }
+          ]
+        },
+        "id": 3,
+        "unit_box": true
+      },
+      {
+        "name": "Sunshine",
+        "appearance": {
+          "items": [
+            {
+              "kind": "fill",
+              "paint": {
+                "type": "solid",
+                "color": {
+                  "model": "rgb",
+                  "r": 0.9843137,
+                  "g": 0.6901961,
+                  "b": 0.23137255
+                }
+              }
+            },
+            {
+              "kind": "stroke",
+              "paint": {
+                "type": "solid",
+                "color": {
+                  "model": "rgb",
+                  "r": 0.94509804,
+                  "g": 0.3529412,
+                  "b": 0.14117648
+                }
+              },
+              "width": 2.0
+            }
+          ]
+        },
+        "id": 4,
+        "unit_box": true
+      }
+    ],
+    "symbols": [],
+    "guides": [],
+    "grid": {
+      "spacing": 72.0,
+      "subdivisions": 8
+    },
+    "raster_effects_ppi": 72.0,
+    "images": {},
+    "next_id": 45,
+    "metadata": {
+      "author": "",
+      "authorTitle": "",
+      "description": "",
+      "keywords": [],
+      "rating": 0,
+      "copyrightStatus": "unknown",
+      "copyrightNotice": "",
+      "copyrightUrl": "",
+      "created": 1794532725,
+      "modified": 1794532737
+    }
+  },
+  "images": {}
+}
+ VCBLOBS %PDF-1.7
+%ÄÄÄÄ
+
+1 0 obj
+<</Type/Pages/Count 1/Kids[12 0 R]>>
+endobj
+2 0 obj
+<</ProcSet[/PDF/Text/ImageC/ImageB]/Font<</f0 3 0 R/f1 6 0 R/f2 9 0 R>>>>
+endobj
+3 0 obj
+<</Type/Font/Subtype/Type0/BaseFont/MSVOJH+Inter-SemiBold/Encoding/Identity-H/DescendantFonts[4 0 R]/ToUnicode 14 0 R>>
+endobj
+4 0 obj
+<</Type/Font/Subtype/CIDFontType2/BaseFont/MSVOJH+Inter-SemiBold/CIDSystemInfo<</Registry(Adobe)/Ordering(Identity)/Supplement 0>>/FontDescriptor 5 0 R/DW 0/CIDToGIDMap/Identity/W[0 0 656.25 1 1 745.60547 2 2 608.8867 3 3 839.35547 4 4 251.95312 5 5 353.02734 6 6 612.3047 7 7 591.3086 8 8 624.02344 9 9 574.21875 10 10 396.97266 11 11 549.3164 12 12 388.67188 13 13 261.71875 14 14 713.3789 15 15 612.3047 16 16 900.3906 17 17 625.4883 18 18 736.8164 19 19 261.71875 20 20 624.02344 21 21 422.85156 22 22 659.66797 23 23 650.3906 24 24 569.33594 25 25 623.0469 26 26 1020.01953]>>
+endobj
+5 0 obj
+<</Type/FontDescriptor/FontName/MSVOJH+Inter-SemiBold/Flags 131076/FontBBox[9.765625 -215.82031 995.60547 906.25]/ItalicAngle 0/Ascent 968.75/Descent -241.21094/CapHeight 727.53906/StemV 144.2/CIDSet 13 0 R/FontFile2 15 0 R>>
+endobj
+6 0 obj
+<</Type/Font/Subtype/Type0/BaseFont/YFEVAG+Inter-Regular/Encoding/Identity-H/DescendantFonts[7 0 R]/ToUnicode 17 0 R>>
+endobj
+7 0 obj
+<</Type/Font/Subtype/CIDFontType2/BaseFont/YFEVAG+Inter-Regular/CIDSystemInfo<</Registry(Adobe)/Ordering(Identity)/Supplement 0>>/FontDescriptor 8 0 R/DW 0/CIDToGIDMap/Identity/W[0 0 656.25 1 1 641.60156 2 2 548.8281 3 4 242.1875 5 5 527.83203 6 6 281.25 7 7 561.52344 8 8 562.0117 9 9 591.3086 10 10 599.6094 11 11 818.3594 12 12 242.1875 13 14 612.3047 15 15 590.8203 16 16 583.0078 17 17 288.08594 18 18 743.16406 19 19 613.28125 20 20 327.14844 21 21 571.28906 22 22 645.5078 23 23 612.3047 24 24 376.46484]>>
+endobj
+8 0 obj
+<</Type/FontDescriptor/FontName/YFEVAG+Inter-Regular/Flags 131076/FontBBox[-12.6953125 -215.82031 784.1797 906.25]/ItalicAngle 0/Ascent 968.75/Descent -241.21094/CapHeight 727.53906/StemV 95.4/CIDSet 16 0 R/FontFile2 18 0 R>>
+endobj
+9 0 obj
+<</Type/Font/Subtype/Type0/BaseFont/DKUXNX+JetBrainsMono-Regular/Encoding/Identity-H/DescendantFonts[10 0 R]/ToUnicode 20 0 R>>
+endobj
+10 0 obj
+<</Type/Font/Subtype/CIDFontType2/BaseFont/DKUXNX+JetBrainsMono-Regular/CIDSystemInfo<</Registry(Adobe)/Ordering(Identity)/Supplement 0>>/FontDescriptor 11 0 R/DW 0/CIDToGIDMap/Identity/W[0 28 600]>>
+endobj
+11 0 obj
+<</Type/FontDescriptor/FontName/DKUXNX+JetBrainsMono-Regular/Flags 131077/FontBBox[-371 -180 569 830]/ItalicAngle 0/Ascent 1020/Descent -300/CapHeight 730/StemV 95.4/CIDSet 19 0 R/FontFile2 21 0 R>>
+endobj
+12 0 obj
+<</Type/Page/Resources 2 0 R/MediaBox[0 0 1200 500]/BleedBox[0 0 1200 500]/TrimBox[0 0 1200 500]/Parent 1 0 R/Contents 22 0 R>>
+endobj
+13 0 obj
+<</Length 12/Filter/FlateDecode>>
+stream
+xú˚ˇˇˇ 	Ûˆ
+endstream
+endobj
+14 0 obj
+<</Length 469/Type/CMap/Filter/FlateDecode/WMode 0>>
+stream
+xúmìMo‚0ÜÔ˘≥áHÙ¿∆&ZÑêJh$˝P©vœ!ÿHƒéÁ¿ø_ŸØi´’íËôœºûI˙„Ì0}TÊ»”¸ß†wÃhûñœuü§ÈŒ4c«⁄Ω0+V7Ô∞¢ﬁöf`GÂ~∑◊≠K“tØõÀ®¯Ûøê-ü[˝‡kP9ŒtIö~¥Ó¬+ö¿@°'⁄+÷ÆuWwIö˛b;¥FØH&i˙§Ui:ﬂ‹êd±eo÷4vtjµ≤±}›DŒHµçãﬁMW˜!˘pw{}2î#Jç}å$" ﬁ˘‹Œ^iª#≈'x^≠b€Í3MnÕ~s∆æø∞oíD∞≤V·õyÒ/u«îE¡ü÷®í‰óÈ„⁄s< ˚˝l‘$Zlå‚°Ø∂µ>s≤Bà≠´™™6æ‚?˛YÅ¥„©˘S€.7¥b~ø	4TT†<–r	öö	–æ9®@^<e	ZÄÓÛ‡ì†G¯f†-(ïà,@;–Ë)–"RÖ<‘ì˛Ñ(v Ë+†ABﬂ$Ù%˙
+(í–ó£O	}94HË[ƒS†ØÿÇ†/á"	}ãeFºu?ø}ü{–å÷≤va˘¬–˝Ñ[Õü[‹õﬁgÖ'¨ˇÌOÚÙZ˝fº"
+endstream
+endobj
+15 0 obj
+<</Length 6426/Filter/FlateDecode>>
+stream
+xúÕz{x≈ïÔØ∫´{FY“HÛê<í‹£÷H∂¶Gñı≤lª=c˘%…≤±g¿ñgÙ∞l#K¬ñü[cõ·0¬ÓÂÃ≤7|¡∑F^'ŸM Lúªë≤_≤a7{…íê@BBxX≠˚U˜Hñ¡∞˜Ówˇ∏£OSø™Û´™SÁú:U=3  ÅàÍÓ˝√ »ŸZ ∫}®ow◊|€1ÄåŸY}˝á∂g;Öe@Œ%¿˘áΩâû∫Õ√¿?†a«éﬁÑgyû†l«Ó·É«\éﬂ •E Ü˚ª´^j}(Ω@”Óƒ¡!AÕπ(Ω@HÏÓÌ8?r#P˙ ^‹;º¯ç3kÄÚß ÙÌÈ⁄1©*Ï ﬁ≈ÚEÏƒéWÒ™4–N¿Ëîﬁö|áˆO˛ª±ÈälÚ=iúvNægI•_”~éÒﬁ¿#xÑ‰:c|‚wB-â?úx{™]>+˝Vº]xL˛•Ùæx@¯ãôsÒÒ¶fìEkæ+„„”c⁄çó“„˛Ó ∏‚Ì”c_Nçœ†)7Dõcä“rŸ◊∑0y√çQVÁcscÒÌJÚÜ(âoŸaGw∑⁄ÂÛ˚bu≈("Òpàç)ÒÌ!&h™_ıáò®)=ÁDó·Àè(Òx8%∏"·T@å0!≤Ò†¬≤T&D"âF€é
+Çâáôø∑»œ[G≥›$\§0!¢ÜGÛI~$V⁄£Ω±Q·Ã£ÉÃâÚ˘ò'I|Jè¬∆⁄-øqt.ôiÓnfrs‘œƒ@¨„¶®_ı˚íQÖµ∑G˝Lè˘÷»Qc,¶§,v¢áÕmè˙”5ÖUsy5géµGïÌJ2ôPXf{4ÓSò¬eô5p‘˜≈c±òè	ñÈfËà2¥p≤üeE|-¨Ñ£íñƒÖ\ts∆	]±XO"∆H0KØ ¶Ù0OD«BL“îfÖ—@¢Ga∂H{îŸ‘0≥´aüﬂc$b≤in&ïûî≠+¨p!_ÆœRüø3[ºπõIï~ÖŸ#JRI2LUKFÀØè∆€}âéXTç˘c
+”7D	˙∏]“™ÑòMcë‡(ÀÕvçe®aUaP√	&tmg§õë8≥UÜXÜ¶pm≥#›(∫>”„1NâØ0µÕ‘F3≤iW˙ß«°]HY÷($®2DƒïÊ§ö‡N5çwS|Lü6jbÖ5≈¨œÈŒ ⁄£º≥~≠NŸ<˛’πYYõ€£~üÍèU˙C,GK	B3ÎI¨±\çë∏¢∞ú»Z>Ä¬r‘påÂÚZGTaπ¶øúö¬rM£((∫ìjÇ9#q%WòS´!ñßµlå¶hœäXõ’´±|≠Â˙hÀ´—Áèï±|≥›••êπ!ö Àã0í3gêo9&¬©˛ñ+¬åxTÖâÅˆhäõè—@8ôT¯¥πï~ïëƒˆYrﬁEò-1ñY≈r#´‚L∏⁄Yü„¬êØÆ`$¬∞tîbzÀ≠!°ycîÂ©a•ôe´a6Ke∂xXâ≥†Ä¿â|Ñ√anóf$ërŸÉÏÓ†Ø4b-w0ƒºZä≤@K	º,‘R"/gk) KüñíxY§•d^k)/K¥îùós¥T/Éö:e&«[6FU•äë≠|∑Ñò6CËôﬁb	C3ÑÂ”¬=ñP—¿rÇüªNFœYKÂÎúπ>øñÇ±R-Ex©j)ÅóeZJ‰e@KQ^ñk)âóZJÊÂ\-e„Â<-eÁe•ñ ‡eï¶4ô;_S‚¨ ÆDTF‚<&|VÒò≠÷ÿ¸ õ_b4EY•|é7’D£ ˚2||ı5S.NeÀÕ<‚ÿÇ îD‹Õ—Íòπ ⁄Ê˘<Nù¶‘õö◊kHsö?;'#¡kÍ¬€·˘Û‡]±TmL’7_kÉ¶4)´>GÜH¢1ƒjUﬁ¶k¸è®åD∫Clëñ‡	(U *ûòXìLÆRW©	%⁄Â„YWè6‚vUÜÿbç¡√ºjò— £ìñ Bò9"¡ﬁdï™(M…∆[r5M©≤∆c≤ûb+,Œsä~}ÙU$≈wéñK≥caûi3#JR5{®+„Lé|zª∆y∂≥N%â˜®Lä$z⁄£åF>&E‚<”}∫OBUFÀ’ïâFü 2#+˘âï1gâ+◊öDµr™âsgHÅì>3*£Â\â WBƒ{“ôÙ \±kö≤Ö¢(L*O€Bmj±Î¶E,”îØTWÒIπóNõê/∆≤4√∆hï“§˙ÕÛ6›®pΩ“Æ`rÄIÅ53Ô.ñØÌio©<‰óÕ–$2ÂÆ8ø‡|z…S.÷5U©‚V\…ºëhªØ#UöbU©j‚
+ÜÿÚ´§æˆ´§·kˆ˝¢ç-~—Ñ+4∂$òTî&c…∆œß29R≈™É!÷l.ô«gπe˘ÀR√÷“yÄ™JìR•6¶«_©•2i <’Âˇ2§W˝øäbæ&û«ö‘FüFº¯ci=Wi),NYeµñ¬í†ü˚å+ö^Õ¥	÷hnk€èÇÔ¸*÷Pbk?ßΩEKÅ∏ÚŸ¬ k’ÿ¢ k„VlVï*eeRMLYkù∆öµClΩ6
+¨ÜXª6
+¬¡ı⁄(1[:¥Qb∂l‡úU¡€»9‹¿9l‚6kÁ DÇ!’ŒÒ´S0ƒb⁄9bµ›®ù#V€MúG8⁄¬y&⁄ y&Í‰<m„s6C,ŒÁ‰ ¡Á‰†ãœ…A7Á¨ÜXÁp–À9lÁ˙LΩVClá©G;MΩ8⁄eÍ≈—Õ¶^ıõzq¥€‘ã£S/éµö¶8d÷ò±[,∏<b{∏—ÕZ8b{µIsÜ-»9˚LIsˆk)\7=Í≥fˆ8hAﬁ„ê9˝∞ñ"i¬≠‰Ñ€,»	_“RX:=ﬁ≥f“èZê”G,»È«¥In∑ '‹aAN8Æ•∞lzº;ÕöI?aAN?iAN?••Höpó9!iAN∏[uò7[&˚F© 6GUøœãÖÉÃﬁÀƒ≤ˆÉSáuôdµ?¥ÈaC>ä°b>a"XE˛Rw«,“Í"““¬üîÙ˚`ìdŸ∂Æ|‚Ísì¸rèêÁÃœÎÉ3@rKùπ}(ıìúÏ“ú>d£∞ ª∞≈æÇ‚Õ≥IAÒy|}Œ%%Eﬁí>ïeí≠HÍÉ;ïÌ;@U"*TÏÉÇ9Ç2ß≤f	Y}òGÊ,G2ÅÃÕ»Ãƒ6 Î}˙iÆídìG˛ø—)¶w.^\]]VVRb∑S∫jeÛäHxπæxŸ‚eKØkZRΩ®zQ„¬Ü˙∫⁄öeÛÀÊWÖ¥`ÂºπÂÅµD-ı+säã|≥º∑=ﬂûüÁÃÕ…ûïÂ»Ã†6jÀsÊŒìÉƒÔÙßﬂ…ˇUwm}≠[≠›˛zuaΩﬂ]k¢˙
+ÛΩñ7∏EŒ1ëç∑∫ùj}≠»ˇ?úhòa'∫1FÙ1]”â˛˙Î∆ÿo}dåË˜›gåççc##D◊«∆Ft›à€ﬂ¸ì  #¸}Dª<¢ÎGóÎ“ÿõ˙#∫◊ı¯ƒò˛ÑÆ«GÙ7üò–Gƒ7„ ¡CÄîê∆·@Ö^*⁄'`Sõ,	¢∏Y\g~æ‰pÚóÕ·÷:˝”áqöhë∆'v|\%‹5q bìo”¥9òÉê^	Q$	≤≠M"ÇÄ%@ÎúπÖﬁ‹9Œ96‰êŸ·	J•ÂB}]^Cmç'œÌ‰äöÜÜ˙∫ÚrµTñ›.èG<ÛﬁwºwÊÃ{«èøwÊ¶ÉMMo∫Ò‡í%Ωßâ¯ç≥D∫Ô>„ì≥ﬂ0&Nø⁄ıÙˆæßª∫ûÓ€˛t4@æõv¢ÑØuvé,ä ≠ÄXõDß[ÇgAÅSvÃ˙â?ﬂ„Ò64,ÃØù~‚ÀÀ+dŸ&íC∆9í7‡Æ-(®+∏Â√O]°wÅwÄ∏åQ„£;ºö€Ú‹A;çµ[^?z€Î€»ycÌ÷◊è|ÈıNr˛ì'…KÌ◊Ÿ˘›ıF#˜ÉkÚ˜¬YiºX§7dÇL"°ïÓ	@∑ŸdÅ“X∫ [Æ´^ß3ø<ﬂiwâ[u∫<µ5Ω≤¨ññ◊Û®r˙ù¬Ωo‘6Â-Œüºqﬁ◊æÒ¯„Ñ“ŒK_ønQΩ8ÀÒƒ¬ÓK$”¯Ä∞Ü$@∑H„»CπÆJÑí≤©î
+	¬∂6ÆÃf¨SÛKùN…·Úà˜;π∑‹Nø≥éªâ‹c\&ÿ˛€g«çOÜ∑Ô8)‹;qã4>Òw?ˇŸ≈âE¬„C#'¯≥Ñ#€i?º(¡Ω—ÌDÅ¥ÇB©–IJáD	ŸäÇb_aA^nˆ¨ºƒkª:b<n∑ﬂ3e‚7£F8¯ı˜Ô8ˆ€'NΩ}œÂ§Gø¥È÷ŸÔŒ˝ƒ
+YY«Ü‹ÌΩáˇ˝D˙ Åè^Ïxëµ´ú¸+·Ï¡”aÍò4:È”¥î¢_œâ®–⁄¬?‘–ã!IH¬C»F“F⁄⁄&QºI\Á”˝‡í+K˘,'¶ª
+º@Ië∑¥†x Nª£0òÔ¨u◊.¶vÅZZ^^°:Iﬂj)ﬂ	I√ôøv§˚ÿ+∑˙üw∆è∂∫Ñﬁ~ÚŒ„«N%çNﬂ™ÿ9nL~˚Çaú\æeÓƒ≥Bœ?<˙»•ú9sZ'ﬂ¶Ÿ¥~Ã«·ÊmèÍYÂ˘y"%%Thı]©äThçYî}V»ÑR$DI0›‚”ãÆà äõ”r…ÚZLw´••Û’˘≈E^wn6¸ƒüv]y}]C√¬ÜÜzka∂äÜ≤⁄öÅßDUÊªøæ>[∞ô{ü<øÎôÆ[_Ëøˇˆûm]√Æﬂ/ ‰ø≠ˇ⁄âéè2O.;xoﬁñæ“Ëæ]ﬁ∂áé‹ΩÃëÎ[,u‹¥i·ÇÓl~ph¬˝ó´w~?πıx∂;G Z›∂∫%Ô¢Dw√âù-¨¥=™gãD@&°5É`≠OœŒ  Sç"∑ßÂÅß1ÀÒîò©√ß{,oB⁄€iALœ‡Ñ≥¨Ã)9
+Éµ‹µµ5^∑†ngÚrV…CÒöPÓju˜Ω¥Û;âù∂wi∆…õ'∏é—…∑©ìˆ#Äzï«MEJD“
+Qú≤7!”ï`vAæ”&!@íe‡äÖ|C‘◊UTîqS◊÷xº6k^ó«Î•nó,æˇIÒ˚⁄˜‚∑|ı{∆ﬂÔ˘—âÔ˛ºÙﬂ]=7v≠ŸÙ]≤ËOΩıp’Smã∂˘Á≠¯”éá7>v{’‚é5ã,Àü˘ÕÆØ›d~( Rπ HËôπD¢N"J|ß(ÈùB†¥≥ç/"œg¢hÊ≥ÕdùO˜ÅB©¥Û“òû† Å2~
+MÂ:?œoüZí[xÌ∆ƒè‹˘hºyWaΩsÅÕ2⁄yÈÚÄxˇ•õlÒdº,9Vá7cr˚ Úî\(îÉª!√˜_E ›!ç#™ÆÃ≤Q iÂéﬁ‘&AÿlÊ›ld‰QGA–Ô$~bùƒOúBt‚üH#…úSWPX[L$“0Ò¶∞\<mT.Ï[™˜’ì◊.N|œ ¥ì†[h'Ú–˛úìÑ§SJæH1£]îoØ≠|{y”≠în∂D|gmÂ;ÀI¿/$ôvâ"è‰•è–zßﬂ:8P+d!„ŸqB˜mﬂqÇHz≤vQ¯·Dbh‰ƒa·ﬁOû|ÛwñìÄ¸ÇõŒ€EA§\©¢ˆ®Ó±∂s˙∞¥€$1Ú≥ÕêÁRí˙iaLœ‡á_ÕWÛU’ô·(Ê°Ô5#ø·™√ÌTß@ÚèvÌŸû◊÷Ñûﬂˇ’K∆Â=Ì€˙ç]6¶ùˇx`Ë˝Cá_¸ˆD∂Úé¯˛Œâ∞⁄}˚Ü&6Xßâ±í†˝Êç˘IÀîé"b£Tà»ØIÈZÃ"TBêEYG`≥—ÑD(›÷ñAdYLò9Ã‹Xv$∏™¶…ík3{‡:ƒt_†å 8Øl~`˛úíBØ3'Àaó°5”·	scö™W≥ûﬂ”°ÏÒ÷÷◊:]≤,ŒHˆBˇÀ¨¸ŸÏá›Ôq≠Ω-1Ú ≠∑éÎiueOûzÁ¡£…S«éü<e¨|`p}ıñ[æ:w”¢C8ˇÕ…„·≠søı…„=øMx¯¸èøÚ√ˇı;ñØ˚&ﬂëNHo°òüΩDI§HTîËë©Î⁄p÷Ÿª’Ã-Ö^∑3gVVÜ≈§ÿJ‡e¸Ï-´≠°Øyﬁ
+Ó‹<~ ˚eôäŒçK£ÁH›gà„lÅÒ~·ã'æ˘õwû;ÒÉBíÌ~ ¯£Î<ŸÙﬁÔ…ÊÛáuÊ¯i„]√ò4˛x˙¯Ωøæ{*…=“8DÍ^õ⁄`^? àù¢√k^@¯çCˇ∏äIg›,ﬁ°˚§qÛ‘æΩÖ∂GıÃ,"ëºÙŸñÆ§O6..Ü l˙‘AçÑ(OÌ?ˇß‰¶ª-R⁄:1›[‡%ÈÉú?#dÿ‡!˚ß.(^~#SπÀ+f∫∑¸¯+ør¨ÁËZ~åOÊ∫[èMﬁ5r¸ƒI◊I"\¯6!«#[+Ñ–«U©π[ñøvÒÃô\z‰—∞|Ÿ	?ñ∆aÉ_/ë%~±Â7€´ÏeÉm⁄^™T~l¸9”xä¨‚Ü£ˇˆ±ÒkÀv}ìÔ–7•∑‡ÄwÊÕ}Àåõ˚V¨õïEêÔÃÚŒÚ⁄$8à√L;
+úπõÔÅö<gÆ†ñ
+Œ‹<·)„=„URErH6©2^5~ˇ£èﬁˇcè∫»ir3ŸE0˙çáåç¡7…l"ëø4¯Î-lõ|õ˛£Ù43N©D$JF@âG IÊŒ€bÊƒ+wƒí¢ŸÖó]¶"4¢ôq™îUX7√˙∫ÚääõÕ∫$Ú'Ø∑D0O√Øóçe[∆Ëë„˝¿°ØÁï{>x‰ÒwOâ∆DÊWπØm_”›èû∏Ï}ÔÁ˚˜àoéÕ—™üÏ¯ûøm€Æ¡ñ≠ØŒ)Ûı>s˚?ú∫Uï∆ëÖJΩ¬ëi)œ˜‡g
+xZß¢0u≤d!+/?}M;kâü?±9ìÑÊìØê∆zÚ#„%„Ø„“¯Âã‰£x‚NÚã>„îG zLzE®”B˘5Å@G∏o˘ua]∫çÁ∫ÕîOXÑ¢πj^‹©≠'Ê≥∑áö∂7àç∏˝ÓÇ¥{œówùò<ˆo_y_è,{‚¥1!‹5F&€∂Ûù{ø<æwËÖ/u<Ò˜ˇ≈¯–ÒSü¿ˆgi¸O\õ˛„'.ˇµû∏^4»úÁΩsÛ]¡¬óâÔba–ï?œ˚}¢ªçˇÒSWinŒœO•ÒÀøÍ˝ó¡¡È/ˇ™Áü˛πG,¸∏J\∏é≈∑û›p˘"é“À‰¨\»ü|Srœ
+~ÅHÃL·¡ıVlãO0%c)ÂQ√œ-óL<Kc±•Àb1zyC”íñ4mò W¥” WÊ…»7·f23_q∑&˘#ÿ'OZ?f @VÚîw[N”ü`„?ç ~πıÅötyÎG?ô∏…ıå˝óÊ(¬‘è  €òë∏á?˙…{]œX˝fºä%ù¨ñ˛åáË/ìø	M†Ä*\Ù-$Èw£íÙa¥ä!$i/¢b\BˆIœ°ÜsluHJ1È°O(@íàâ]ËîV°O™√6zíÙ2éÿÁqO„(Á §ëÙê≥‰2π,Ë¬~·%±Nº@3i'=OøOˇ$-ìïÎÂìÚõœ∂‹vóÌ7ˆ9ˆ>˚sˆ_ÿ?2mQå„»ƒÿ †_¡óíùùõ)Õ∆Yœ4@ªié	ä–û∆≤—ü∆"÷·p”	x)çe¡Hc6íŸiláù§q≤?çP»Ciú5œ"
+9ü∆Ÿ®^CÉ¬!Ï¡NÙaÜ°†’XÄ(ÿàËÖÇ5¿0z±
+⁄±ÉÿÖ^tõÏÂÿáaÏ¿ ˆ`ÔUÃË≈nÏDÉËG:–ã>ÏC?ÿÉ:T°⁄úi	˙∞√ajPÉËB/z—ÉZ,A6†∞d∆ÿ°œåΩ…lﬂãùƒ îˇ√—øhƒô+πk† ÅÙ| ;±◊î(∆$–cé¬◊w3b;SØ›ÿã™i‘ÅÑâˆôΩóõ„Z˙Ô5ıÁ~∆ˆb1Êc˛åv£ÛMøX3Ø4˘‹ÃŸÜq¿úù{ÕbÙc'∫—ãÏ5W≠`ﬂÙ|\kÀ√∞≠P∞C&wÊ»≠Wç†A˘åµ† ¸∑"ÊZÛ^±‘~$∞”åÅ.Ùõí¶v§Ì∏ÀqΩâá± ¥-,KÏE∑´C6Ì¡uËGï}}òèıXâ÷ˇTütŒ2û√≥◊¸AW1Ä :p#DlFVcV‡l2-◊Ñ(⁄±ÂXèUp!X7Ø€ˆÏ¨Æ≠^àñx©#ö"‰û#÷WéC)ÿ¬z∆—¡mÎ#+l®4Îπ√ˆ˚F˚jπI÷Ï%6[f∫˘6π_ﬁ"Ø£aZ'$≥9;º<£X/‘›zûû£;t€lpT¶‡/œÄ~’|"∞"UFN]e˙©h∫>ó◊/ÿ1’Û•*x”∑Ì# T?’ΩqJ¿_zÓ~yªºI^Kó“*YëlŸï»‰ùå~9%`≈9©G∆ä¯ﬂÕxÊ
+endstream
+endobj
+16 0 obj
+<</Length 12/Filter/FlateDecode>>
+stream
+xú˚ˇˇˇ 	ÎÓ
+endstream
+endobj
+17 0 obj
+<</Length 458/Type/CMap/Filter/FlateDecode/WMode 0>>
+stream
+xúmìMo£0ÜÔ¸äŸÉ•Ùê≈&¥Q)!A‚–5’ˆLÏIäldÃ!ˇ~eèI´’ =û◊ûy«˚ıvúnï9·tˆõ√;ˆf∞ß≈s›%åÌçZ‘ÓQ°£˝
+:kdèäj_È∆%åUZ^Ö£Êí^˝-9†zg⁄Ñ±è∆]qZÄPT
+µk‹¯C¬ÿ¥}cÙ
+D¬ÿA´¬¥æ∏>IcHﬂ¨ëGtpn¥≤1ú|ﬁDd†È"Ö∑lÎ.l>ﬁzám•œf§RCï  È;^öﬁŸLBa†LëW´–6˙ì±ÿ¡„–uWÙE´®U¯¶ﬁ¸K›"§—}5∫ÒΩÙqÎ0ê~>5Ç†•QÿwµD[Î&kŒ9ﬂ¿∫,Àr„3˛œÊ¥Ìtñ_µr±Å5ÁãŸ&Phπ#ö=Õâ
+¢E†<Ó[ 8QNJAÙH x ≈â∂D%—éî9QA±-—û(#:ÕâJ¢C ·¿˘rAD˛≤#s .¢? '»_Ng
+Ú∑$Ç¸-bå¸Â‰VDYhxÏ¨oΩü∞˚]À¡Z‘.X∏Xãç∆˚§v¶Ûª¬F|¸[<Ωñ⁄Ï‹
+endstream
+endobj
+18 0 obj
+<</Length 5967/Filter/FlateDecode>>
+stream
+xúÕZytS◊ù˛Ó€$[ﬁdYã-c?˘Y6XO∆ oÄCí¿åY,±…6âfÀP0IH©	ê.ÅNúÑv:i reHBBõ¯ÃtNsÊÙtÒ§I⁄s⁄I€î°ùi''ÌL3$ñÁ‹˜d«$–iÁÃcéuøwÔ˜Ó˝Ìø+ ÄC‡Q—µoP>ú}Ô% ﬂà∞u†w{Á\”QÄåiΩ˝∑˛¡Ù∆ôﬂ≤ä˚zb›ïÁˆ$Ä¬˜ T˜ııƒ€R y6Ä‚æÌÉÓ_nyê[ ÏËﬂŸŸˇêø	`·ˆÿÅÆ(Ûq@˛ Äº#∂ΩgÕØá˛∏ ˛õ;˜÷ó:Ä‚7 ‹7∞ªg†oRy j ˛ˇ€üÒ"û≈≥‚8 t âÒ∆‰ø	˝ì7Î?^õ|O:&ﬂ3V≈ﬂ˝„2.„(éíπ'1>Ò;.@BâÔL¸zj^∫$˛ñêë~)˛ûﬂœùùy€oÍ4âOû7Ω_b|zOs‚ı‰æø˚x_˛¡ÈΩØÒ¶ˆßPeäu·Üà,7_C∆Íf*≠Ÿ¶ïn:;›*ØSŒ{Ÿ3∫∫îN∑«C°)ı£ EÉ~JT*G∑˙)ß*≈„ßº*w_·sÏÜ®-$G£¡8ó
+∆Ω|àr°µdö¶P.äuS°ı¿(«q°hêzzÚ=lv4√NÇ˘2ÂBJp‘Fl°hP°h˜DFÑ1˝TP)Ô£ˆPòùG°Pí‡ñªe:÷JÖí£≥Iz®°´ÅJaÂΩë∂çaè‚qáe⁄⁄ˆP-‚ñi-Cµëà7ÿ±n:ª5ÏI>…¥Ç≠W0ÊXkXﬁ*«dö⁄é∫e*≥µTÜ™™é∫£ëHƒM9/MuQ¥Ö)öŸC”BÓfZ¿PAsÏZ∫„öàŒH§;°ƒâ$5à»›‘RÇ?UπA¶Ç7÷-SS®5LMJêöï†€„âPıSI77Â}rw‹‘îŸ"S◊màœ>©)⁄–E≈2èLÕ!yX¶ƒØΩT(Yé∂∫cmë∞ÒDd™≠	S‚s3ª$EÒSìJSBæQpÜõÕ*MQÇäL°cîÎ‹JI%Qj*Û”Uf“fÑ∫Æ	ËîŸTãF%ZØKõ™é¶d ‘,ÛLéEΩ=ê“å]àO°Q¡ïÜïs™nl∏ôC®Ï¶⁄¥¡(ÔUbı∆Èwyù∑ÜŸÀ⁄ù^ `ÒØØ§ßÅoh{‹ä'RÊÒ”L5Œq¥;VÔßY*%QY¶ô°Âlôf*¡ÕbOmaôfÈ˛≤™2Õ“ç"_–5¨ƒ®5ïá£2µ*A≈O≥’Êµ·∏–])¶È= ?µ©Õ´√ÕkåI∑'RLm˙|éGvh]8ûù¢$§VK9 yÉÒLˆë≈yÉî8ôÚﬁ÷púôè
+ﬁ‡∞ÃéÕ*Û(îƒ¶∞€XgØp^}&B3CM4+‘•‹ÌŒ∫ã„ÄM©ß$D±xî¢{ÀÆ"Æamòf+AπÅf(AöÆPS4(G_rπ¨∞!2‰(AJbÒ≥è>ÍsE¸‘°∆a˜˘©Sç6∫‘8«∆\5Œ≥1Oçlt´qëç˘j\b„,5nbcÅ7≥±Pçß∞—ß*SˆßR¥ymXëÀ)ŸÃ≤≈O’ãéÈ≈]∆¢∆b…Ù‚ncQVA3}w’ìíÿÜ™Lœô˙y‘8düü©q¬FEçsl,V„<Ωj\`câŸX™∆%6ŒV„&6ŒQ„f6ñ©Ò6ñ´rù∞sU9J]Q9§Pe1cIXŒb∂B•s}tnôüŒSeπIæã7ïX≠¬
+˚üd∏ôˆÛß\œêXƒ—yeqëÿ¬]À¿Û‹çS© U∫‰U*íúÜOüIâÔé≤∞y8ÆÍ}∑~±RØ$v¶kµ*◊…Mwëü"´ı”µ‹YÁßµˇïíPW≠ü.P„^π\nb%Årﬁe√√MJìì√ùnVuï‡h-!ˆú2?]®R8®S	R¡KØNãß!H-!_œpπ"Àu√µ~∫Ëvö\nÏG%%8≈ñiî’mu¯ä ã≤˚äP"ÊEÇ¨“¶Ü‰aECiåR)Ù…tç≤jgt%!ÌV®äu∑Ü©äπ©ä≤J˜…wbä,S°Diå’∫öjd+5§üïÔtàb‘T)eŒΩ1*~jW*î0!ºLﬁÌNV“èœä¯i›î-dY¶bI“J]≠üﬁ3ΩDSııF•â º∏x⁄ÑL√“k√Ârù‚—˚mrRfr%]A%/ΩÀfﬁ]'ﬁ)⁄ìﬁRX»ﬂ;Cí–îª¢ÏÇÛIïß\¨©ä\Œ¨ÿHù°p´ª-ñÎ"ÂÒ
+í„Û”%∑≠∂π[o[ﬁÒ›?ıFH•}Í¿zï.ÚÀrã±·⁄ªS©*ß>?m–UfÒYbX>F”î†°:PEÆìÀï⁄‰˛çj<Uß^˘C∫Èˇ*äôN¨é’)µnœåxÒDír6©q,ÙMYe©«"üá˘å	ö‘f⁄ÀT
+ªëˆ£`n+ß’e~∫¸.ÛÕj$«Fk ¸¥E• ¸t≥bÉ"óÀç√Jl Z+U–tÖœOW©£@£œO[’QV´£DüiSGâ>≥Üqö|~∫ñqX«8¨g⁄’+ B>?´Wÿ’…Áßı
+1Ê6®Wà1∑ëÒCõOGõOGåß£-ÏÃüüFŸôƒÿôt≤3Ëbú•>?ÌfzáÅ≠å√@Ø.WΩœO˚tπ⁄¶À≈–}∫\›ØÀ≈Pø.C€uπ⁄°À≈–N5é∫iËOTÛ˘È..Ò˘Ènft˝)ËÛ”=jú$9ÉdúΩ:á$9˚‘8Óôﬁuø˛§øq¿ÄÏçÉdÙ‘8I˛ Äåp»Äå5é≈”˚÷üt˙2˙ê˝®'I¬ÉdÑá»´q‹;Ωﬂ1˝Iß?b@Fˇ¨˝∏'I¬Á»√dÑG’Qã~≥•í{T‡¯Ü∞‚q{"ë†èö{(_‹z`™Y˚ëJñ&¢¸&<L∞aÃ≈‹ãö»9ÕíK,È§%áXHs3˚¶§ùÇIî$”n‰ÿHNØùÿJ\∂’ñ›´ódY≥zQ‰!ôEôΩ»@Æ+#∑≥‹ÆYÌyƒUJ‹NóªŒŸ§ ﬂY–ã¸‚N4ÂãΩê`$sÖ≤¿˜BF!'ˆÇCZ:ó÷ãtXR”-ΩHR€ëöä-@*Vπµ”L$—$˝øë)¢u,\XQQ\\P`6BScC}(∏D[xÔ¬{ﬂS∑®bA≈Ç⁄öÍ™ ¿¸y≈sãÁñ˚U_ŸúŸ•%ﬁ•@)Ú»Ö≥Ú›y.ß√n∂ômŸ÷¨ÃåÙ4Kjä`LŸ÷¨9RÆèx¨bıXŸØbTÏJo˜T)5U{@GU•˙gÄMÿy∆—ëâÕ⁄≠JUÄgøL¥r4a&Zbåhcö6¶Ì≠∑coøM¥°1¢ù:ïJåM“¥D‘¸Œ-LÇÄ±œ!mhÏ£!M;≤D«ﬁ—û“¥®¶E'∆¥g4-:§ΩÛÃÑ6ƒø'oóƒ®¿"≠ÇHDÅÅp"·C˘x~”
+pb¢XI‡)úïüÎL1	<*HÖ…‚âE≈•Å.0ø∫∫™≤§§¥¥§§™≤∫:0ﬂ·p*%%Jëdœq8úŒﬁû#I‹È˜øHˇ{sÁŸˆûg;V?“zıÍÎ«oûz‚	Ø§øxÏ4ç´˛B›Èá◊y?ÔW◊◊nØ
+Xµt√BG ÍÁ´ØÔ ÆÌ˚?∑mÂñ™Ã9YµõÔ{‡€ª¡tÑ•‚8“P•Õ7¬YR9ûp- œ~¿z¶JdÖ(p<ﬂŒØêÜ¥l´’*YÚ|k¿ Bb≤é\uêü˝sB%¸óDÔ>q¸£ß…oÚƒÉúeg¢¿‰$døƒs%pêêÀ%• m‚8x‰jé≤~Äv∞√xVﬁ‚Ù´b%mW≈Ò[Â‚8˙'oÚˇ$Ù£Û¥rßC‡¬ì<«mYB¶ÏÔŒÕ…6K(%•¢n˚í“á#0ø∫™≤¥¥8iwßi ÏNß√°[=Ô¬ªﬂpÎﬁ˚ËW_Iº—}ˇ≈◊Jæ‚ºøø˚ÿÜŒØ?yfÁw\_<=g”˙ÓÜ=•j”o¢O¨˘“æ≤∫ŒMçãõù≥ãø¥ßÛl áì7¯wÑ~xQçN-≈Á±Á!-Õ‘÷÷\ $)¥D1^‰t±›Z˛«K‡˘ˆ‰∫hh—Ï•%%’•’raû+;^‚5Bã≈“bÆf1WUU…t2ï.ÊÛ8ñ4JW ÇÆ*É7epˆyÎæã[[éú[Ÿ}¯û}ÉèÁ]Ùù°Îk?÷O≥≠}DÎ^jYæ%í∑dW˝Cy≠ÁvD4•¶gÕë˙ˆl[¥`Îû
+wÎSM>Y∫¶ˆÈïü©ˇr∫=À¬õKõµˆ˚DPùX/,:‡DÅÊNì§Ö ¬Ç+∆≠T\NﬁíÎ≥’8’55$`s8ú’’5∂ ë$•®‰DπmÕÅ9rb›?¸.oéÕ6'ÔΩo'ÏÅØÓØhL‹ˇ◊¢c¡ÅÕB˜ƒ∂eßO-„ætÎ√cá3¶¢{ñ8Jµbë@ -–ÉKíVÂâgäM±ZEã[è≤ÄUªU±Í∆#mWØ÷|c«Û?|·≥{>ÀçLtä„ˇ8cb!˜“—3OÈ>Óõº)t˝»D!¸Zxûƒ@»ñ"aï â÷,Ç\gV°µ0≈ÑLí)Ó‚™*≥ŸôŸˆN“ΩS©«¢^∏û'54Ù´'œﬁ∫qv◊ô∆∆3ªò™ÆSD∏pôàßN%>º|!Ò—©gøµcÁk{˜æ:∞„[É h§F°LˇºLâÁAZ8¬1ªœ»ÁX].=ü=3Lˇ±æ§§TíL<9õ∏¯⁄qW≠€]ï˜»ÿ√Æ™º¸ö‹„Ø%.^9ù»À≠rü:Æˆz{3πôpmxÎË–[…Õœì[—Ôﬁˇ˜:“‰‰‰çDŸßWÅ<£
+f¡ë…õ¬aq„–©ÑH,CÏ≠aÕ"âá¿ÛÎW@íÑaÀ
+3Eƒ8”T∫Ãπ◊û$õ¶r'◊Â$êú≈Æ‚¨å≥I8à#%ô?•äùEBÄÂÕß‹bœqpsﬂÉç∂úKW3lıC€O¸Ë‡Å˝Ì∂ìMç'Ô;˜Ãy◊≤ÕÖ≈Òâl\z"1M|Ùÿ≥ª^€;x}«ª/_ˇM2ZñNÎöFÑ∫
+í(	‚8N◊!FÜ¯¸]ÔÃ”Îƒùt-»g∫Ω8≈4C◊©‡s8Y5ü*F·0p…£o8¯Ê£€á≤3Æ^ …n:⁄˙‰˘ßø|ﬂ…∆¶«\èa4N¯K7p•∑ /n^ˆÏoÆø¸ÓéÎÉ{_€ïÃ¬|°6‘ø`$a3˚€M-Ç@b¨‹G¶Ú–≠9¿?ï†ëónOQÁßRÙ"©æºÎ˘\ù Q°„˚˚∑ŒHQ√ÊçB?\êYÁvÿYãkÅ é∏^à‚«ú—πÚÛrmV›d.‚2›f≤Œn˜Ë}§∆)Iƒc‰,7x˛_è˙Âìëã'◊~Ù∂È˙∫/ºT˙€âIn ˝ÏpÙ—V◊)¬]∏@§œ/zËÕ/7_æﬁæÆ‚»S‹˘«Øl8√™÷3ìø'óÅyöSoc63aL",ƒ¬BTUÍ6»ëHiÌ™Uµµ´V•Îüµµ´Ù™{ã„∞∞ÏÅ¿°ómµ~Ö$N'ø+˚1Y‹z7˜∞∞z¨W_Â3^}ı£˜≈ÒâC‹√∑ πØMl`’úC_¢QX.Ù£Û-mV'JœéK:∂íƒ«¬ÛFÿÍÆl7:2ã…st	!¬‚Vø/›ï—rKºjôw^…<£Õ•òPLäY÷«ı;TãZ•h∆*P∞ÊH?3íπÆW~Vy∆’t∞ÛëãV[√—˛Gﬁ<Ù¿[èˆm¥Y/?¯”ìzP?÷t>—x|Sáº≤fh¯9:ÚáÀ'O4m*∏Ú·±S/≠Á˙øˇ“Ëœ∑ø8p·'FwÀô|ü€+ˆ¡âZu
+!H%ªBâÇxåÖØ∞≈$q∫≤Ñpù‡∏Õ3ºN´’Vb≥ö-˘>bW¨9SÅ§ïT±€≠5`Â÷ﬂ∏ß…ZÂÊ7)ßœ?˜‹U°„‹DGsÉYx25ıÏÁ8zé§&˛”êÉ≈wπ–èYÏF‰ŒK≥0ß¥Ä„f∆ıÙç»Â»b1=ãÃo/…kêû˘IÅ¶:–˘ˇ(øò{záﬁ|v=ë{¡ˇ¡t˙ ôyÎwùgœ∆y_¯∫!S' º.é√èV¿‰!Ï˚Öqßl◊Õ`Ç… ;◊g´Úÿ=V≈⁄)lM¯_Àû{Ó÷õbôs#â·∞–Ø◊À/‰Qø=ﬂ÷$…»îàKzXEWòà lnÎ˙≠CííÊ”‹àfw9ëÏp¿Q¢X≠)ñ<üÕ∞œh,‹J+π≠/å\ ôn'Xã» µ”}!—!· åû∞ls·DúÛÕË…[˜#a≤±¸EØ©fZ§Lvì0ÆM,ª⁄yΩ`&oQI/'"ZÄldWÍ∆0ŸçkÆ›ê’:r)≠ÈÓúö,≥V|pDË∏∞Æó#/pÊ'vM‘39ÌdØƒ≥˙ó∫ÎŸe ë©äD∞zfAäK®∑Õ(J,_®\æ\¥7Œõﬂ–0^#@ÙŒøFË@*ªÈOKﬁ	B6íï%Kø¨IQ™Û´ûzÅ|Ì+≈û/
+∂=3˙µSˆ!mBáÒmAﬂÉıêv2Û€Àùë´B«áÁç8•üòµ%≥Ó?`2Î5ˇÀÕüüüó›rNÙÁ<o˛©æó¸7sò∆ŸÄ}ñÛè}9œÔÕ¯qãY*aPË∆yá»{†ü” ·06GP-\«à]ÙI'–Hﬁõº!‹¿àp}¬+ûG∑œàÔ„™p}‹rÑ3ËÀ–…x<œÙ≈Ï=Å‘íÚ&˘9˘ê[Õ≠Ê~»ßÛ!˛$ˇc˛]aÉ1GÏOà◊$MzX˙ûÙæ©œt¡Ù¶Èsv“˘x©ÿ8¥·	úHFFL˙j.ÅR ¥Í∂`ò ≠IÃ!íòG˙íX@Æ&±àj|/â%‰!âMXK
+íÿ3Ÿùƒ)ê…IlÅLŒ%q⁄úNdÚJg†í˚	BÿâƒnlC/˙0ÛQÅy®ÜåµËCd,√¢ª!£ª±˜°]:{	ˆb}ÿâ›ÿ3ÉŸÜÙb/˙√nT¢˙æã–ãmÑ0Û1ùËA∫¿"¥aV`Õÿ…ˇâΩfJs˚ z}v∂a'v@˛3O˝ÛNZáeê√t¬"€∞G_ë1à›à°=ÿÆø?dÏƒV»∫T€±Â”®1Ì’ﬂ^¢ÔkHøGóû˘bÿÉÖòãπ3vÿéÃ’}cú‹®Ûô/÷Ëßbø~:Ûú¡Ë«6t°;∞G◊Y∆ﬁÈÛò‘Üó◊`Z ctÓÃù[n€AÖ¸)[œCπ˛kDÕùŒ˝ÿR˚√6›∆ùË◊WˆÎﬁÈK⁄±K∞Z«ÉXy⁄Ü%ˆ†Kè◊Íˆ`2Ù£\è¿^Ã≈*4Í9ıóøì¨YâØ‚ƒˇˇO>˚ﬂJXâ¨¬z®«&4£∞h¬j,Ö>,G;QÉ5XG8¬„-”ﬁ€*5˙8?P†˘^o«	y,BâÒOUqòÇZ ëù[VÖjJM(”ü≥Õ›ÊµÊ•Rù§öL¶‘‰Ù!©_⁄$≠ÇB•‰ıÈå‡íîYZÆf◊≤µLÕ¢ô∆`Ç•,{pI
+¥€˛∞Öó¡ıÒbr|uòj«√…ÁŸÏ˘öSwºîMΩb¥„]kßÿèñµO⁄*≠óñãÖrIMe◊»‰1*úås®ø"vK®Ø«5Æ=
+endstream
+endobj
+19 0 obj
+<</Length 12/Filter/FlateDecode>>
+stream
+xú˚ˇˇˇ 	˙˝
+endstream
+endobj
+20 0 obj
+<</Length 475/Type/CMap/Filter/FlateDecode/WMode 0>>
+stream
+xúmìMo£0ÜÔ¸äŸRz»bìñ§Q©!A °j™›3¡ì,R∞ë1á¸˚ï˝:mµ⁄†«3√ÃÉM˙„Ì0}RÊ»”ŸOAÔ<ò—6<-üÎ>I”≠i∆éµ{aV¨n—aIΩ5Õ¿é ˝vØ[ó§È^7óQÒ-Á)>∑˙+¡˜†rúÈí4˝h›Öó4¡ÖôhØXª÷]I‹%i˙ãÌ–Ω$ô§ÈN´“t~∏!…b ﬁ¨iÏË‘jec':˙æâÃIµçãÓMW˜°¯pw{}24Cñ˚òIDîΩÛπúΩ“$vGäOàºZ≈∂’gö‹Ü˝<å}a?$â∞ ZÖgÊÂ_Íé)ã¬ü´—í‰◊“«µÁ¯ÇÏ˜≥Q7ê±1äáænÿ÷˙Ã…J!÷¥™™™Z˚éˇƒÛ éßÊOmC∫\”JàBÆÂÅrööÁ†{d>Äãu(∆Ê†h∫=‚-Ë	Ù⁄Äv†Î∂Å6s–±ÿ°-IˇÑ(6 ¯Õa$·Wî ¯[¸ÚH—˝§˜ÀE^Ä‡W‡ª»Ë	ø9$¸rÿJ¯Õbw¯Õva£‚é¯-Û'ÛÛå4£µ¨]8ò·@¯›o5ûﬁÙæ*\·◊∏˝eû^´øQ
+endstream
+endobj
+21 0 obj
+<</Length 5475/Filter/FlateDecode>>
+stream
+xú≠Z{p«}˛vÔÄ‚" REx(à"æEq|»"ECi∞b$(ä±E—)Àç£(Æù8åÌv2ù<ö6„8ù6u›tèr•M=N2}L&˘'ìâ;¸#ì◊t:ô¥ˇE„d,∞≥wä‘√ôtJ±ﬂÓ~ª˚{ÔJÄ=∏ÌÛWVï÷LÕ~ ﬂ’s+ãÊH®Æ\|ÚôsóøÚ⁄ã@Õ
+P3p~°Pl:ˆ˜öﬁ –u˛¸BIÒOÄ¶_h9aıÍÒøı∏ÄÉn ◊üº8_	Ë◊ÅÉ/H](\]ÒÏÛø@Y.\XxZˇ¬≥¿¡_‚wV.^^˝ ø|ha >ºriae˝—Ñ¸»O9§ë¶õ ç [Ùó[∑h˚÷{[ªÊ6wÃ˛í∆?h^8Î«0:Èﬂ˙—∑Æî˚¬ π&‰Maò…åde¸&™Oç3˘t.√:ÉÏP6NYü…0.|”7ÊÁ’π`(ƒêe0‘·˘Tåç)˘s1F55§ÜbL–î‚¡ÁG `uÜíœßLÍ3RfX05¶Ø*¨Re‘0
+E&¶ØnPJç|äÖC|t£⁄ORç
+£Üö⁄®#uF>•2§3Ÿç ·Ã5&Dôﬂ»ÛX¿0BP)*Ïù4#πçC§ ôaÚH&ƒÑpvÍ±LH◊3
+Kß3!¶gÉ
+Î·®'õULõ](≤CÈL»È)¨ùœ∑sÊ;ÈårNY_/(¨"ù…¶π
+é∫8Í ÛŸl6»hòUÛSÜqN±J#8Œö8j/‹¨≈<g‹î0óÕYF¢Ÿ¨£AV)≤Ä°¶≤1&i à¬ƒp°®0óëŒ0óöbn5Ö≤å‰cL∂ÃÕÑ®R4]s)ÖOruÉ∂¯¸ìI˘ëy&µÖÊ6îueùë®Ÿ.Öô9ï…ßÉÖ©lFÕÜ≤
+”Ogâπ]QbÃ•1è› µ›Ï÷òGM©
+Éö*0:wéëyFÚÃ’cM·“VÛ7EÃ)|¶Á≥úí∂§≠–6<’0FRm°Ì¿Ÿ£Ì§J{U&ÜÛ »∫Z‡Nµåç wSÇLﬂ6¬jaÿ>¢ÍÀYK:√Î˜[TÕ„_M›®™Ñ0íŒÑÇj(€ä±Õ§tÑ√1V´1íWVcú‡(¨FMeY-ÔMeVk˘À´)¨÷2ärSƒ¸∫Z`^#Ø¨ÁÊUSjåÌ’∆ß3¶XŒ∂∞™ıjå’i„ß2„ßÌ¡`(€¬Í¨qüfbØ1ì1˜Ó5)§ò7 Sé—p ¨·µ4úb$†*Lß3&7√©ıuÖ[€R)îq–ûÁKhÿ…≤cå’cyFw;Î.4Å:uòÉapÉbyÀØ¡ôŒ∞ΩjJa’jäU©L ßî¸7º®C*ï‚©)F
+¶œeüéõ≥1–L¯£1VØôÑ∑öIyªO3ﬁÓ◊Lë∑AÕîx€®ô2oh¶ã∑MöÈÊÌAÕÙ6™©e˚39?>ùQï8#‚Ÿc⁄é…¿ˆ‰Sˆdl«dd{Úí=©h`5—Í…H·Î∂™\œù˙Ö4J4∆ö5ìV’L €Õx÷Lë∑Õîx€™ô2oi¶ã∑i¶õ∑möÈ·m\S¨Ä=¨)y÷êWïë<èâO¬8èŸvçé≤√m1vDSî1ÂﬁT=*/Ï»rÌ; .6´ÂqÏHõ)ˇH¶=kiôÿaûq:5%iIû‘‡pFÓ=ìëË}e·„ºi›ì√ÉjèŸI¸\◊.MP∆ ?ÉQËâ±n-^?c=øè à1ﬂcΩöI+qeåóF√ØØè©cjA…Ãy’US=Ñ¯}m1÷ß1XΩöbbòâaãfV"≈ˆ—Öı∏™(Î=1÷øõ¶ƒÌ˝ò¨¶ lÖÂyM—Oenàä§oài6≈+mÖ°¨´÷
+u4œd„ÓtÕÛjgﬂJ¢ë/™L2
+≈tÜâF!»$#œ+››k
+™¢01¢ézÇ*´0F˘çUaXß‰ï˚¢⁄5U6Ú‹R∏¿§{vebÑÊB·|—©§wŒ ∆ÿ@Ÿä¢0)‚ÿBËâ±£€S¨¬öU«¯°‹ãÉ€&‰ ÿñfòŒƒï5d›∑Œ†¬Âr\¡‰0ì¬Ô|ªÿNº_¥;ﬁRy»€!âQvWû?pÓVπÏb]Sï8∑‚(´72È‡T6£d„f;ÒEclh◊ÏT0Ωk6uﬂµ¥¬–X_ÙÉ÷Xt]Qxå≠˜<ò d#Œ⁄£16b©Ã„3b[æ¿*’î≠:PUP‚jè≥ˇ®fVà·Ty…“cˇ_QÃu‚ul@Ì	ÜvƒK(Î»9¶ôËãñ≠r\3—qüqAm∂M∞∆‡∑”~<√Î‚¨´-∆N<`|\3A|u¨ª-∆&4÷€c'πGT%ÆåÆ´Ö≤µ&5–Ïd4∆—6Ä—hå•µNiƒô“6à5rös∆¢16Õ9Ãpèrg¥ åhåe¥¸Èç±¨vÉÿc9Ì±«„<¬—YŒ≥–á8œBèsûÖf˘ô#—ÀÛ39(39ò„gr0œ9«£1V‰8áÉsú√¡¢%◊p4∆Œ[rq¥d…≈—á-π8z¬íã£'-π8∫`…≈—≤%G5€\±zLè∆ÿS6ä∆ÿ%nt´óä∆ÿeÕ$g’Üú≥fqà√π¢ô8∫ΩÎ”VœZq’Ü|≈36‰Ù?“L‚>bCNx÷ÜúQÕƒ‡ˆ~◊¨ûEˇò9˝∫9˝„öI¬s6‰Ñ?∂!'<Øô8∂ΩﬂVœ¢¬Üú˛Ir˙ãöI¬ßl»	Î6‰ÑOk{¨ó-ìÉ"F2j( fSQÊ^`BK˙j˘≤éA@ %∫	2<8¢«="(ô @–EÑg dV$D è nó,AÄ‡ï‰˙h¬ÚÜI®.‰Õëø*ΩB¥“è|D£õ∑#hˇÌu⁄œˇ2±uãºO€DœΩÅ».21Œ“˝J®@ÆÉ¿%◊"(≈°ì"À(Hn
+√dP◊LÖ$ı:|7±ËY=x†ë†Yiåà‘Íº5’ïnA¨¢ıÕëdgWW"ëÏTõeó⁄’ïË¯ΩjRïÂ÷éÆdRmñ˝æ¿˚3≈¯TÚıµNùÊ§ãgãOd©˚—#©…WµÓ£≥'—ËëÊ°ô¸£•O˝z˜…§O XË^⁄é:‰æ.pπç˜É
+¢@≈Î˙OJD{≈…†ﬁ¥=…áπ— d®L»ÍU ÍP◊\◊‚ï=˚£	o¬ü∞Ö˜´ñ.~ÔJé∫&ÙG?î[Î§ë•‰‡‚Ï·√Wáı“k‹•òﬁ∫EE⁄éz(‘˚¡Ω-
+◊!Åä]Ñ,;gZÚπls45Ók˚ˆ÷VU∫e‘ìz∑'ïö#…d'?=‡˜á¸æ@¢£´;!ÀB(Ÿ·≤≠Ù”Ö°BWÈ´£}CÆúgı]„ËQ£bmÒπ≈µŒ«ıπŒ£c≠°ëSd¢qhllàø˘(ŒlMXÒ‚C3ŒøUK©(ïÕw íD
+îp	]DQ pÏ§L·®0‘C†¥üÑ£≈Ωú¨Ó¯ÅAs†>¯|·∞€≥/*%ªUYV∑u™O$^+le¸æ yç
+ÆÙ‡Èπ˘©¡¥ã‰~ÿ£Î=Ω∫˛Ê´M.œ~yˆ¬—Æ•€ë˜F?;8⁄ßøÆ˜q}r[∑HâF‡Eã!˝'A)
+bŸ∫’UnIÑóx%«ÆﬁÑ◊≤ßdùΩî”ª{Ür´O»„•◊∆∆x[x
+3[ÔQÅ∆q˝zDâH"O*zí$ Cˆë2RñCÉ˚uYpà¥∫úcæ@Çü⁄Ÿ⁄·)í‡ÜP#’Jà˙˙Äﬂ'´$pv!◊uDÎË˙|œ‡¸-Ω >FiÒŒ‰+/-úuüûàDµCcûÄ˚‰±„SèË"m-}nüÔOOŒXˆ8P7˝6Íê‘; P·âBgEb9OñëÁÅ◊ÀÂ‰!∑ß¬√kéà:R«/ƒ§&…Ñ?·Wπ°~2?<ı•/Â~ˆ≥P’GRƒò˙‚ßJˇ‹®NY1ˇiU"¶∑ÌÃ´≤Rò¨©&¯™É5A∑å*R%Ô
+qøﬂ'ﬂ⁄¸⁄j±∏∫6ﬂo˝}√√Ó’Û◊ñ._^∫v~5ù“?£ß¨è≠-Ã 4*xh∏–D-;úµj/èÛâ]5¢ngm)•Ωt2®◊ﬂ]úª*¯‡SÔ≠
+^’kÀÎ=õ#ÆâcßÁr«∫zÜhd©{‡\¶Ù
+ô;få⁄•¡ ;^ß7≠º{‚-o≈Æº£¥Áûº‰ru›5AËuHrπ$◊¸ƒ…ª⁄öÍ*∑ÒÌ.$ıâ÷dbGæcÏ ©˘π”Éß‹ÑÊrƒïVú‘´X~¸À≥ÀÉ…èæz;≤‘ut“JΩ˛·WçÅ≠-lë\#-∏p  ’ò 7I5KFÌºÃl›¢{¨{âÁ$ÅJ◊!âÇ$^ªcgÏPÇ`_C¿WSµ«πL\ª•ÁôbÀÎîB“Yºzµ8ª&‰ÑTOˇÿXOJ»	k+süù[9óIˆÉüÓÎÃúª‹˛1ΩÕ =˜Ò˘=˜˛áoñ~·x|~–Ò8·uë¶õ®‰˜æãàÑLÄ@à»„≥áWå˛ì≤D°W‡GV¢“ª◊Îı∫<A˚ÃÓÑPß∂™˛BnÈœÕZzı	∫YZ˙EÈw•ü˛Ê7vLù›ö†dªñ{Öªjy9Ãy®–(›UÀ≠Äﬂsª9˜‘Úpãó◊Ú˙˜¢è◊ÙVµﬁﬂΩ+†∏yx)ü;=òv	ÙjØÆ˜vΩI7ó∫é^òuÇÍΩ„’·~+®@–ƒˇµûn¢
+áÙ0x≈≤£^0+ñVeÖU™™HïtßTÖú"ıÏ√gﬁ&ÂıôQÚﬂS∑ø›‹:ÇÄ6“v¥‡—∑**àed+É(°‹nó$XÆÍ¸[ë˛ì|∂|nOfıZ˛uZ‘:µ.‹‚ıxÏ®ı˜ƒ…6ò§“ëHK«‚:IõVÉ 	%ÿ®–»√·x[KK€#«JèìØÑZ#°“ŸrÀ„Ë%“LæO.A@ì¡û_≥î£ıX<ı—∫d»ˇ—Is:Õ◊h/ç†	≠zÀ˛Y@x¥8uØvMhÚ64ÿë.$ÍÅ˙ÆÆÓ∫;@PÖH§Uñ]¬3π…A&TGr#¢ãPYË;Ò¯¸1—Eâ[J—HÈŸ@“ÎM»Ûw–ÌMÚl„1Ø˜XcÈy≥∂n—Fºn›°]èIW•‡]Tñ¨Bp†ë_-ÕçxhÁ•·πÁ“ÌÍ%vı»ØççÅ˙`∞t¡„¥M˚F˜5=£ú[∑(ŸÆ◊ªsÀ©«ŒÂoóbroΩ.?˘†z]Se=˙Ô‘ÎV’Øz~◊ù,ª´^OX/§%ÓS<ÀûrÚ´‚h◊›tﬁKè/OÓ ØÆ≠	⁄L#®B≥~–≈Ôf2aóÅPz‘*{U®jÿ+z¢ı›;bÅlú˙A·9wµ Tªûô-˝œõ?¶bÈüV[´˘»ÙÌà]ÔGÒ;∫ó¸Ç8o ≈·qOgÙ %ÄH .Å…Çaé="Lıá@!Çä◊e"ÅHö;l©ÃÁfıj A[‘Ω-*/ë¶å·nÀŸMB¢#ôLXµ(.®Õ~ˇËÒæpGs∞…wxf¨ﬂA[£˝c˚[[˜wèéˆ∑Å-˜¯÷ghï0ı∫èº¿s˛ éƒ™'	2NÊgKπ,ºÒ˛4bà
+Ù4*!ﬂ@:¢·p2ÏódŸ‘KT(MëØïæWr{öΩ§kË›‚ªg>Ô©¢¥ ÛÎÃùÎ+¯˙Ód∏´´;i'%ˇÈ≤óñæGæ6dØ¨v!˜nëØ›‹∫EÆ·ÛÿÉ˝z=/Zæ>]ˆê=Çì%v"¯d¢Öc±p8´–‘p<V5.CÈe˙©≠†‡¡¥rÈç ÄeskGÇS;7‰Ê&;6-˝(âÑBë˝TÛÅ&Um:–lÈ•xxÕ)◊p`Ä8Î¸=ÄØ◊k◊ÎEÚ&¸3ﬂ˝‚˘Êyn™§Ò∫–IﬂÖ≈)˜lÕ¿oP#¸w◊O+æÒ+ﬁ˛|s˛ÀøÌ-≠–€‚À dPÁª_Ôó~–Ão{∑£∑Ìu;~öAéf`–gaÖf0M38„åœ–;cüuÊ6iß_p⁄&ö¡ Õ‡%ö¡AÛÒ.ö¡(Õ`‹ŸÉˇn•ó9–Å7ﬁ#'»˘9Ì£óË}[êÖe·öØBIl?+~Gjñ•uÈ'Ú®|E˛°¸kW•´Õ5È∫Í˙í≠'rÀ¯$◊û˛ôp/Ræ∫Ç5[çØq$zúÔ¯mL–ào9ò¢ˇ·`¯Oã–H≥É%LìIÀh#Ø9ÿÖ9Ú}ª±ó∆Ï¡	™;x:Ë∫É+w‡*“LÀ2T£K¯	\ƒ
+û¡%,aÁ±
+h∑~L„<†‡∞ä.°Ä%,„2úƒE,„"§q	Òa,`ﬁZ?Ñ5¨‚<.‚í≈<dÌªä\F„0±d1÷0á8Êqp¯>ß‹o¨|ÓC(’∞à5<â.°q$–é$˙q)ÎÛA˚∆ÓZ˚¡∫ÔÊ>äKÁ%k^ŸuÆbŸ‡
+ñu.‚ºµ∑◊!\¡ƒ—É8:G7bH¢à$ÊÓ´ÂˇM“%´_∞‰‡å"p¡Z˜\ƒπ¯˘2‚∏Ñ8."~ü˘¥•«ìX¬
+V†`k∏dIƒ«ñ°A¡∏%√e¨¢`iÃ«§,÷ñÒ.‚ =1Ú¥ı'n≈’*ÊvúYéù∂V£÷	‹ñß-MVÒ¥•è]õ¡•ô∑Nªå°`Àñ.Y±„¸4∆<ÇãªsÁâ];pΩÓˆ6˜!ˇµÛÊ~ÁﬁÒ¬KÓ∑9À
+
+ûvr¬ˆ—(Üp ¬´ËÉrèux÷Ú]œ9ÚÌ>á{Îíìœ¯*˛≥~∂–·Tºª*9ˇ˜qò¡qL#ÉGqSò¿)å·ª≈8&qè çZ‰w¡Y∞ÇóPºÎZ[^jO¥wøâü òÑºíeƒ˛äk≈Ñ+ı0t$$°çwÙ IqTÏrG‹.©¬ö¢'Ë†óJ÷PeÍÌ∫wºÔTΩ„yG÷!aOõ	oÍm˛üÑú?|ÏõÄa≥Öºx*√Ù3º_6Ò˛M7ÏgÉf+˙G˜uQq~∫<¡Ù 4=N{‰CÚ~I™nªI∂^`‚À&≈©(cx¯_í{Ò
+endstream
+endobj
+22 0 obj
+<</Length 1963/Filter/FlateDecode>>
+stream
+xúÂZKèπæœØ–1}Ö/ΩÆÇ {€Ï‹≤{q≥A–3¿‰Ô/H=JUÆÍÈ±{åcÆè]¢HQ~b˘7á∏G} w~qh?ˇÍ0˙‡¿˜‚37·‚yÊXeƒR|p…«»"“eS>wIL˝2ƒ÷Aò˙í™VU·\{©¬e1QÄUG&ôÓπ∫•öÉCoÄ—@¡˘·ﬂœ?>¸∂YÑúY°!Rı\1≈‡˛˘èˇß0˝¥ìd'“‚ÑÑ!Ê®qBN§†B˝çRpü}¯€ì˜Ù˘Øœ‡à‹”ÛnpO/ˇ˙Àœ 3 ∂'ù0x‰ò∞ÙW‹û“û·ÙàæF
+ΩIlœ¥j˙ÈÙX|ä!ˆÜø€øØßGÃbàΩÉp ûR∆ˆÆ≠>üÉœ°pj]}äø<˝˜ß/ÉÑTÉƒR K$Ö9ó∞l#tnä—A`FÄ6QÈr:°¯(Y∆(>≠Zˆl£3b±sïü´⁄*,Ω%ÔªÑq“l˝¥'Æ[M≠_7AËm∫•ﬁóú÷s?zﬂ˙Ba¸‚C8∞#sÎ≈⁄˛∏∑øèH¶ªƒeû∂e|[[|∞l∫Øt"Ú°pﬁÑj<è‹Â[ÇÒ÷†˚∫%ÿÓ◊°¬pzƒ‡ó€–¥¿·Ó~¸2œEp¢{qî»–≈Q >R)ã£àûu!ª≥!&—÷äöFWeé÷£>œjD¡≈÷éB6QÚ¢®òƒù®ÖKÕÓPSèö«ﬂöπ>Ù¿7π(EGêø"a∫rŒb<ïÏ#”H}Î¥U˜∫]∑Î≈⁄◊˚zwåÕõvWhä≥º7cêC˛ñåq∞€H>≠¥?8N∂6nÈÛuÓ˘˙ûΩanq$‡^\2tqäO\•à—ëDO1U)ËÍSƒ¨Àœê”Ëö◊ÁŸl(∫8Œ÷ìIúaËf›.ä‘Ç∂Ö…r◊Tü∫œ;;Zò|
+%êÆo/2]+NÖWfø•Õû{¥∑ßÙö3≠>üKª›Y‚}tòäÁ∆wB]Ω:Y!€™U.â·w-ﬂÌr≈âo,é”äyÃ\a€f§âÑﬁÛH∞f}W,l€.ºæ—ße‘}nÁ≥$=´k¸íÆj;~ã^2XÎ¢¨ù˘à≤…úXü^$È·kí¿µñ≥Nj}•v®+“Cù[*SûµõdÌgk≥NæûØdß7Ãz¢ÕN¨€t+¢BÓr=Òç¢Æ9äs
+‘õÓø››Í	`ÜbTø5W)¬§&3‰ä∂	'Z¶À˜>¶ﬂXÁ7RöL†wDªíJÖz´îX3Æ àÅRœÆUd∞À®6®£o∞™·‘’ÆúÕû¢ãÀX{å&kÙı*©	ã*è¯/mu±è‚[yŒ˜çüﬁ\  zyOöézïK.C¥'FΩŸõACÍFÒÖπøAúµ™îÃ›Ü—Z≠§UÖ∫]j}aXjod•’˝ª>πodê±ô?÷xè¶|é˙Gœ¬“)MùOŒNÿãÀë]\é…€©¨bN˙≥xI	cïÇ9Ø()˚®®òäL &P•ú’N∂ÊL⁄Y}ëµ·¢kí5WÃÛcÿ ÍZÛ}g¶≥ÄO%+ÒBüÛm©·fˆﬁ/ÓwèÕú≥câ˜æ3Ù2√LzQ¢?òÆ˘§ó°wóã‰ZV˘8eü„®‹x$lí-›¬ä◊Ïx‹∂~^W$ØK3-Ï|zù=≤ÿ>®·öBv€∑“”UAlˇ∂v¥˛ÔOô*≤ƒ¶hè2—˚k°oP¶o"Ú”n}µ"ëN&ŒdBÂ §XÚ.M‘≤EÖµR°PÁ Ω•z'Ω=™9E3óPYÉ<¥M∞jã≈ﬁ*9ÜÜ=¿´„˜ VﬂS,n§UuÈw,öÙÅF˙ßBçT¥çˆ∆Ëƒ§◊dsπ·‰S…ìf}÷O>ãµ˙F6z›œ{“´è6Ó+4´≥	•é[‘SHÔ≠çoQ¥·F24Ò-ïMQ„;“$âﬁΩÌ≤ZQ0ï∏(3Çı©œ ∑M|Àh√E◊$kÆ÷ì9chÿÔ ÊZÛ}óo°GP¬E·B]ê≤˙R2p!=ñ+#¢¸5îãÒ0ë}Õ'√´Vø(<“äÇmÎ1Ω|∂ﬂÖñ≤Ì°˜XÚù…ŸG¯ËtΩ‹óïm—ÎWÎS⁄GÑ3Û˘ÇÏñÌ˙≤ŸFeƒ^ˆ£y3„¯_Û/©E»ÌÒØÔLøF∞xöÆN@∑ÖÂ˝iÿ‘ºç∆˝©Wå≠$PIÑÙ&vë†1èÍ∑¶*e≠·î®Òl∞}›ZÙ•J`†≤E3;QŸ¶£kW¡äD SrüØ·¬ƒlíÊÅÍˆ=à⁄˜âiöÓÅNWÑ`CWs£-t•Ω1J2È5Ÿ<nò7tE(Ù>-t•øëç^˜Ûû4Ì£ç˚x:¡„|2 öI*i*6H%R˙A`‚WÖ*ı*q"gÊø"2˙§àqKŒÑU–W∆Â∏˛2ë3k`áÆJdÕÅ9c~˚ÉŸ©kÕ˜=r∆…ÉPp©¯ú ‘ŸèJ»–»ô°êºãìç“¬a/roJ∆´£æ◊¬HtÔí◊˜Ò_Y¶‚˚Ú.nÈ∂Õ‹ü^Îv∏ˆ[)√˙Ht⁄4πY^ÒÄiÑÓ.™§
+endstream
+endobj
+23 0 obj
+<</Title(parts)/Creator(VectorCraft)/Producer(VectorCraft)/ModDate(D:20261113011857Z)/CreationDate(D:20261113011845Z)>>
+endobj
+24 0 obj
+<</Length 1055/Type/Metadata/Subtype/XML>>
+stream
+<?xpacket begin="Ôªø" id="W5M0MpCehiHzreSzNTczkc9d"?><x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="xmp-writer"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><rdf:Description rdf:about="" xmlns:dc="http://purl.org/dc/elements/1.1/"  xmlns:xmp="http://ns.adobe.com/xap/1.0/"  xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"  xmlns:xmpTPg="http://ns.adobe.com/xap/1.0/t/pg/"  xmlns:pdf="http://ns.adobe.com/pdf/1.3/" ><dc:title><rdf:Alt><rdf:li xml:lang="x-default">parts</rdf:li></rdf:Alt></dc:title><xmp:CreatorTool>VectorCraft</xmp:CreatorTool><pdf:Producer>VectorCraft</pdf:Producer><xmp:ModifyDate>2026-11-13T01:18:57+00:00</xmp:ModifyDate><xmp:CreateDate>2026-11-13T01:18:45+00:00</xmp:CreateDate><xmpTPg:NPages>1</xmpTPg:NPages><dc:format>application/pdf</dc:format><xmpMM:InstanceID>On+yLuBmSbLF3FHF3mgPfg==</xmpMM:InstanceID><xmpMM:DocumentID>On+yLuBmSbLF3FHF3mgPfg==</xmpMM:DocumentID><xmpMM:RenditionClass>default</xmpMM:RenditionClass><pdf:PDFVersion>1.7</pdf:PDFVersion></rdf:Description></rdf:RDF></x:xmpmeta><?xpacket end="r"?>
+endstream
+endobj
+25 0 obj
+<</ViewerPreferences<</DisplayDocTitle true>>/Type/Catalog/Pages 1 0 R/Metadata 24 0 R>>
+endobj
+xref
+0 26
+0000000000 65535 f
+0000000016 00000 n
+0000000068 00000 n
+0000000157 00000 n
+0000000292 00000 n
+0000000889 00000 n
+0000001130 00000 n
+0000001264 00000 n
+0000001793 00000 n
+0000002034 00000 n
+0000002177 00000 n
+0000002393 00000 n
+0000002608 00000 n
+0000002752 00000 n
+0000002832 00000 n
+0000003388 00000 n
+0000009884 00000 n
+0000009964 00000 n
+0000010509 00000 n
+0000016546 00000 n
+0000016626 00000 n
+0000017188 00000 n
+0000022733 00000 n
+0000024766 00000 n
+0000024902 00000 n
+0000026034 00000 n
+trailer
+<</Size 26/Root 25 0 R/Info 23 0 R/ID[(On+yLuBmSbLF3FHF3mgPfg==)(On+yLuBmSbLF3FHF3mgPfg==)]>>
+startxref
+26139
+%%EOF

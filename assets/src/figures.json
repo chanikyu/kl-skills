@@ -1,0 +1,69 @@
+{
+  "_about": "Words, colours and fonts of the README figures. figures.py reads this; gate names, skill names and the version come from the repo itself.",
+  "fonts": {
+    "sans": "Inter",
+    "mono": "JetBrains Mono"
+  },
+  "colors": {
+    "card": "#FFFFFF",
+    "border": "#D8DEE4",
+    "surface": "#F6F8FA",
+    "ink": "#1F2328",
+    "muted": "#59636E",
+    "faint": "#8C959F",
+    "rule": "#D0D7DE",
+    "accent": "#0969DA",
+    "accent_soft": "#DDF4FF",
+    "back": "#BC4C00",
+    "back_soft": "#FFF1E5",
+    "back_border": "#FFB77C",
+    "back_ink": "#953800",
+    "gate": "#1A7F37",
+    "gate_soft": "#DAFBE1",
+    "wiki": "#9A6700",
+    "wiki_soft": "#FFF8C5",
+    "terminal": "#0D1117",
+    "terminal_bar": "#161B22",
+    "terminal_ink": "#E6EDF3",
+    "terminal_dim": "#8B949E",
+    "terminal_prompt": "#7EE787",
+    "terminal_banner": "#79C0FF",
+    "dots": ["#FF5F57", "#FEBC2E", "#28C840"]
+  },
+  "hero": {
+    "eyebrow": "CLAUDE CODE PLUGIN",
+    "title": "kl-skills",
+    "subtitle": "Skills and hook gates for Claude Code, installed together.",
+    "languages": 5,
+    "terminal_title": "claude  ~/project",
+    "commands": ["/plugin marketplace add chanikyu/kl-skills", "/plugin install kl-skills@kl-skills"],
+    "restart": "# restart the session"
+  },
+  "turn_flow": {
+    "title": "One turn, five moments",
+    "subtitle": "Each moment runs its hook gates. Two of them can send the answer back, once a turn.",
+    "legend_gate": "hook gate",
+    "legend_back": "can send the answer back once",
+    "stages": [
+      {"event": "SessionStart", "label": "Session starts", "detail": "SessionStart"},
+      {"event": "UserPromptSubmit", "label": "Message in", "detail": "UserPromptSubmit"},
+      {"event": "PostToolUse", "matcher": "Write|Edit|MultiEdit", "label": "File written", "detail": "PostToolUse · Write, Edit"},
+      {"event": "PostToolUse", "matcher": "Bash", "label": "Bash runs", "detail": "PostToolUse · Bash"},
+      {"event": "Stop", "label": "Answer ends", "detail": "Stop"}
+    ],
+    "sends_back": ["answer-check", "checklist-check"]
+  },
+  "parts": {
+    "title": "How the parts fit",
+    "subtitle": "Skills say how a job is done. Hook gates check that it was done. The wiki keeps what was learned.",
+    "message": "Your message",
+    "message_detail": "a request or a question",
+    "center": "Claude Code",
+    "center_detail": "reads · is checked · keeps",
+    "cards": [
+      {"kind": "skills", "title": "Skills", "detail": "say how a job is done", "link": "reads", "examples": ["llm-wiki-docs", "task-checklist"]},
+      {"kind": "gates", "title": "Hook gates", "detail": "check that it was done", "link": "checked by", "examples": ["skill-match", "answer-check"]},
+      {"kind": "wiki", "title": "Wiki", "detail": "keeps what was learned", "link": "writes · recalls", "badge": "md", "path": "~/llm-wiki-docs/<topic>/wiki/"}
+    ]
+  }
+}
