@@ -124,4 +124,4 @@ Publicar cambios, probar hooks con conversaciones reales, el contrato de salida 
 
 ## Licencia
 
-MIT
+[MIT](../../LICENSE)

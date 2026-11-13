@@ -121,4 +121,4 @@ KL-SKILLS GATES v<버전> — loaded, 12 rules enforced
 
 ## 라이선스
 
-MIT
+[MIT](../../LICENSE)

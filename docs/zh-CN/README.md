@@ -124,4 +124,4 @@ KL-SKILLS GATES v<version> — loaded, 12 rules enforced
 
 ## 许可证
 
-MIT
+[MIT](../../LICENSE)

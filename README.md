@@ -124,4 +124,4 @@ Releasing, testing hooks on real conversations, the hook output contract and the
 
 ## License
 
-MIT
+[MIT](LICENSE)
