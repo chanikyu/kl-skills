@@ -291,7 +291,7 @@ scripts/check_prose.py --all <파일...>  # 참고 등급까지
 
 | 무엇을 정하나 | 어디 |
 |---|---|
-| **무엇을** 담을지 (결론 먼저, 용어 정의, 숫자 맥락) | CLAUDE.md §0-2 |
+| **무엇을** 담을지 (결론 먼저, 용어 정의, 숫자 맥락) | 이 스킬 (2026-11-13 CLAUDE.md §0-2 에서 옮겨 옴) |
 | **분석 결과** 보고의 여섯 단계 (데이터·방법·용어·결과·판단) | `reporting.md` |
 | **코드 작업** 보고의 여섯 단계 (결과·변경·검증·제약) | 이 스킬 → `references/work-report.md` |
 | 위키 밖 문서의 뼈대 (README·Architecture·API 등) | 이 스킬 → `references/document-structure.md` |
