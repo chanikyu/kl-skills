@@ -102,6 +102,7 @@ When a gate sends an answer back, Claude Code shows `Stop hook feedback:` with t
 
 ## What's new
 
+- **0.23** — field terms: `answer-check` flags words the field does not use, in answers and in slides (`data/domain-terms.tsv`)
 - **0.22** — `task-checklist` with its two gates, `skill-match`, and this documentation wiki
 - **0.21** — the maintainers' skills left the plugin; README in five languages
 - **0.20** — a turn that changed files must end with a six-step work report

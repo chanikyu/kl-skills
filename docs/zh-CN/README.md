@@ -102,6 +102,7 @@ KL-SKILLS GATES v<version> — loaded, 12 rules enforced
 
 ## 更新记录
 
+- **0.23** — 领域术语：`answer-check` 会在回答和幻灯片中找出该领域不用的词（`data/domain-terms.tsv`）
 - **0.22** — `task-checklist` 及其两个检查、`skill-match`，以及这个文档 wiki
 - **0.21** — 维护者用的技能（`plugin-release`、`hook-replay`）移出插件；README 支持五种语言
 - **0.20** — 修改过文件的一轮对话，必须以六步工作报告结束

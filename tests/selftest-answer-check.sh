@@ -313,6 +313,27 @@ case "$out" in
   *"작업 보고"*) bad "앞 턴에서 고친 것을 이번 턴의 작업으로 셌다: $out" ;;
   *)            ok "앞 턴의 수정은 이번 턴의 작업이 아니다" ;;
 esac
+# --- 분야 용어: 그 분야가 쓰지 않는 말이 답·이번 턴의 파일·답이 가리킨 결과물에 있으면 막는다
+# (2026-11-13 사용자 요청: 슬라이드에 분야가 쓰지 않는 말이 들어갔다). 아래 줄들은 일부러 틀린 말을 쓴다.  term-check: ok
+out="$(report_case term-answer '' "MAG 는 stringent quality 로 나눴습니다.")"   # term-check: ok
+case "$out" in *"분야 용어"*"high quality"*) ok "답에 쓴 틀린 분야 용어를 짚어 막는다" ;; *) bad "답의 틀린 용어를 놓쳤다: $out" ;; esac
+out="$(report_case term-mention '' '`stringent quality` 대신 high quality 로 고쳤습니다.')"   # term-check: ok
+case "$out" in *"분야 용어"*) bad "백틱 안의 언급까지 막았다: $out" ;; *) ok "백틱으로 감싼 언급은 막지 않는다" ;; esac
+printf 'title = "Higher sequence resolution"\n' > "$TMP/repo/slides.py"   # term-check: ok
+out="$(report_case term-file "[\"tool\", \"Write\", {\"file_path\": \"$TMP/repo/slides.py\"}]," "슬라이드 스크립트를 썼습니다.")"
+case "$out" in *"분야 용어"*"slides.py"*"taxonomic resolution"*) ok "이번 턴에 쓴 파일 속 틀린 용어를 짚는다" ;; *) bad "파일 속 용어를 놓쳤다: $out" ;; esac
+"$PY" -c 'import sys, zipfile
+z = zipfile.ZipFile(sys.argv[1], "w")
+z.writestr("ppt/slides/slide1.xml", "<p:sld><a:p><a:r><a:t>stringent quality MAGs</a:t></a:r></a:p></p:sld>")
+z.close()' "$TMP/deck.pptx"   # term-check: ok
+out="$(report_case term-deck '' "슬라이드를 만들었습니다: $TMP/deck.pptx")"
+case "$out" in *"분야 용어"*"slide 1"*"high quality"*) ok "답이 가리킨 .pptx 의 슬라이드 글까지 본다" ;; *) bad "결과물 pptx 를 안 봤다: $out" ;; esac
+export KL_CHECKLIST_DIR="$TMP/checklists"
+printf -- '- [x] stringent quality → high quality 로 고친다\n' > "$KL_CHECKLIST_DIR/s1.md"   # term-check: ok
+out="$(report_case term-checklist "[\"tool\", \"Write\", {\"file_path\": \"$KL_CHECKLIST_DIR/s1.md\"}]," "고칠 항목을 적었습니다.")"
+case "$out" in *"분야 용어"*) bad "체크리스트 속 인용까지 막았다: $out" ;; *) ok "체크리스트 파일은 용어 검사에서 뺀다" ;; esac
+unset KL_CHECKLIST_DIR
+
 # 2026-11-11 hook-replay 로 실제 턴에 돌려 보고 찾은 두 가지
 out="$(report_case work-probe "[\"tool\", \"Write\", {\"file_path\": \"$TMP/repo/_probe_tmp.py\"}]," "훅이 도는지 봤습니다.")"
 case "$out" in

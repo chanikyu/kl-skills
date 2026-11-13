@@ -3,3 +3,5 @@
 # 2026-11-13: 백그라운드 작업이 끝났다는 알림이 들어와 작업 중인 체크리스트를 .prev 로 치웠다.
 <task-notification>
 [SYSTEM NOTIFICATION
+# 서브에이전트가 일을 마치고 보내는 보고. 알림과 함께 이 모양으로 먼저 들어온다(2026-11-13 확인)
+<agent-message

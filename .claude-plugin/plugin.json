@@ -1,6 +1,6 @@
 {
   "name": "kl-skills",
-  "version": "0.22.1",
+  "version": "0.23.0",
   "description": "Skill package whose hooks install with it — no settings.json editing on the target machine. Hook gates are written in Rust or Python, whichever fits: Rust ships prebuilt for the hot paths and for Windows, Python needs no build step.",
   "author": {
     "name": "chanikyu",

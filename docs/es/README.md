@@ -102,6 +102,7 @@ Cuando un gate devuelve una respuesta, Claude Code muestra `Stop hook feedback:`
 
 ## Novedades
 
+- **0.23** — términos del campo: `answer-check` señala palabras que el campo no usa, en respuestas y diapositivas (`data/domain-terms.tsv`)
 - **0.22** — `task-checklist` con sus dos gates, `skill-match` y esta wiki de documentación
 - **0.21** — las skills de mantenimiento (`plugin-release`, `hook-replay`) salieron del plugin; README en cinco idiomas
 - **0.20** — un turno que cambió archivos debe terminar con un informe de trabajo en seis pasos

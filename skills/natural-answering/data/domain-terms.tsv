@@ -1,0 +1,11 @@
+# 분야 표준 용어집. 왼쪽(wrong) 말이 답변·결과물에 나오면 오른쪽(right) 말로 고치라고 알린다.
+# 열은 탭으로 나눈다: wrong <TAB> right <TAB> field <TAB> source
+#   wrong  분야가 쓰지 않는 말. 대소문자와 붙임표(-)·띄어쓰기 차이는 같은 말로 본다
+#   right  그 분야가 실제로 쓰는 말 (지침·공식 문서·대표 논문, 또는 사용자의 PPT·논문 초안의 표현)
+#   field  분야
+#   source 근거. 논문이면 서지와 DOI, 사용자가 고쳐 준 것이면 "사용자 지정 <날짜>"
+# 사용자가 용어를 고쳐 주면 여기 한 줄 더한다. 코드는 고치지 않는다.
+# 이 파일은 검사하지 않는다(틀린 말을 적어 두는 곳이라서).
+wrong	right	field	source
+stringent quality	high quality	metagenomics — MAG quality tiers (high / medium / low quality)	MIMAG: Bowers et al. 2017, Nat Biotechnol 35:725-731, doi:10.1038/nbt.3893; 사용자 지정 2026-11-13
+sequence resolution	taxonomic resolution	microbiome profiling	사용자 지정 2026-11-13

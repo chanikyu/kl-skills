@@ -42,6 +42,11 @@ out="$("$PY" -c 'import json,sys; print(json.dumps({"session_id":"s1","prompt":s
   | sh "$REPO/hooks/run.sh" checklist-start 2>/dev/null)"
 [ -f "$LIST" ] && [ ! -f "$KL_CHECKLIST_DIR/s1.prev.md" ] && [ -z "$out" ] && ok "작업 알림은 지시가 아니라 목록을 그대로 둔다" \
   || bad "작업 알림에 목록을 치웠다: $out"
+printf -- '- [ ] 하던 일\n' > "$LIST"
+out="$("$PY" -c 'import json,sys; print(json.dumps({"session_id":"s1","prompt":sys.argv[1]}))' \
+  "$(printf '<agent-message from="a1">\n[Subagent hand-back] report\n</agent-message>')" \
+  | sh "$REPO/hooks/run.sh" checklist-start 2>/dev/null)"
+[ -f "$LIST" ] && [ -z "$out" ] && ok "서브에이전트 보고로 시작하는 알림도 목록을 그대로 둔다" || bad "서브에이전트 보고에 목록을 치웠다: $out"
 rm -f "$LIST"
 
 # --- 답이 끝날 때: 목록이 없으면 한 번 막는다

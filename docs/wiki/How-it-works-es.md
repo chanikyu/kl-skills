@@ -32,7 +32,7 @@
 | Se escribe un archivo | `plan-drift` | Revisa el marco del plan y sus desvíos | — |
 | Se ejecuta Bash | `after-bash` | Detecta ediciones de la wiki y commits hechos en la shell | — |
 | Termina la respuesta | `wiki-sync` | Pone el grafo al día, sin importar cómo se editaron las páginas | — |
-| Termina la respuesta | `answer-check` | Revisa la respuesta: preguntas repetidas, el informe de trabajo, la longitud, la redacción | una vez |
+| Termina la respuesta | `answer-check` | Revisa la respuesta: preguntas repetidas, el informe de trabajo, la longitud, la redacción, los términos del campo | una vez |
 | Termina la respuesta | `checklist-check` | Comprueba que todos los puntos de la lista de comprobación estén hechos | una vez |
 
 ## Cuando se devuelve una respuesta

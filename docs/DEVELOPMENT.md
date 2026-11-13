@@ -134,7 +134,8 @@ skills/
   planner/           check_plan.py · check_drift.py · plan template · field references
   wiki-recall/       recall.py — two-letter fragments + BM25 + query coverage + graph neighbours
   readable-code/     check_code.py — Python names and docstrings
-  natural-answering/ check_prose.py · data/ (rules) · references/ (work report, document skeletons)
+  natural-answering/ check_prose.py · check_terms.py (field terms, also inside .pptx/.docx) · data/ (rules;
+                     domain-terms.tsv = wrong word → the field's word) · references/ (work report, document skeletons)
   research-to-wiki/  check_research.py · data/ (evidence and reading levels) · page template
   task-checklist/    the checklist procedure the checklist gates point to
 hooks/
@@ -169,4 +170,5 @@ tests/
   selftest-research-to-wiki.sh source labels on research pages
   selftest-checklist.sh        an open item sends the answer back once; a finished list passes
   selftest-skill-match.sh      a message names its skill; everyday messages stay silent
+  selftest-terms.sh            a word the field does not use is caught, in text, .pptx and .docx
 ```

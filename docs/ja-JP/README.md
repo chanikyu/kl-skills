@@ -102,6 +102,7 @@ KL-SKILLS GATES v<version> — loaded, 12 rules enforced
 
 ## 新着
 
+- **0.23** — 分野の用語: 回答とスライドで分野が使わない言葉を `answer-check` が指摘する（`data/domain-terms.tsv`）
 - **0.22** — `task-checklist` とその 2 つのゲート、`skill-match`、そしてこのドキュメント wiki
 - **0.21** — メンテナー用スキル（`plugin-release`、`hook-replay`）をプラグインから外した。README を 5 言語に
 - **0.20** — ファイルを変更したターンは 6 段階の作業報告で終える

@@ -32,11 +32,15 @@ import sys
 import tempfile
 
 # 사람 메시지와 기계 글을 가르는 규칙은 hook-replay 스킬과 같이 쓴다.
+from _checklist import checklist_dir
 from _transcript import read_turns, tool_calls_since_last_human
 from _work_files import is_work_file
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CHECKER = os.path.join(PLUGIN_ROOT, "skills", "natural-answering", "scripts", "check_prose.py")
+TERM_CHECKER = os.path.join(PLUGIN_ROOT, "skills", "natural-answering", "scripts", "check_terms.py")
+# 답이 가리키면 결과물로 보고 분야 용어를 검사할 파일 형식 — check_terms 가 읽을 수 있는 것들이다
+DOCUMENT_PATH = re.compile(r"(?:[A-Za-z]:)?[\w.~/\\-]+\.(?:pptx|docx|md|html|txt|tex)(?![A-Za-z0-9])", re.IGNORECASE)
 REASK_MARKERS_FILE = os.path.join(PLUGIN_ROOT, "skills", "natural-answering", "data",
                                   "reask-markers.txt")
 WORK_REPORT_GUIDE = os.path.join(PLUGIN_ROOT, "skills", "natural-answering", "references",
@@ -222,26 +226,58 @@ def work_report_gaps(answer_text, steps, outcomes):
     return gaps
 
 
-def check_answer(answer_text):
-    """답변 글을 natural-answering 검사기에 넘긴다. 경고 줄만 돌려준다."""
-    if not os.path.isfile(CHECKER):
+def run_on_answer(script, answer_text, make_args):
+    """답변을 임시 파일로 내려 써서 검사 스크립트에 넘기고, 찾은 것이 있을 때만 출력을 돌려준다.
+
+    검사기들은 파일을 받는다. 답변은 파일이 아니므로 한 번 내려 쓴다. 출력의 마지막 줄은 집계라서,
+    그 줄만 있으면 찾은 것이 없다.
+    """
+    if not os.path.isfile(script):
         return ""
-    # 검사기는 파일을 받는다. 답변은 파일이 아니므로 임시 파일로 한 번 내려 쓴다.
     with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False,
                                      encoding="utf-8") as answer_file:
         answer_file.write(answer_text)
         temp_path = answer_file.name
     try:
-        finished = subprocess.run(
-            [sys.executable, CHECKER, "--exit-zero", "--limit", "5", temp_path],
-            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, timeout=30)
+        finished = subprocess.run([sys.executable, script] + make_args(temp_path),
+                                  stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, timeout=30)
         report = (finished.stdout or b"").decode("utf-8", "replace").strip()
     except (OSError, subprocess.SubprocessError):
         report = ""
     finally:
         os.unlink(temp_path)
-    # 마지막 줄은 집계다. 그 줄만 있으면 경고가 없다.
+    # 검사기가 없거나 죽어도 답을 막지 않는다 — 판단을 못 한 게이트는 통과시킨다
     return report if len(report.splitlines()) > 1 else ""
+
+
+def check_answer(answer_text):
+    """답변 글을 natural-answering 검사기에 넘긴다. 경고 줄만 돌려준다."""
+    return run_on_answer(CHECKER, answer_text, lambda path: ["--exit-zero", "--limit", "5", path])
+
+
+def files_for_term_check(tool_calls, answer_text, cwd):
+    """분야 용어를 볼 파일: 이번 턴에 쓴 파일과, 답이 가리킨 결과물(슬라이드·문서). 체크리스트는 뺀다.
+
+    결과물은 Bash 로 만들어져 도구 기록에 경로가 안 남는 일이 많다. 대신 답에서 그 경로를
+    알리므로, 답이 가리킨 파일을 본다. 체크리스트에는 고칠 말을 인용해 적으므로 뺀다.
+    """
+    candidates = [str(tool_input.get(EDIT_TOOLS[name]) or "") for name, tool_input in tool_calls
+                  if name in EDIT_TOOLS]
+    for mentioned in DOCUMENT_PATH.findall(answer_text):
+        path = os.path.expanduser(mentioned)
+        candidates.append(path if os.path.isabs(path) or not cwd else os.path.join(cwd, path))
+    checklists = os.path.realpath(checklist_dir()) + os.sep
+    found = []
+    for path in candidates:
+        if path and path not in found and os.path.isfile(path) and not os.path.realpath(path).startswith(checklists):
+            found.append(path)
+    return found
+
+
+def check_terms(answer_text, paths):
+    """답변과 파일들에서 분야가 쓰지 않는 말을 찾는다. 찾은 줄들(없으면 빈 글)."""
+    return run_on_answer(TERM_CHECKER, answer_text,
+                         lambda path: ["--exit-zero", "--limit", "8", "--answer", path] + paths)
 
 
 def main():
@@ -274,7 +310,8 @@ def main():
             % (times_asked, reason))
 
     # 코드를 고친 턴은 작업 보고로 끝낸다. 무엇이 됐고, 무엇을 바꿨고, 확인했고, 무엇이 남았나.
-    if turn_changed_work(tool_calls_since_last_human(event["transcript_path"])):
+    tool_calls = tool_calls_since_last_human(event["transcript_path"])
+    if turn_changed_work(tool_calls):
         steps, outcomes = work_report_steps()
         gaps = work_report_gaps(answer_text, steps, outcomes) if steps else []
         if gaps:
@@ -293,6 +330,15 @@ def main():
     prose_report = check_answer(answer_text)
     if prose_report:
         problems.append("글 검사가 잡은 것:\n" + prose_report)
+
+    # 분야가 쓰지 않는 말. 쉬운 말로 바꿔 부르거나 비슷한 말을 지어내면 그 분야 사람이 못 알아본다.
+    cwd = event.get("cwd") if isinstance(event.get("cwd"), str) else ""   # 모양이 틀린 입력에도 터지지 않게
+    term_report = check_terms(answer_text, files_for_term_check(tool_calls, answer_text, cwd))
+    if term_report:
+        problems.append(
+            "분야 용어가 틀렸다 — 그 분야가 실제로 쓰는 말로 고친다"
+            " (용어집: skills/natural-answering/data/domain-terms.tsv):\n" + term_report
+            + "\n   틀린 말을 일부러 보여 주는 자리면 백틱으로 감싸거나 그 줄에 'term-check: ok' 를 단다.")
 
     if not problems:
         return 0

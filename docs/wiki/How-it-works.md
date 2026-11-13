@@ -32,7 +32,7 @@
 | A file is written | `plan-drift` | Checks a plan's frame and drift | — |
 | Bash runs | `after-bash` | Catches wiki edits and commits made in the shell | — |
 | The answer ends | `wiki-sync` | Brings the graph up to date, however pages were edited | — |
-| The answer ends | `answer-check` | Checks the answer: re-asks, the work report, length, prose | once |
+| The answer ends | `answer-check` | Checks the answer: re-asks, the work report, length, prose, field terms | once |
 | The answer ends | `checklist-check` | Checks that every checklist item is done | once |
 
 ## When an answer is sent back

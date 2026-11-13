@@ -99,6 +99,7 @@ KL-SKILLS GATES v<버전> — loaded, 12 rules enforced
 
 ## 새 소식
 
+- **0.23** — 분야 용어: 답과 슬라이드에서 분야가 쓰지 않는 말을 `answer-check` 가 잡는다(`data/domain-terms.tsv`)
 - **0.22** — `task-checklist` 와 그 게이트 두 개, `skill-match`, 그리고 이 문서 위키
 - **0.21** — 관리자용 스킬(`plugin-release`, `hook-replay`)을 플러그인에서 뺐다. README 5개 언어
 - **0.20** — 파일을 고친 턴은 작업 보고 6단계로 끝내야 한다

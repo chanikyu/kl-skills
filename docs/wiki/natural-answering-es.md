@@ -16,18 +16,22 @@ No hace falta decir nada: el gate `answer-check` lee cada respuesta.
 2. La primera frase responde a la pregunta que se hizo.
 3. Una respuesta cabe en una pantalla; lo que sea más largo se convierte en un documento con un resumen breve.
 4. Después de cambios en el código, un informe sigue seis pasos: resultado, resumen, cambios, verificación, problemas y límites, seguimiento.
+5. Los términos son los del campo: la palabra de las guías, los artículos y tus propias diapositivas, con su significado sencillo entre paréntesis; nunca un sustituto inventado.
 
 ## Archivos y scripts
 
 | Script | Qué hace |
 | --- | --- |
 | `check_prose.py <files>` | Señala términos y siglas sin definir, frases largas y otras omisiones |
+| `check_terms.py <files>` | Encuentra palabras que el campo no usa (pares en `data/domain-terms.tsv`), también dentro de .pptx y .docx |
 
 Las reglas son datos en `data/`; el informe de trabajo y los esqueletos de documentos están en `references/`.
 
 ## Hooks que la respaldan
 
 `answer-check` devuelve una respuesta una vez cuando le falta algo: una pregunta que se vuelve a hacer, un turno que cambió archivos sin el informe de seis pasos, una respuesta de más de una pantalla o hallazgos de redacción. `prose-check` lee las páginas de la wiki.
+
+También devuelve la respuesta una vez cuando la respuesta, un archivo escrito en este turno o una presentación a la que apunta la respuesta usa una palabra marcada como incorrecta en `data/domain-terms.tsv`, y da la palabra del campo. Añade una línea ahí cada vez que corrijas un término.
 
 ## Límites
 
