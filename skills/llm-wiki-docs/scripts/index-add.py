@@ -21,14 +21,20 @@ import _wiki
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("topic")
-    ap.add_argument("page", help="file name inside wiki/, e.g. pathway-gating.md")
+    ap.add_argument("page", help="path inside wiki/, e.g. pathway-gating.md or "
+                                 "history/joseon/sejong.md (subfolders allowed)")
     ap.add_argument("category", help="index section to file it under, e.g. Concepts")
     ap.add_argument("summary", nargs="?", default="", help="one line on what it holds")
     args = ap.parse_args()
 
     page = args.page if args.page.endswith(".md") else args.page + ".md"
+    page = page.replace("\\", "/")
     if page in ("index.md", "log.md"):
         raise SystemExit(f"error: {page} is machinery, not a page to index")
+    # A page is a path under wiki/. Anything that climbs out of it, or is absolute,
+    # would put an entry in the index that no page can ever match.
+    if page.startswith("/") or ".." in page.split("/"):
+        raise SystemExit(f"error: {page} must be a path inside wiki/")
 
     lines, entries = _wiki.read_index(args.topic)
     if not (_wiki.wiki_dir(args.topic) / page).exists():

@@ -34,6 +34,18 @@ being learned. Prefer an existing topic over a new one — a second topic for th
 splits the knowledge and neither half stays current. The root is overridable with
 `LLM_WIKI_ROOT` for machines that keep it elsewhere.
 
+**Subfolders are allowed** when a topic grows a hierarchy (`wiki/history/joseon/kings/sejong.md`).
+A topic's `README.md` says whether it uses one and how it is laid out — read it before filing a
+page. Three things change with subfolders:
+
+- Scripts take the page as its path under `wiki/`: `index-add.py <topic> history/joseon/kings/sejong.md …`,
+  and `log-append.py --pages` lists the same paths. That is what `lint.py` matches.
+- `[[sejong]]` finds the page by name at any depth, but only while exactly one page has that
+  name; two pages with one name make the bare link ambiguous, and lint reports it broken. Keep
+  page names unique within a topic, or link by path (`[[history/joseon/kings/sejong]]`).
+- Pages filed under the index's `Overview` section are entry points (a hierarchy's root page),
+  so lint does not call them orphans.
+
 **Project code stays in the project repo.** The wiki holds understanding, decisions, and
 findings, and points at the code by path. Copying code into the wiki creates a second,
 rotting copy.

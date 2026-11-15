@@ -46,9 +46,21 @@ def log_path(topic: str) -> pathlib.Path:
 
 
 def pages(topic: str):
-    """Every page in the wiki — index.md and log.md are machinery, not pages."""
-    return sorted(p for p in wiki_dir(topic).glob("*.md")
-                  if p.name not in ("index.md", "log.md"))
+    """Every page in the wiki, subfolders included — index.md and log.md at the top of
+    wiki/ are machinery, not pages. Subfolders let a wiki grow a hierarchy
+    (history/joseon/kings/sejong.md); the graph and recall already read them, so the
+    index and lint have to as well or every nested page looks unfindable."""
+    wiki = wiki_dir(topic)
+    return sorted(p for p in wiki.rglob("*.md")
+                  if not (p.parent == wiki and p.name in ("index.md", "log.md"))
+                  and not any(part.startswith(".") for part in p.relative_to(wiki).parts))
+
+
+def page_ref(topic: str, path: pathlib.Path) -> str:
+    """A page as index.md and log.md name it: its path under wiki/, always with '/'.
+    The kl-gate index check compares against the same form, so Windows paths never
+    get a backslash in here."""
+    return path.relative_to(wiki_dir(topic)).as_posix()
 
 
 def read_index(topic: str):

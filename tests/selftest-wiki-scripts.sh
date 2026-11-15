@@ -102,6 +102,46 @@ python3 "$S/lint.py" clean >/dev/null 2>&1
 [ $? -eq 0 ] && ok "indexed + logged wiki exits 0, overview.md is orphan-exempt" \
   || bad "clean wiki reported findings"
 
+# --- subfolders: a hierarchical wiki (Wiki.md -> domain -> subdomain -> page)
+sh "$S/new-topic.sh" tree "tree topic" >/dev/null 2>&1
+W="$TMP/tree/wiki"
+mkdir -p "$W/history/joseon/kings"
+printf '# Wiki\n\n[[history]]\n'                                > "$W/Wiki.md"
+printf '# History\n\n[[joseon]]\n'                              > "$W/history/history.md"
+printf '# Joseon\n\n[[kings]]\n'                                > "$W/history/joseon/joseon.md"
+printf '# Kings\n\n[[sejong]] and [[history/joseon/kings/nobody]]\n' > "$W/history/joseon/kings/kings.md"
+printf '# Sejong\n'                                             > "$W/history/joseon/kings/sejong.md"
+for entry in Wiki.md:Overview history/history.md:Domains history/joseon/joseon.md:Domains \
+             history/joseon/kings/kings.md:Domains history/joseon/kings/sejong.md:People; do
+  python3 "$S/index-add.py" tree "${entry%%:*}" "${entry##*:}" "x" >/dev/null
+done
+python3 "$S/log-append.py" tree ingest "tree" \
+  --pages Wiki.md,history/history.md,history/joseon/joseon.md,history/joseon/kings/kings.md,history/joseon/kings/sejong.md >/dev/null
+out="$(python3 "$S/lint.py" tree 2>&1)"
+grep -q '(history/joseon/kings/sejong\.md)' "$W/index.md" && ok "index entries carry the path under wiki/" \
+  || bad "index entry lost the subfolder"
+echo "$out" | grep -q 'not-indexed' && bad "nested pages reported as not indexed: $out" \
+  || ok "pages in subfolders are seen and matched to their index entries"
+echo "$out" | grep -q 'not-logged' && bad "nested pages reported as not logged: $out" \
+  || ok "pages in subfolders are matched to the log by their path"
+echo "$out" | grep -q 'broken-link .*\[\[sejong\]\]' && bad "[[sejong]] did not resolve to the nested page" \
+  || ok "a bare [[name]] resolves to the one page with that name, at any depth"
+echo "$out" | grep -q 'broken-link .*kings/nobody' && ok "a path link to a missing nested page is broken" \
+  || bad "missed a broken path link"
+echo "$out" | grep -q 'orphan' && bad "orphan reported in a fully linked tree: $out" \
+  || ok "a page filed under Overview is an entry point, and linked nested pages are not orphans"
+
+mkdir -p "$W/science" && printf '# Sejong crater\n' > "$W/science/sejong.md"
+out="$(python3 "$S/lint.py" tree 2>&1)"
+echo "$out" | grep -q 'broken-link .*\[\[sejong\]\]' && ok "a bare name two pages share is ambiguous, so broken" \
+  || bad "an ambiguous bare name was accepted"
+printf '# Loose\n' > "$W/history/loose.md"
+out="$(python3 "$S/lint.py" tree 2>&1)"
+echo "$out" | grep -q 'not-indexed .*history/loose\.md' && ok "an unindexed page in a subfolder is found" \
+  || bad "an unindexed nested page went unseen"
+python3 "$S/index-add.py" tree ../escape.md Misc "y" >/dev/null 2>&1 \
+  && bad "accepted a page path outside wiki/" || ok "refuses a page path that climbs out of wiki/"
+
 # --- a topic that does not exist must say so, with the fix
 out="$(python3 "$S/lint.py" nope 2>&1)"
 echo "$out" | grep -q 'new-topic.sh nope' && ok "unknown topic names the command that fixes it" \

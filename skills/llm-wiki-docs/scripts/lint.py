@@ -22,6 +22,7 @@ Exit code is 1 when anything was found, so it can gate a commit. Judgement calls
 (stale claims, contradictions) are not here — those need reading, not comparing.
 """
 import argparse
+import posixpath
 import sys
 
 import _wiki
@@ -30,13 +31,45 @@ CHECKS = ("not-indexed", "not-logged", "dangling-index", "duplicate-index",
           "broken-link", "orphan")
 # The entry point is meant to be reached from the index, so it is never an orphan.
 ORPHAN_EXEMPT = {"overview.md"}
+# Pages filed under this index section are entry points too (a hierarchical wiki's
+# root page, say Wiki.md). The index template opens with this section.
+ENTRY_CATEGORY = "Overview"
+
+
+def resolver(page_files):
+    """[[link]] -> page path under wiki/, the same way build_graph.py resolves it
+    within a topic: the path itself first, then a bare name that exactly one page
+    has. Two pages with one name is ambiguous, so the link counts as broken."""
+    # Bare names are compared lowercased, as build_graph.py does, so the graph and the
+    # lint never disagree about whether a link lands.
+    by_name = {}
+    for ref in page_files:
+        by_name.setdefault(posixpath.basename(ref).lower(), []).append(ref)
+
+    def resolve(target):
+        """One link target -> the page path it points at, or None when no page
+        (or more than one page) answers to it."""
+        wanted = target.strip().replace("\\", "/")
+        while wanted.startswith("./"):
+            wanted = wanted[2:]
+        wanted = wanted.lstrip("/")
+        if wanted in page_files:
+            return wanted
+        hits = by_name.get(posixpath.basename(wanted).lower(), [])
+        return hits[0] if len(hits) == 1 else None
+
+    return resolve
 
 
 def lint(topic):
     findings = {k: [] for k in CHECKS}
-    page_files = [p.name for p in _wiki.pages(topic)]
+    wiki_pages = _wiki.pages(topic)
+    page_files = [_wiki.page_ref(topic, path) for path in wiki_pages]
+    resolve = resolver(page_files)
     _, entries = _wiki.read_index(topic)
     indexed = [e["file"] for e in entries]
+    entry_points = ORPHAN_EXEMPT | {entry["file"] for entry in entries
+                                    if entry["category"] == ENTRY_CATEGORY}
 
     for name in page_files:
         if name not in indexed:
@@ -60,16 +93,17 @@ def lint(topic):
             findings["duplicate-index"].append(f"{name} (x{indexed.count(name)})")
 
     linked_to = set()
-    for page in _wiki.pages(topic):
+    for page, ref in zip(wiki_pages, page_files):
         text = page.read_text(encoding="utf-8")
         for target in _wiki.wikilink_targets(text):
-            if target not in page_files:
-                findings["broken-link"].append(f"{page.name} -> [[{target[:-3]}]]")
-            elif target != page.name:          # a page linking to itself proves nothing
-                linked_to.add(target)
+            found = resolve(target)
+            if found is None:
+                findings["broken-link"].append(f"{ref} -> [[{target[:-3]}]]")
+            elif found != ref:                 # a page linking to itself proves nothing
+                linked_to.add(found)
 
     for name in page_files:
-        if name not in linked_to and name not in ORPHAN_EXEMPT:
+        if name not in linked_to and name not in entry_points:
             findings["orphan"].append(name)
 
     return findings
