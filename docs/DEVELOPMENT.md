@@ -158,7 +158,9 @@ hooks/
 crates/kl-gate/      the Rust gate
 bin/                 five prebuilt binaries — CI fills it
 version-files.txt    other files that carry the version
-scripts/ · results/  hook start-up benchmark and its results · publish_wiki.py (docs/wiki → the Wiki tab)
+scripts/ · results/  hook start-up benchmark and its results · publish_wiki.py (docs/wiki → the Wiki tab) ·
+                     token_replay.py (token savings estimated from past transcripts) · compact_recall_test.py
+                     (does an earlier compaction lose early details? two forked runs) and their results
 tests/
   selftest.sh                  the launcher picks the binary or the interpreter
   selftest-readme.sh           README and wiki counts, lists and links match the repo, in every language
@@ -183,4 +185,5 @@ tests/
   selftest-skill-match.sh      a message names its skill; everyday messages stay silent
   selftest-terms.sh            a word the field does not use is caught, in text, .pptx and .docx
   selftest-publish-wiki.sh     wiki pages become Wiki-tab pages: links without .md, full addresses outside
+  selftest-bash-offload.sh     long Bash output goes to a file; short output, exit codes and risky commands untouched
 ```

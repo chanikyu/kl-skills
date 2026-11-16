@@ -1,0 +1,5 @@
+manual correct: {'A-as-is': 10, 'B-compacted': 5}. Not tested for significance: statsmodels/scipy are not installed in this Python, and the house rule is not to hand-write test formulas. One session, one run per arm, 10 questions.
+cost: summary.tsv cost_usd is the session's cumulative cost reported by Claude Code, including the original 133 requests (about $24.17).
+new spend, estimated from token deltas: A $3.95 (1h cache write 394,803 + output 226), B $3.51 (uncached input 345,075 for the compaction + output 15,275 + cache read 28,063 + 1h cache write 138,936).
+rates used: input $5/M, output $25/M, 1h cache write 2x input, cache read 0.1x input. The input rate was solved from the A-B difference under those ratios; not checked against a price list.
+context after: the answering request read 394,803 tokens in A and 138,936 in B (65% smaller); B ran 2 compaction events.

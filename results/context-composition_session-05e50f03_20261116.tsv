@@ -1,0 +1,20 @@
+category	bytes	share
+attachment (hook context, reminders)	30334204	70.0%
+tool_result: Read	7277186	16.8%
+tool_use input: Bash	1809589	4.2%
+system text	852350	2.0%
+tool_result: Bash	837076	1.9%
+user text	755979	1.7%
+tool_use input: Write	726921	1.7%
+assistant text	341828	0.8%
+tool_result: mcp__plugin_pubmed_PubMed__get_article_metadata	108572	0.3%
+tool_use input: Edit	57529	0.1%
+assistant thinking	55399	0.1%
+tool_use input: Agent	36790	0.1%
+tool_result: Write	27031	0.1%
+tool_result: mcp__plugin_bio-research_consensus__search	25205	0.1%
+tool_result: mcp__plugin_pubmed_PubMed__search_articles	18950	0.0%
+tool_result: Agent	17712	0.0%
+tool_use input: AskUserQuestion	16538	0.0%
+tool_use input: Read	8712	0.0%
+TOTAL	43330198	100%

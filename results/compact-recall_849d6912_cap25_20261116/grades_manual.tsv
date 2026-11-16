@@ -1,0 +1,21 @@
+arm	id	grade_auto	grade_manual	note
+A-as-is	1	correct	correct	자동 채점과 같음
+A-as-is	2	correct	correct	자동 채점과 같음
+A-as-is	3	correct	correct	자동 채점과 같음
+A-as-is	4	correct	correct	자동 채점과 같음
+A-as-is	5	correct	correct	자동 채점과 같음
+A-as-is	6	correct	correct	자동 채점과 같음
+A-as-is	7	correct	correct	자동 채점과 같음
+A-as-is	8	correct	correct	자동 채점과 같음
+A-as-is	9	correct	correct	자동 채점과 같음
+A-as-is	10	wrong	correct	이유 두 가지(지금 정상 작동, upload/download 짝 어긋남 위험)를 다 말함 — 표현만 달라 자동 채점이 놓침
+B-compacted	1	unknown	unknown	자동 채점과 같음
+B-compacted	2	unknown	unknown	자동 채점과 같음
+B-compacted	3	correct	correct	자동 채점과 같음
+B-compacted	4	correct	correct	자동 채점과 같음
+B-compacted	5	correct	correct	자동 채점과 같음
+B-compacted	6	correct	correct	자동 채점과 같음
+B-compacted	7	correct	correct	자동 채점과 같음
+B-compacted	8	unknown	unknown	자동 채점과 같음
+B-compacted	9	unknown	unknown	자동 채점과 같음
+B-compacted	10	wrong	wrong	'아직 동작해서'만 말하고 핵심 이유(짝이 안 맞아 깨질 위험)가 빠짐

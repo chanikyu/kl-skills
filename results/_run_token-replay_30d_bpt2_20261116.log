@@ -1,0 +1,6 @@
+sessions 40 (of 256 transcripts, 30 days, >= 20 requests)
+limits {'KL_OFFLOAD_MAX_BYTES': 6000, 'KL_OFFLOAD_HEAD': 40, 'KL_OFFLOAD_TAIL': 30, 'KL_OFFLOAD_LINE_CHARS': 300}  bytes/token 2.0
+actual                      6149172148    0.0% less than actual
+offload                     6088126409    1.0% less than actual
+cap250000                   2464457254   59.9% less than actual
+offload+cap250000           2459360342   60.0% less than actual
