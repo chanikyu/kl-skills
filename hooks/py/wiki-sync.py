@@ -26,6 +26,9 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+# list[...] 대신 List[...]: 기본 python3 가 3.6 인 서버가 있다(2026-11-18). 함수 머리의 list[Path] 는 3.9 꼴이라
+# 3.8 이하는 함수를 만들 때 멈추고, 3.7·3.8 의 해법인 from __future__ import annotations 는 3.6 에서 문법 오류다.
+from typing import List
 
 PLUGIN_ROOT = Path(__file__).resolve().parents[2]
 BUILDER = PLUGIN_ROOT / "skills" / "graph-doc-memory" / "scripts" / "build_graph.py"
@@ -41,12 +44,12 @@ def wiki_root() -> Path:
     return Path(env) if env else Path.home() / "llm-wiki-docs"
 
 
-def wiki_pages(root: Path) -> list[Path]:
+def wiki_pages(root: Path) -> List[Path]:
     """<뿌리>/<토픽>/wiki/**.md 전부. 목차와 기록은 빼고 준다.
 
     토픽은 wiki/ 를 가진 디렉토리로 정한다. 숨은 디렉토리(.graph 등)는 토픽이 아니다.
     """
-    out: list[Path] = []
+    out: List[Path] = []
     try:
         topics = sorted(entry for entry in root.iterdir()
                         if not entry.name.startswith(".") and (entry / "wiki").is_dir())
@@ -59,7 +62,7 @@ def wiki_pages(root: Path) -> list[Path]:
     return out
 
 
-def run(cmd: list[str]) -> str:
+def run(cmd: List[str]) -> str:
     """다른 스크립트를 돌려 그 출력만 돌려준다. 실패하면 빈 문자열이다.
 
     실패를 예외로 올리지 않는 것은 훅이기 때문이다. 한 스크립트가 없다고 세션을
@@ -96,7 +99,7 @@ def main() -> int:
     if not changed:
         return 0
 
-    lines: list[str] = []
+    lines: List[str] = []
     if BUILDER.is_file():
         built = run([sys.executable, str(BUILDER), "--root", str(root)])
         if built:
