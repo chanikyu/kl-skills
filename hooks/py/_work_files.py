@@ -14,6 +14,13 @@ SKIP_PARTS = ("__pycache__", "/.venv/", "/venv/", "/site-packages/", "/node_modu
               "/.git/", "/scratchpad/", "/.tox/", "/build/", "/dist/")
 
 
+# 남이 만든 코드를 들여온 자리: vendor 폴더와 압축된 .min. 파일. code-check(이름 검사)만 건너뛴다.
+# SKIP_PARTS 에 넣지 않는 까닭: 작업 보고 검사(is_work_file)도 그 목록을 쓰는데, 이런 파일을 고쳐도
+# 프로젝트가 바뀐 것이라 보고는 해야 한다(2026-11-18 영향 확인). 압축 파일 하나에 지적이 2천 건 넘게 났다.
+VENDOR_DIR = "/vendor/"
+MINIFIED_MARK = ".min."
+
+
 def wiki_root():
     """위키 뿌리. 환경 변수가 먼저고, 없으면 ~/llm-wiki-docs."""
     return os.environ.get("LLM_WIKI_ROOT") or os.path.join(os.path.expanduser("~"), "llm-wiki-docs")
@@ -23,6 +30,12 @@ def is_skipped(path):
     """캐시·임시 폴더처럼 사용자가 직접 쓴 것이 아닌 자리인가."""
     normalised = path.replace("\\", "/")
     return any(part in normalised for part in SKIP_PARTS)
+
+
+def is_not_own_code(path):
+    """남이 만든 코드를 들여온 자리인가(vendor 폴더, 이름에 .min. 이 든 압축 파일). 이름 검사만 건너뛴다."""
+    normalised = path.replace("\\", "/")
+    return VENDOR_DIR in normalised or MINIFIED_MARK in os.path.basename(normalised)
 
 
 def is_work_file(path):

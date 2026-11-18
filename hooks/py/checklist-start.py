@@ -43,6 +43,8 @@ def main():
     tell_model("UserPromptSubmit",
                "checklist: 이 지시를 항목으로 나눠 체크리스트를 먼저 쓴다 → %s\n"
                "  한 줄에 '- [ ] 항목'. 끝낸 것은 '- [x]', 할 수 없는 것은 '- [~] 항목 — 이유'.\n"
+               "  뜻이 둘로 읽히면 첫 항목에 '- [ ] 질문: A인가 B인가' 를 쓰고 먼저 묻는다."
+               " 항목마다 '→ 확인: …' 을 붙인다.\n"
                "  답을 끝내기 전에 남은 '- [ ]' 가 없는지 대조한다 (방법: kl-skills:task-checklist 스킬)."
                % path)
     return 0

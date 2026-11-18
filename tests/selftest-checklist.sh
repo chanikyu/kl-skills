@@ -27,6 +27,7 @@ check() { printf '{"session_id":"s1"%s}' "${1:-}" | sh "$REPO/hooks/run.sh" chec
 # --- 메시지를 받으면: 어디에 쓸지 알리고, 지난 턴의 목록은 치운다
 out="$(start "README 고치고 커밋해줘")"
 case "$out" in *"$LIST"*) ok "체크리스트를 쓸 경로를 알린다" ;; *) bad "경로를 알리지 않았다: $out" ;; esac
+case "$out" in *"질문: A인가 B인가"*"→ 확인:"*) ok "뜻이 둘이면 먼저 묻기와 '→ 확인:' 을 매번 알린다" ;; *) bad "질문·확인 안내가 없다: $out" ;; esac
 mkdir -p "$KL_CHECKLIST_DIR"; printf -- '- [ ] 지난 턴에 남은 일\n' > "$LIST"
 start "다음 지시" >/dev/null
 [ ! -f "$LIST" ] && [ -f "$KL_CHECKLIST_DIR/s1.prev.md" ] && ok "새 지시가 오면 지난 목록은 .prev 로 보관한다" \

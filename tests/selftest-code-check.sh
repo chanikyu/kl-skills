@@ -70,6 +70,19 @@ out="$(gate "$TMP/settings.json")"
 out="$(gate "$TMP/.venv/lib/site-packages/vendored.py")"
 [ -z "$out" ] && ok "남이 만든 패키지는 건너뛴다" || bad "site-packages 를 지적했다: $out"
 
+# 들여온 라이브러리(vendor 폴더)와 압축 파일(.min.)도 남의 코드다. 압축 파일 하나에 지적이 2천 건 넘게 났다.
+mkdir -p "$TMP/ui/vendor"
+cp "$TMP/bad.ts" "$TMP/ui/vendor/graph.js"
+cp "$TMP/bad.ts" "$TMP/ui/chart.min.js"
+out="$(gate "$TMP/ui/vendor/graph.js")"
+[ -z "$out" ] && ok "vendor 폴더의 파일은 건너뛴다" || bad "vendor 파일을 지적했다: $out"
+out="$(gate "$TMP/ui/chart.min.js")"
+[ -z "$out" ] && ok "압축된 .min. 파일은 건너뛴다" || bad "압축 파일을 지적했다: $out"
+# 건너뛰는 것은 이름 검사뿐이다. 작업 보고 검사는 이런 파일을 고친 턴도 작업으로 본다.
+"$PY" -c "import sys; sys.path.insert(0, '$REPO/hooks/py'); from _work_files import is_work_file; \
+sys.exit(0 if is_work_file('$TMP/ui/vendor/graph.js') and is_work_file('$TMP/ui/chart.min.js') else 1)" \
+  && ok "작업 보고 검사는 vendor·압축 파일도 작업으로 본다" || bad "작업 보고 검사까지 vendor 파일을 건너뛴다"
+
 out="$(gate "$TMP/does-not-exist.py")"
 [ -z "$out" ] && ok "없는 파일에는 조용하다" || bad "없는 파일에 말했다: $out"
 

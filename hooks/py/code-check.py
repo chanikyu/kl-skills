@@ -18,7 +18,7 @@ import subprocess
 import sys
 
 from _hook_output import tell_model
-from _work_files import is_skipped
+from _work_files import is_not_own_code, is_skipped
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CHECKER = os.path.join(PLUGIN_ROOT, "skills", "readable-code", "scripts", "check_code.py")
@@ -46,7 +46,7 @@ def own_code_file(path):
     """사용자가 직접 쓴, 검사기가 읽는 언어의 파일인가."""
     if not path or os.path.splitext(path)[1].lower() not in checked_extensions():
         return False
-    return not is_skipped(path)
+    return not is_skipped(path) and not is_not_own_code(path)
 
 
 def main():
