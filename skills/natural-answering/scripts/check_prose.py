@@ -61,6 +61,15 @@ IDENT = re.compile(r"\b\w*(?:_|[a-z][A-Z])\w*\b")  # snake_case, camelCase, Pasc
 ACRONYM = re.compile(r"\b[A-Z]{2,6}\b")
 LATIN_WORD = re.compile(r"\b[a-z][a-z-]*[a-z]\b")
 NUMBER_WITH_UNIT = re.compile(r"\d+(?:[.,]\d+)?\s*(?:%|배|개|건|초|분|시간|ms|s|bp|KB|MB|GB|점|명|쌍)")
+# 금액: "$8", "€3.5", "8,000원", "1만 원", "20달러". 2026-11-18 답에 "약 $8" 만 쓰자 사용자가 "이게 뭔데" 라고
+# 물었다 — 무엇에 드는 돈인지, 누가 내는지가 없으면 읽는 사람은 판단할 수 없다.
+# 수식($2^n$)은 금액이 아니고, "제2원칙"·"3원인" 처럼 '원' 뒤에 조사가 아닌 한글이 오면 돈이 아니다.
+# 조사 '가' 는 넣지 않는다: "1688 원가"(도매 사이트 이름 + 원가)를 금액으로 잡았다(2026-11-18 실제 답 대조).
+MONEY = re.compile(r"(?<![$\\\w])[$€£₩¥]\s?\d[\d,]*(?:\.\d+)?(?![\d^_$\\{])"
+                   r"|\d[\d,]*(?:\.\d+)?\s?(?:만|억|천)?\s?(?:원|달러|엔|유로)"
+                   r"(?=$|[^가-힣]|[이은는을를도의에와과으])")
+# 진행할지 묻는 문장: "진행할까요?", "돌릴지?" 따위. 금액 규칙은 이런 글에서만 본다.
+ASKS_GO_AHEAD = re.compile(r"(?:까요|할지|될지|괜찮을지)\s*\?")
 SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+|(?<=[。!?])")
 
 
@@ -212,14 +221,15 @@ class Doc:
             self.paragraphs.append((para_start, para))
 
 
-def check(path, text, cfg, patterns, acronyms, terms, baseline):
+def check(path, text, cfg, patterns, acronyms, terms, baseline, charge_words=()):
     doc = Doc(text)
     found = []
 
     def add(line, sev, code, msg, fix=""):
         found.append({"path": path, "line": line, "sev": sev, "code": code, "msg": msg, "fix": fix})
 
-    seen_acronym, seen_term = set(), set()
+    seen_acronym, seen_term, seen_money = set(), set(), set()
+    money_spots = []
 
     for lineno, body, masked in doc.prose:
         korean = bool(HANGUL.search(body))
@@ -241,6 +251,14 @@ def check(path, text, cfg, patterns, acronyms, terms, baseline):
                 add(lineno, "warn", "undefined-acronym",
                     "약어 %s 를 뜻 없이 썼다. 처음 나올 때 한 줄로 풀어 쓴다" % tok,
                     "%s(= 쉬운 뜻 한 문장)" % tok)
+
+        # 풀어 쓰지 않은 금액의 첫 자리를 모은다. 판정은 글 전체를 본 뒤에 한다(아래 money-without-meaning).
+        for amount in MONEY.findall(masked):
+            if amount.replace(" ", "") in seen_money:
+                continue
+            seen_money.add(amount.replace(" ", ""))
+            if not is_glossed(body, amount):
+                money_spots.append((lineno, amount))
 
         if korean:
             for tok in LATIN_WORD.findall(masked):
@@ -309,6 +327,15 @@ def check(path, text, cfg, patterns, acronyms, terms, baseline):
         if len(shorts) >= 3:
             add(start, "note", "period-spam",
                 "짧은 조각마다 마침표를 찍어 리듬이 끊긴다. 이어 쓴다")
+
+    # 금액을 들고 진행할지 묻는데 실제로 나가는 돈인지(청구·구독·한도 …)가 없으면 읽는 사람은 승인할지 못 정한다.
+    # 금액마다 막으면 상품 가격·요금표까지 걸린다(2026-11-18, 지난 30일 답 1,302개 중 31개). 그래서 묻는 글만 본다.
+    prose_text = "\n".join(body for _, body, _ in doc.prose)
+    if money_spots and ASKS_GO_AHEAD.search(prose_text) and not any(w in prose_text for w in charge_words):
+        lineno, amount = money_spots[0]
+        add(lineno, "warn", "money-without-meaning",
+            "금액 %s 를 들고 진행할지 묻는데, 실제로 나가는 돈인지(누가 내는지, 청구되는지)가 없다" % amount,
+            "%s(= 무엇에 드는 돈인지, 실제로 청구되는지 한 문장)" % amount)
 
     for lineno, before in doc.tables:
         if not before or before.startswith("#"):
@@ -398,6 +425,7 @@ def main(argv=None):
     terms = set(w.lower() for w in load_lines("known-terms.txt", cfg.data_dir)) \
         | set(a.lower() for a in acronyms)
     baseline = load_lines("baseline-words.txt", cfg.data_dir)
+    charge_words = load_lines("charge-words.txt", cfg.data_dir)
 
     found = []
     for path in cfg.files:
@@ -406,7 +434,7 @@ def main(argv=None):
         except OSError as e:
             print("읽을 수 없다: %s (%s)" % (path, e), file=sys.stderr)
             continue
-        found += check(path, text, cfg, patterns, acronyms, terms, baseline)
+        found += check(path, text, cfg, patterns, acronyms, terms, baseline, charge_words)
 
     warns = [f for f in found if f["sev"] == "warn"]
     notes = [f for f in found if f["sev"] != "warn"]

@@ -52,6 +52,8 @@ A가 더 빠릅니다.
 
 설정은 `a` 와 `b` 와 `c` 와 `d` 와 `e` 와 `f` 와 `g` 로 바꾼다.
 
+시험 비용은 약 $8입니다. 돌릴까요?
+
 ## 같은 말 반복
 
 게이트는 위키 페이지를 쓸 때만 돌고 그 밖에는 바로 끝낸다.
@@ -93,7 +95,7 @@ EOF
 out="$("$PY" "$CHECK" --all "$TMP/bad.md" 2>&1)"
 for code in undefined-term undefined-acronym pattern missing-comparison missing-count \
             long-sentence table-without-lead-in number-without-baseline missing-path \
-            repeated-sentence code-mark-heavy; do
+            repeated-sentence code-mark-heavy money-without-meaning; do
   case "$out" in
     *"[$code]"*) ok "걸림: $code" ;;
     *)           bad "안 걸림: $code" ;;
@@ -114,6 +116,30 @@ case "$out" in
   *"graph-doc-memory"*) bad "위키 링크 안의 페이지 이름을 용어로 셌다" ;;
   *)                    ok "위키 링크 안은 건너뛴다" ;;
 esac
+
+# --- 금액을 들고 진행할지 묻는 글은 실제로 나가는 돈인지 함께 쓴다. 2026-11-18: "약 $8 … 진행할까요?" 에
+# --- 사용자가 "이게 뭔데" 라고 물었다. 숫자 규칙은 단위에 돈이 없는 데다 참고 등급이라 답을 막지 못했다.
+# --- 금액마다 막으면 상품 가격·요금표까지 걸려(지난 30일 답 1,302개 중 31개) 진행을 묻는 글에서만 본다.
+printf '비용은 지난번 계산 방식으로 약 $8입니다(압축 안 한 쪽 약 $4.4).\n\n$8로 진행할까요?\n' > "$TMP/money.md"
+out="$("$PY" "$CHECK" "$TMP/money.md" 2>&1)"
+money_hits=$(printf '%s' "$out" | grep -c '\[money-without-meaning\]' || true)
+[ "$money_hits" -eq 1 ] && ok "금액을 들고 진행을 묻는데 청구 여부가 없으면 경고 한 번" \
+  || bad "금액 경고가 ${money_hits}건이다(1건이어야): $out"
+
+case_no=0
+for text in \
+  '서버 요금은 한 달 8,000원이 듭니다. 판매가는 1만 원입니다.' \
+  '비용은 약 $8입니다. 구독 한도 안이면 청구되지 않습니다. 진행할까요?' \
+  '약 $8(= 시험 두 번에 드는 사용량을 API 요금으로 바꾼 값)이 듭니다. 진행할까요?' \
+  '제2원칙과 수식 $2^n$ 과 1688 원가와 `$8` 은 금액이 아니다. 이렇게 쓸까요?'; do
+  case_no=$((case_no + 1))
+  printf '%s\n' "$text" > "$TMP/money-ok-$case_no.md"
+  out="$("$PY" "$CHECK" "$TMP/money-ok-$case_no.md" 2>&1)"
+  case "$out" in
+    *"money-without-meaning"*) bad "잡지 말아야 할 글을 잡았다: $text" ;;
+    *)                         ok "금액 경고 없음: ${text%%.*}" ;;
+  esac
+done
 
 # --- 잘 쓴 글은 조용해야 한다. 여기서 소리가 나면 검사가 쓸모없다
 good="$("$PY" "$CHECK" "$TMP/good.md" 2>&1)"
