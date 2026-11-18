@@ -1,0 +1,3 @@
+A-as-is      correct 10/10  unknown 0  cache_write 402780  cache_read 0  output 634  cost 183.1298377  compactions 2
+B-compacted  correct 7/10  unknown 2  cache_write 125087  cache_read 7195  output 1500  cost 182.48301429999998  compactions 4
+exit=0

@@ -1,0 +1,21 @@
+arm	id	kind	grade_auto	grade_manual	note
+A-as-is	1	decision	correct	correct	자동 채점과 같음
+A-as-is	2	decision	correct	correct	자동 채점과 같음
+A-as-is	3	reason	correct	correct	자동 채점과 같음
+A-as-is	4	decision	correct	correct	자동 채점과 같음
+A-as-is	5	decision	correct	correct	자동 채점과 같음
+A-as-is	6	value	correct	correct	자동 채점과 같음
+A-as-is	7	value	correct	correct	자동 채점과 같음
+A-as-is	8	value	correct	correct	자동 채점과 같음
+A-as-is	9	value	correct	correct	자동 채점과 같음
+A-as-is	10	value	correct	correct	자동 채점과 같음
+B-compacted	1	decision	correct	correct	자동 채점과 같음
+B-compacted	2	decision	correct	correct	자동 채점과 같음
+B-compacted	3	reason	wrong	correct	같은 목록을 코드 속 이름으로 답함. 정답 형태 목록에 그 이름이 없어 자동 채점이 틀렸다
+B-compacted	4	decision	correct	correct	자동 채점과 같음
+B-compacted	5	decision	correct	correct	자동 채점과 같음
+B-compacted	6	value	correct	correct	자동 채점과 같음
+B-compacted	7	value	correct	correct	자동 채점과 같음
+B-compacted	8	value	correct	correct	자동 채점과 같음
+B-compacted	9	value	unknown	unknown	모름 (한 번 본 개수)
+B-compacted	10	value	unknown	unknown	모름 (한 번 본 사용량 숫자)
