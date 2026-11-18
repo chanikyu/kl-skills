@@ -1,0 +1,379 @@
+{
+  "_about": [
+    "readable-code 가 Python 말고 읽는 언어들. scripts/other_languages.py 가 이 파일만 보고 읽는다.",
+    "언어를 더하거나 잘못 잡는 패턴을 고칠 때는 이 파일을 고친다. 코드는 고치지 않는다.",
+    "extensions: 이 언어로 볼 확장자(소문자). line_comments·block_comments: 주석 모양.",
+    "strings: 한 줄에서 끝나는 따옴표. multiline_strings: 여러 줄에 걸칠 수 있는 따옴표.",
+    "long_strings: \"\"\" 처럼 여러 글자로 여닫는 문자열. raw_quotes: 역슬래시가 이스케이프가 아닌 따옴표(셸의 ').",
+    "escape: 이스케이프 글자(기본 역슬래시, PowerShell 은 `). char_literal: 'a' 같은 짧은 문자 상수가 있나.",
+    "comment_needs_space: 주석 표시 앞이 줄 처음이나 공백일 때만 주석(셸의 $# 와 가르려고).",
+    "line_start_blocks: 블록 주석이 줄 맨 앞에서만 열린다(Ruby =begin, Perl =pod). heredoc: 셸 <<끝표시 본문을 건너뛴다.",
+    "body: braces 면 함수 본문을 중괄호로 찾아 설명 주석·길이를 본다. none 이면 이름만 본다.",
+    "attributes: 함수 위 설명 주석을 찾을 때 건너뛰는 줄의 시작(@장식, #[속성]).",
+    "variables·functions·types: 정규식 목록. (?P<name>...) 이 이름이다. 주석·문자열을 지운 뒤 한 줄씩 맞춘다.",
+    "keywords: 패턴이 잘못 잡을 수 있는 예약어. 이름으로 보지 않는다.",
+    "넣지 않은 것: SQL·HTML·CSS(변수·함수 이름 규칙이 다르다), Haskell·OCaml·F#(한두 글자 이름이 관례라 지적이 잡음이 된다),",
+    ".m 파일(Objective-C 와 MATLAB 이 확장자를 같이 쓴다), Vue·Svelte(한 파일에 HTML 과 스크립트가 섞인다)."
+  ],
+  "languages": [
+    {
+      "name": "javascript-typescript",
+      "extensions": [".js", ".mjs", ".cjs", ".jsx", ".ts", ".tsx", ".mts", ".cts"],
+      "line_comments": ["//"],
+      "block_comments": [["/*", "*/"]],
+      "strings": ["\"", "'"],
+      "multiline_strings": ["`"],
+      "body": "braces",
+      "attributes": ["@"],
+      "keywords": ["if", "for", "while", "switch", "catch", "function", "return", "typeof", "new", "do", "else", "try", "with", "await", "yield", "delete", "void", "in", "of", "instanceof", "super", "this", "constructor"],
+      "variables": ["\\b(?:const|let|var)\\s+(?P<name>[A-Za-z_$][\\w$]*)"],
+      "functions": [
+        "\\bfunction\\s*\\*?\\s*(?P<name>[A-Za-z_$][\\w$]*)\\s*(?:<[^>]*>)?\\s*\\(",
+        "\\b(?:const|let|var)\\s+(?P<name>[A-Za-z_$][\\w$]*)\\s*(?::[^=]+)?=\\s*(?:async\\s+)?(?:function\\b|(?:\\([^()]*\\)|[A-Za-z_$][\\w$]*)\\s*(?::[^=]+?)?=>)",
+        "^\\s*(?:(?:public|private|protected|static|async|readonly|override|abstract|get|set)\\s+)*(?P<name>[A-Za-z_$][\\w$]*)\\s*(?:<[^>]*>)?\\s*\\([^;()]*\\)\\s*(?::\\s*[^;{=]+)?\\{"
+      ],
+      "types": [
+        "\\b(?:class|interface|enum)\\s+(?P<name>[A-Za-z_$][\\w$]*)",
+        "\\btype\\s+(?P<name>[A-Z][\\w$]*)\\b(?=\\s*(?:<[^>]*>)?\\s*=)"
+      ]
+    },
+    {
+      "name": "rust",
+      "extensions": [".rs"],
+      "line_comments": ["//"],
+      "block_comments": [["/*", "*/"]],
+      "strings": ["\""],
+      "char_literal": true,
+      "body": "braces",
+      "attributes": ["#["],
+      "keywords": ["self", "Self", "mut", "ref"],
+      "variables": [
+        "\\blet\\s+(?:mut\\s+)?(?P<name>[A-Za-z_]\\w*)\\b(?!\\s*\\()(?!\\s*\\{)(?!::)",
+        "\\b(?:const|static)\\s+(?:mut\\s+)?(?P<name>[A-Za-z_]\\w*)\\s*:",
+        "\\bfor\\s+(?P<name>[A-Za-z_]\\w*)\\s+in\\b"
+      ],
+      "functions": ["\\bfn\\s+(?P<name>[A-Za-z_]\\w*)"],
+      "types": ["\\b(?:struct|enum|trait|union)\\s+(?P<name>[A-Za-z_]\\w*)"]
+    },
+    {
+      "name": "swift",
+      "extensions": [".swift"],
+      "line_comments": ["//"],
+      "block_comments": [["/*", "*/"]],
+      "strings": ["\""],
+      "long_strings": [["\"\"\"", "\"\"\""]],
+      "body": "braces",
+      "attributes": ["@"],
+      "keywords": ["func", "var", "let", "init", "self", "Self", "case"],
+      "variables": [
+        "\\b(?:let|var)\\s+(?P<name>[A-Za-z_]\\w*)",
+        "\\bfor\\s+(?:case\\s+(?:let\\s+)?)?(?P<name>[A-Za-z_]\\w*)\\s+in\\b"
+      ],
+      "functions": ["\\bfunc\\s+(?P<name>[A-Za-z_]\\w*)"],
+      "types": ["\\b(?:class|struct|enum|protocol|actor)\\s+(?P<name>[A-Za-z_]\\w*)"]
+    },
+    {
+      "name": "go",
+      "extensions": [".go"],
+      "line_comments": ["//"],
+      "block_comments": [["/*", "*/"]],
+      "strings": ["\""],
+      "multiline_strings": ["`"],
+      "char_literal": true,
+      "body": "braces",
+      "keywords": [],
+      "variables": [
+        "\\b(?P<name>[A-Za-z_]\\w*)(?:\\s*,\\s*[A-Za-z_]\\w*)*\\s*:=",
+        "\\bvar\\s+(?P<name>[A-Za-z_]\\w*)",
+        "\\bconst\\s+(?P<name>[A-Za-z_]\\w*)"
+      ],
+      "functions": ["\\bfunc\\s+(?:\\([^)]*\\)\\s*)?(?P<name>[A-Za-z_]\\w*)"],
+      "types": ["\\btype\\s+(?P<name>[A-Za-z_]\\w*)\\b"]
+    },
+    {
+      "name": "kotlin",
+      "extensions": [".kt", ".kts"],
+      "line_comments": ["//"],
+      "block_comments": [["/*", "*/"]],
+      "strings": ["\""],
+      "long_strings": [["\"\"\"", "\"\"\""]],
+      "char_literal": true,
+      "body": "braces",
+      "attributes": ["@"],
+      "keywords": [],
+      "variables": [
+        "\\b(?:val|var)\\s+(?P<name>[A-Za-z_]\\w*)",
+        "\\bfor\\s*\\(\\s*(?P<name>[A-Za-z_]\\w*)\\s+in\\b"
+      ],
+      "functions": ["\\bfun\\s+(?:<[^>]*>\\s*)?(?:[\\w.]+\\.)?(?P<name>[A-Za-z_]\\w*)\\s*\\("],
+      "types": ["\\b(?:class|interface|object)\\s+(?P<name>[A-Za-z_]\\w*)"]
+    },
+    {
+      "name": "java",
+      "extensions": [".java"],
+      "line_comments": ["//"],
+      "block_comments": [["/*", "*/"]],
+      "strings": ["\""],
+      "long_strings": [["\"\"\"", "\"\"\""]],
+      "char_literal": true,
+      "body": "braces",
+      "attributes": ["@"],
+      "keywords": ["if", "for", "while", "switch", "catch", "synchronized", "return", "new", "throw", "else", "do", "try", "finally"],
+      "variables": [
+        "\\bvar\\s+(?P<name>[A-Za-z_]\\w*)\\b(?=\\s*[=:])",
+        "\\b(?:int|long|short|byte|char|float|double|boolean|String|[A-Z]\\w*(?:<[^;()]*>)?)(?:\\[\\])*\\s+(?P<name>[a-z_]\\w*)\\b(?=\\s*(?:=(?!=)|;|:(?!:)))"
+      ],
+      "functions": ["^\\s*(?!(?:return|new|else|throw|case|yield|await|goto)\\b)(?:(?:public|protected|private|static|final|abstract|synchronized|native|default|strictfp)\\s+)*(?:<[^>]+>\\s+)?[\\w<>\\[\\],.?]+\\s+(?P<name>[A-Za-z_]\\w*)\\s*\\("],
+      "types": ["\\b(?:class|interface|enum|record)\\s+(?P<name>[A-Za-z_]\\w*)"]
+    },
+    {
+      "name": "csharp",
+      "extensions": [".cs"],
+      "line_comments": ["//"],
+      "block_comments": [["/*", "*/"]],
+      "strings": ["\""],
+      "char_literal": true,
+      "body": "braces",
+      "attributes": ["["],
+      "keywords": ["if", "for", "foreach", "while", "switch", "catch", "lock", "using", "fixed", "return", "new", "throw", "else", "do", "try", "finally"],
+      "variables": [
+        "\\bvar\\s+(?P<name>[A-Za-z_]\\w*)\\b(?=\\s*=)",
+        "\\b(?:int|long|short|byte|sbyte|uint|ulong|ushort|char|float|double|decimal|bool|string|object|dynamic|nint|nuint|[A-Z]\\w*(?:<[^;()]*>)?)\\??(?:\\[\\])*\\s+(?P<name>[a-z_]\\w*)\\b(?=\\s*(?:=(?!=)|;))"
+      ],
+      "functions": ["^\\s*(?!(?:return|new|else|throw|case|yield|await|goto)\\b)(?:(?:public|protected|private|internal|static|virtual|override|abstract|sealed|async|extern|unsafe|partial|readonly|new)\\s+)*(?:<[^>]+>\\s+)?[\\w<>\\[\\],.?]+\\s+(?P<name>[A-Za-z_]\\w*)\\s*(?:<[^>]*>)?\\s*\\("],
+      "types": ["\\b(?:class|interface|enum|struct|record)\\s+(?P<name>[A-Za-z_]\\w*)"]
+    },
+    {
+      "name": "c-cpp",
+      "extensions": [".c", ".h", ".cc", ".cpp", ".cxx", ".hh", ".hpp", ".hxx"],
+      "line_comments": ["//"],
+      "block_comments": [["/*", "*/"]],
+      "strings": ["\""],
+      "char_literal": true,
+      "body": "braces",
+      "attributes": ["[[", "template", "#"],
+      "keywords": ["if", "for", "while", "switch", "catch", "return", "sizeof", "else", "do", "try", "delete", "new", "throw"],
+      "variables": ["\\b(?:auto|int|long|short|char|float|double|bool|size_t|ssize_t|unsigned|signed|u?int(?:8|16|32|64)_t|std::[\\w:]+(?:<[^;()]*>)?|[A-Z]\\w*(?:<[^;()]*>)?)(?:\\s+|\\s*[*&]+\\s*)(?P<name>[a-z_]\\w*)\\b(?=\\s*(?:=(?!=)|;|\\[|\\{|:(?!:)))"],
+      "functions": ["^\\s*(?!(?:return|else|new|delete|throw|case|goto|sizeof|co_return|typedef)\\b)(?:(?:static|inline|extern|virtual|constexpr|explicit|friend|const|unsigned|signed|struct|enum)\\s+)*[\\w<>\\[\\],.:*&~]+(?:\\s+|\\s*[*&]+\\s*)(?:[A-Za-z_]\\w*::)*(?P<name>~?[A-Za-z_]\\w*)\\s*\\([^;]*$"],
+      "types": ["\\b(?:struct|class|union|enum(?:\\s+class)?)\\s+(?P<name>[A-Za-z_]\\w*)\\s*(?:final\\s*)?[{:]"]
+    },
+    {
+      "name": "php",
+      "extensions": [".php"],
+      "line_comments": ["//", "#"],
+      "block_comments": [["/*", "*/"]],
+      "multiline_strings": ["\"", "'"],
+      "body": "braces",
+      "attributes": [],
+      "keywords": ["this"],
+      "variables": [
+        "\\$(?P<name>[A-Za-z_]\\w*)\\s*(?:[.+\\-*/]?=)(?![=>])",
+        "\\bas\\s+\\$(?:[A-Za-z_]\\w*\\s*=>\\s*\\$)?(?P<name>[A-Za-z_]\\w*)"
+      ],
+      "functions": ["\\bfunction\\s+&?(?P<name>[A-Za-z_]\\w*)"],
+      "types": ["\\b(?:class|interface|trait|enum)\\s+(?P<name>[A-Za-z_]\\w*)"]
+    },
+    {
+      "name": "ruby",
+      "extensions": [".rb", ".rake"],
+      "line_comments": ["#"],
+      "block_comments": [["=begin", "=end"]],
+      "line_start_blocks": true,
+      "multiline_strings": ["\"", "'"],
+      "body": "none",
+      "keywords": [],
+      "variables": [
+        "^\\s*(?P<name>[a-z_]\\w*)\\s*(?:\\|\\||&&|[+\\-*/%]|<<)?=(?![=~>])",
+        "\\bfor\\s+(?P<name>[a-z_]\\w*)\\s+in\\b"
+      ],
+      "functions": ["\\bdef\\s+(?:self\\.)?(?P<name>[A-Za-z_]\\w*[?!=]?)"],
+      "types": ["\\b(?:class|module)\\s+(?P<name>[A-Z]\\w*)"]
+    },
+    {
+      "name": "lua",
+      "extensions": [".lua"],
+      "line_comments": ["--"],
+      "block_comments": [["--[[", "]]"]],
+      "strings": ["\"", "'"],
+      "long_strings": [["[[", "]]"]],
+      "body": "none",
+      "keywords": [],
+      "variables": [
+        "\\blocal\\s+(?!function\\b)(?P<name>[A-Za-z_]\\w*)",
+        "\\bfor\\s+(?P<name>[A-Za-z_]\\w*)\\s*(?:=|,|\\bin\\b)"
+      ],
+      "functions": ["\\bfunction\\s+(?:[\\w.]+[.:])?(?P<name>[A-Za-z_]\\w*)\\s*\\("],
+      "types": []
+    },
+    {
+      "name": "shell",
+      "extensions": [".sh", ".bash", ".zsh", ".ksh"],
+      "line_comments": ["#"],
+      "comment_needs_space": true,
+      "multiline_strings": ["\"", "'"],
+      "raw_quotes": ["'"],
+      "heredoc": true,
+      "body": "braces",
+      "keywords": [],
+      "variables": [
+        "(?:^|[;&|]|\\bthen\\b|\\bdo\\b|\\belse\\b)\\s*(?:(?:local|export|readonly|declare|typeset)\\s+(?:-\\w+\\s+)*)?(?P<name>[A-Za-z_]\\w*)\\+?=",
+        "\\bfor\\s+(?P<name>[A-Za-z_]\\w*)\\s+in\\b"
+      ],
+      "functions": [
+        "^\\s*function\\s+(?P<name>[A-Za-z_][\\w-]*)",
+        "^\\s*(?P<name>[A-Za-z_][\\w-]*)\\s*\\(\\)"
+      ],
+      "types": []
+    },
+    {
+      "name": "r",
+      "extensions": [".r"],
+      "line_comments": ["#"],
+      "strings": ["`"],
+      "multiline_strings": ["\"", "'"],
+      "body": "braces",
+      "keywords": [],
+      "variables": [
+        "(?<![\\w.$@])(?P<name>[A-Za-z.][\\w.]*)\\s*<<?-",
+        "\\bfor\\s*\\(\\s*(?P<name>[A-Za-z.][\\w.]*)\\s+in\\b"
+      ],
+      "functions": ["(?<![\\w.$@])(?P<name>[A-Za-z.][\\w.]*)\\s*(?:<<?-|=)\\s*function\\s*\\("],
+      "types": []
+    },
+    {
+      "name": "dart",
+      "extensions": [".dart"],
+      "line_comments": ["//"],
+      "block_comments": [["/*", "*/"]],
+      "strings": ["\"", "'"],
+      "long_strings": [["\"\"\"", "\"\"\""], ["'''", "'''"]],
+      "body": "braces",
+      "attributes": ["@"],
+      "keywords": ["if", "for", "while", "switch", "catch", "return", "new", "throw", "else", "do", "try", "finally", "await"],
+      "variables": [
+        "\\b(?:var|final|const|late(?:\\s+final)?)\\s+(?:[A-Za-z_]\\w*(?:<[^;()]*>)?\\??\\s+)?(?P<name>[a-z_]\\w*)\\b(?=\\s*(?:=(?!=)|;))",
+        "\\b(?:int|double|num|bool|String|dynamic|[A-Z]\\w*(?:<[^;()]*>)?)\\??\\s+(?P<name>[a-z_]\\w*)\\b(?=\\s*(?:=(?!=)|;))"
+      ],
+      "functions": ["^\\s*(?!(?:return|new|else|throw|case|yield|await)\\b)(?:(?:static|external|factory|abstract)\\s+)*(?:[\\w<>\\[\\],.?]+\\s+)?(?P<name>[A-Za-z_]\\w*)\\s*(?:<[^>]*>)?\\s*\\([^;]*\\)\\s*(?:async\\s*)?(?:\\{|=>)"],
+      "types": ["\\b(?:class|mixin|enum)\\s+(?P<name>[A-Za-z_]\\w*)"]
+    },
+    {
+      "name": "scala",
+      "extensions": [".scala", ".sc"],
+      "line_comments": ["//"],
+      "block_comments": [["/*", "*/"]],
+      "strings": ["\""],
+      "long_strings": [["\"\"\"", "\"\"\""]],
+      "char_literal": true,
+      "body": "braces",
+      "attributes": ["@"],
+      "keywords": [],
+      "variables": [
+        "\\b(?:val|var)\\s+(?P<name>[A-Za-z_]\\w*)",
+        "\\bfor\\s*[({]\\s*(?P<name>[A-Za-z_]\\w*)\\s*<-"
+      ],
+      "functions": ["\\bdef\\s+(?P<name>[A-Za-z_]\\w*)"],
+      "types": ["\\b(?:class|object|trait|enum)\\s+(?P<name>[A-Za-z_]\\w*)"]
+    },
+    {
+      "name": "julia",
+      "extensions": [".jl"],
+      "line_comments": ["#"],
+      "block_comments": [["#=", "=#"]],
+      "strings": ["\""],
+      "long_strings": [["\"\"\"", "\"\"\""]],
+      "body": "none",
+      "keywords": [],
+      "variables": [
+        "^\\s*(?:(?:local|global|const)\\s+)?(?P<name>[A-Za-z_]\\w*)\\s*[+\\-*/^]?=(?!=)",
+        "\\bfor\\s+(?P<name>[A-Za-z_]\\w*)\\s+(?:in|=)"
+      ],
+      "functions": [
+        "\\bfunction\\s+(?:[\\w.]+\\.)?(?P<name>[A-Za-z_]\\w*!?)",
+        "^\\s*(?P<name>[A-Za-z_]\\w*!?)\\s*\\([^)]*\\)\\s*=(?!=)"
+      ],
+      "types": [
+        "\\b(?:mutable\\s+)?struct\\s+(?P<name>[A-Za-z_]\\w*)",
+        "\\babstract\\s+type\\s+(?P<name>[A-Za-z_]\\w*)",
+        "\\bmodule\\s+(?P<name>[A-Za-z_]\\w*)"
+      ]
+    },
+    {
+      "name": "elixir",
+      "extensions": [".ex", ".exs"],
+      "line_comments": ["#"],
+      "strings": ["\"", "'"],
+      "long_strings": [["\"\"\"", "\"\"\""]],
+      "body": "none",
+      "keywords": [],
+      "variables": ["^\\s*(?P<name>[a-z_]\\w*)\\s*=(?![=~>])"],
+      "functions": ["\\bdef(?:p|macro|macrop)?\\s+(?P<name>[a-z_]\\w*[?!]?)"],
+      "types": ["\\bdefmodule\\s+(?P<name>[A-Z][\\w.]*)"]
+    },
+    {
+      "name": "perl",
+      "extensions": [".pl", ".pm"],
+      "line_comments": ["#"],
+      "comment_needs_space": true,
+      "block_comments": [["=pod", "=cut"], ["=head1", "=cut"], ["=head2", "=cut"]],
+      "line_start_blocks": true,
+      "multiline_strings": ["\"", "'"],
+      "body": "braces",
+      "keywords": [],
+      "variables": [
+        "\\b(?:my|our|local|state)\\s+[$@%](?P<name>[A-Za-z_]\\w*)",
+        "\\b(?:my|our)\\s*\\(\\s*[$@%](?P<name>[A-Za-z_]\\w*)"
+      ],
+      "functions": ["\\bsub\\s+(?P<name>[A-Za-z_]\\w*)"],
+      "types": []
+    },
+    {
+      "name": "powershell",
+      "extensions": [".ps1", ".psm1"],
+      "line_comments": ["#"],
+      "block_comments": [["<#", "#>"]],
+      "multiline_strings": ["\"", "'"],
+      "escape": "`",
+      "body": "braces",
+      "keywords": ["null", "true", "false", "_"],
+      "variables": [
+        "\\$(?P<name>[A-Za-z_]\\w*)\\s*[+\\-*/]?=(?!=)",
+        "\\bforeach\\s*\\(\\s*\\$(?P<name>[A-Za-z_]\\w*)\\s+in\\b"
+      ],
+      "functions": ["\\bfunction\\s+(?P<name>[A-Za-z_][\\w-]*)"],
+      "types": ["\\bclass\\s+(?P<name>[A-Za-z_]\\w*)"]
+    },
+    {
+      "name": "zig",
+      "extensions": [".zig"],
+      "line_comments": ["//"],
+      "strings": ["\""],
+      "char_literal": true,
+      "body": "braces",
+      "keywords": [],
+      "variables": ["\\b(?:const|var)\\s+(?P<name>[A-Za-z_]\\w*)\\s*[:=]"],
+      "functions": ["\\bfn\\s+(?P<name>[A-Za-z_]\\w*)"],
+      "types": []
+    },
+    {
+      "name": "groovy",
+      "extensions": [".groovy", ".gradle"],
+      "line_comments": ["//"],
+      "block_comments": [["/*", "*/"]],
+      "strings": ["\"", "'"],
+      "long_strings": [["\"\"\"", "\"\"\""], ["'''", "'''"]],
+      "body": "braces",
+      "attributes": ["@"],
+      "keywords": ["if", "for", "while", "switch", "catch", "return", "new", "throw", "else", "do", "try", "finally"],
+      "variables": [
+        "\\bdef\\s+(?P<name>[A-Za-z_]\\w*)\\s*=",
+        "\\b(?:int|long|double|float|boolean|String|[A-Z]\\w*(?:<[^;()]*>)?)\\s+(?P<name>[a-z_]\\w*)\\b(?=\\s*(?:=(?!=)|;))"
+      ],
+      "functions": [
+        "\\bdef\\s+(?P<name>[A-Za-z_]\\w*)\\s*\\(",
+        "^\\s*(?!(?:return|new|else|throw|case)\\b)(?:(?:public|protected|private|static|final|abstract)\\s+)*[\\w<>\\[\\],.?]+\\s+(?P<name>[A-Za-z_]\\w*)\\s*\\("
+      ],
+      "types": ["\\b(?:class|interface|enum|trait)\\s+(?P<name>[A-Za-z_]\\w*)"]
+    }
+  ]
+}

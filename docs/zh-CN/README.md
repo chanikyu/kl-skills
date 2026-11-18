@@ -89,7 +89,7 @@ KL-SKILLS GATES v<version> — loaded, 12 rules enforced
 | 写入文件时 | `wiki-index-check` | 提示不在目录里的 wiki 页面 |
 | 写入文件时 | `wiki-graph` | 重绘 wiki 图谱 |
 | 写入文件时 | `prose-check` | 提示 wiki 页面中难读的地方 |
-| 写入文件时 | `code-check` | 提示含糊的 Python 命名和缺失的 docstring |
+| 写入文件时 | `code-check` | 提示代码（Python、TypeScript、Rust、Swift、Go 等）中含糊的命名和缺失的 docstring |
 | 写入文件时 | `plan-drift` | 检查计划书的框架和偏离 |
 | 运行 Bash 时 | `after-bash` | 捕捉在 shell 中对 wiki 的修改和提交 |
 | 回答结束时 | `wiki-sync` | 无论页面怎样修改，都让图谱保持最新 |

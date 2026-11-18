@@ -107,11 +107,19 @@ scripts/check_code.py --changed <파일.py...>  # git 저장소면 마지막 커
 - `uncommented-long-function` — 스무 줄 넘는 함수 안에 주석이 한 줄도 없다
 - `no-module-docstring` — 파일이 무엇을 하는 파일인지 맨 위에 안 적혀 있다
 
-파이썬에 들어 있는 분석기(`ast`)로 구문을 읽으므로 문자열 속 글자를 변수로 착각하지 않는다.
-**파이썬만 본다.** 다른 언어는 위 규칙을 손으로 적용한다.
+파이썬은 들어 있는 분석기(`ast`)로 구문을 읽으므로 문자열 속 글자를 변수로 착각하지 않는다.
+
+**다른 언어**(JavaScript·TypeScript·Rust·Swift·Go·Kotlin·Java·C#·C/C++·PHP·Ruby·Lua·셸·R·
+Dart·Scala·Julia·Elixir·Perl·PowerShell·Zig·Groovy)는 `data/languages.json` 의 패턴으로 읽는다.
+주석과 문자열을 먼저 지우고 맞춰 보지만, 패턴이라 드물게 이름을 잘못 잡을 수 있다.
+
+- 설명문은 함수 바로 위의 주석이다(`/** */`, `///`, `#'` 등)
+- `end` 로 블록을 닫는 언어(Ruby·Lua·Julia·Elixir)는 이름만 본다
+- 목록에 없는 언어는 위 규칙을 손으로 적용한다. 넣으려면 그 파일에 한 덩어리를 더하고
+  `tests/fixtures/readable-code/` 에 예제 하나를 둔다
 
 판정 기준은 `data/` 에 있다 — 허용할 짧은 이름은 `short-names-ok.txt`, 모호하다고 볼 이름은
-`vague-names.txt`. 도메인에서 통하는 짧은 이름이 있으면 그 파일에 한 줄 더한다.
+`vague-names.txt`, 언어별 패턴은 `languages.json`. 도메인에서 통하는 짧은 이름이 있으면 그 파일에 한 줄 더한다.
 코드를 고치지 않는다.
 
 **스크립트가 조용한 것이 잘 썼다는 뜻은 아니다.** 주석이 *맞는 말인지*, 이름이 *정확한지*는

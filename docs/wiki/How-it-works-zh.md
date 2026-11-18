@@ -28,7 +28,7 @@
 | 写入文件 | `wiki-index-check` | 标出没有列入索引的 wiki 页面 | — |
 | 写入文件 | `wiki-graph` | 重新绘制 wiki 图 | — |
 | 写入文件 | `prose-check` | 标出 wiki 页面中难读的地方 | — |
-| 写入文件 | `code-check` | 标出含糊的 Python 命名和缺失的 docstring | — |
+| 写入文件 | `code-check` | 标出代码（Python、TypeScript、Rust、Swift、Go 等）中含糊的命名和缺失的 docstring | — |
 | 写入文件 | `plan-drift` | 检查计划的框架和偏离 | — |
 | 运行 Bash | `after-bash` | 捕捉在 shell 中进行的 wiki 编辑和提交 | — |
 | 回答结束 | `wiki-sync` | 不论页面是怎么编辑的，都把图更新到最新 | — |

@@ -25,7 +25,7 @@
 | ファイルが書かれたとき | `wiki-index-check` | 索引に載っていない wiki ページを指摘する | — |
 | ファイルが書かれたとき | `wiki-graph` | wiki のグラフを描き直す | — |
 | ファイルが書かれたとき | `prose-check` | wiki ページの読みにくい箇所を指摘する | — |
-| ファイルが書かれたとき | `code-check` | あいまいな Python の名前と docstring の欠落を指摘する | — |
+| ファイルが書かれたとき | `code-check` | コード(Python・TypeScript・Rust・Swift・Go など)のあいまいな名前と docstring の欠落を指摘する | — |
 | ファイルが書かれたとき | `plan-drift` | 計画の枠組みとずれをチェックする | — |
 | Bash が動いたとき | `after-bash` | シェルで行われた wiki の編集とコミットを拾う | — |
 | 回答が終わるとき | `wiki-sync` | ページがどう編集されたかに関係なく、グラフを最新にする | — |

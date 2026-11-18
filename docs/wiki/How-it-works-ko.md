@@ -28,7 +28,7 @@
 | 파일 쓰기 | `wiki-index-check` | 목차에 빠진 위키 페이지를 알린다 | — |
 | 파일 쓰기 | `wiki-graph` | 위키 그래프를 다시 그린다 | — |
 | 파일 쓰기 | `prose-check` | 위키 페이지에서 읽기 어려운 자리를 알린다 | — |
-| 파일 쓰기 | `code-check` | 모호한 Python 이름과 빠진 docstring(= 함수 맨 위에 쓰는 설명 글)을 알린다 | — |
+| 파일 쓰기 | `code-check` | 코드(Python·TypeScript·Rust·Swift·Go 등)의 모호한 이름과 빠진 docstring(= 함수 맨 위에 쓰는 설명 글)을 알린다 | — |
 | 파일 쓰기 | `plan-drift` | 계획서의 틀과 이탈(= 계획에서 벗어난 일)을 확인한다 | — |
 | Bash 실행 | `after-bash` | 셸(= 명령을 직접 치는 창)에서 한 위키 수정과 커밋을 알아챈다 | — |
 | 답 끝 | `wiki-sync` | 페이지를 어떻게 고쳤든 그래프를 최신으로 맞춘다 | — |

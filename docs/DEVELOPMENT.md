@@ -144,7 +144,8 @@ skills/
   pipeline-debug/    probe.py — counts, columns and blanks of the file between stages
   planner/           check_plan.py · check_drift.py · plan template · field references
   wiki-recall/       recall.py — two-letter fragments + BM25 + query coverage + graph neighbours
-  readable-code/     check_code.py — Python names and docstrings
+  readable-code/     check_code.py — names and docstrings · other_languages.py — reads non-Python code with
+                     the patterns in data/languages.json (one entry per language)
   natural-answering/ check_prose.py · check_terms.py (field terms, also inside .pptx/.docx) · data/ (rules;
                      domain-terms.tsv = wrong word → the field's word) · references/ (work report, document skeletons)
   research-to-wiki/  check_research.py · data/ (evidence and reading levels) · page template
@@ -172,7 +173,7 @@ tests/
   selftest-wiki-recall.sh      the right page first, silence on unrelated messages
   selftest-graph.sh            graph counts and the viewer (opened in Chrome when present)
   selftest-prose.sh            omissions caught, clean writing silent
-  selftest-readable-code.sh    vague names and missing docstrings
+  selftest-readable-code.sh    vague names and missing docstrings; one sample per language in fixtures/readable-code/
   selftest-code-check.sh       the same check as a hook
   selftest-answer-check.sh     re-asks, the work report, blocking once
   selftest-pipeline-debug.sh   a blank in the second stage shows up as a number

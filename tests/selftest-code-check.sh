@@ -55,7 +55,17 @@ out="$(gate "$TMP/good.py")"
 [ -z "$out" ] && ok "스킬대로 쓴 파일에는 조용하다" || bad "잘 쓴 파일에 말했다: $out"
 
 out="$(gate "$TMP/notes.md")"
-[ -z "$out" ] && ok "파이썬이 아닌 파일은 건너뛴다" || bad "마크다운을 검사했다: $out"
+[ -z "$out" ] && ok "코드가 아닌 파일은 건너뛴다" || bad "마크다운을 검사했다: $out"
+
+printf 'let q = 1;\nlet tmp = q;\n' > "$TMP/bad.ts"
+out="$(gate "$TMP/bad.ts")"
+case "$out" in
+  *"'q'"*"'tmp'"*) ok "Python 이 아닌 언어(TypeScript)도 나쁜 이름을 알려 준다" ;;
+  *)               bad "TypeScript 파일에 아무 말도 하지 않았다: $out" ;;
+esac
+printf '{"q": 1}\n' > "$TMP/settings.json"
+out="$(gate "$TMP/settings.json")"
+[ -z "$out" ] && ok "규칙 파일에 없는 확장자(.json)는 건너뛴다" || bad "JSON 을 검사했다: $out"
 
 out="$(gate "$TMP/.venv/lib/site-packages/vendored.py")"
 [ -z "$out" ] && ok "남이 만든 패키지는 건너뛴다" || bad "site-packages 를 지적했다: $out"
@@ -165,6 +175,22 @@ EOF
   case "$out" in
     *vague-name*) ok "커밋이 없는 저장소의 파일은 전부 본다" ;;
     *)            bad "커밋 없는 저장소에서 아무 말도 안 했다: $out" ;;
+  esac
+
+  # 다른 언어도 같은 기준: 커밋에 있던 이름은 지적하지 않고, 새 이름만 지적한다.
+  TS_OLD="$GREPO/pkg/old.ts"
+  printf '// 이미 있던 파일.\nconst q = 1;\nexport const total = q + 1;\n' > "$TS_OLD"
+  gc "$GREPO" add pkg/old.ts
+  gc "$GREPO" commit -q -m ts
+  printf '// 이미 있던 파일.\nconst q = 2;\nexport const total = q + 1;\n' > "$TS_OLD"
+  out="$(gate "$TS_OLD")"
+  [ -z "$out" ] && ok "TypeScript: 옛 이름이 든 줄을 고쳐도 지적하지 않는다" \
+                || bad "TypeScript 옛 이름을 지적했다: $out"
+  printf 'const tmp = 3;\n' >> "$TS_OLD"
+  out="$(gate "$TS_OLD")"
+  case "$out" in
+    *"'tmp'"*"없던 이름만"*) ok "TypeScript: 새로 쓴 나쁜 이름은 지적한다" ;;
+    *)                      bad "TypeScript 새 이름을 놓쳤다: $out" ;;
   esac
 else
   echo "skip  no git — 바뀐 줄만 보는 시험을 건너뛴다"

@@ -26,11 +26,11 @@
 
 ## 背后的钩子检查
 
-每写入一个 Python 文件，`code-check` 都会运行。它只报告，从不阻止。
+每写入一个代码文件，`code-check` 都会运行：Python，以及 `data/languages.json` 中列出的语言（JavaScript、TypeScript、Rust、Swift、Go、Shell 等）。如果文件在 git 仓库里，它只指出上一次提交中没有的名称，免得改一行就要改掉整个文件的命名。它只报告，从不阻止。
 
 ## 局限
 
-这项检查只读 Python。
+Python 用专门的解析器读取。其他语言用模式匹配读取，偶尔会认错名称。用 `end` 结束代码块的语言（Ruby、Lua、Julia、Elixir）只检查名称。
 
 ---
 

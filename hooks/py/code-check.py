@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""PostToolUse gate: a python file was written, so look at its names and comments.
+"""PostToolUse gate: a code file was written, so look at its names and comments.
+
+Python, and every language listed in skills/readable-code/data/languages.json.
 
 Reports only. Names and comments are not a thing a machine should block on — the
 checker can see that a name is two letters long, but not whether a longer one
@@ -20,12 +22,29 @@ from _work_files import is_skipped
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CHECKER = os.path.join(PLUGIN_ROOT, "skills", "readable-code", "scripts", "check_code.py")
+LANGUAGES = os.path.join(PLUGIN_ROOT, "skills", "readable-code", "data", "languages.json")
 LIMIT = "6"   # ponytail: 한 번에 6건까지. 전부 보려면 check_code.py 를 직접 돌린다.
 
 
-def own_python_file(path):
-    """사용자가 직접 쓴 파이썬 파일인가."""
-    if not path or not path.endswith(".py"):
+def checked_extensions():
+    """검사기가 읽는 확장자들. 파이썬과, 규칙 파일에 적힌 다른 언어들.
+
+    모든 파일마다 검사기를 띄우지 않으려고 여기서 먼저 거른다. 규칙 파일을 못 읽으면
+    파이썬만 본다 — 예전과 같은 동작이다.
+    """
+    extensions = {".py"}
+    try:
+        with open(LANGUAGES, encoding="utf-8") as handle:
+            for language in json.load(handle).get("languages", []):
+                extensions.update(ext.lower() for ext in language.get("extensions", []))
+    except (OSError, ValueError, AttributeError):
+        pass
+    return extensions
+
+
+def own_code_file(path):
+    """사용자가 직접 쓴, 검사기가 읽는 언어의 파일인가."""
+    if not path or os.path.splitext(path)[1].lower() not in checked_extensions():
         return False
     return not is_skipped(path)
 
@@ -42,7 +61,7 @@ def main():
 
     tool_input = event.get("tool_input") or {}
     file_path = tool_input.get("file_path") or tool_input.get("notebook_path") or ""
-    if not own_python_file(file_path):
+    if not own_code_file(file_path):
         return 0
     if not os.path.isfile(CHECKER) or not os.path.isfile(file_path):
         return 0

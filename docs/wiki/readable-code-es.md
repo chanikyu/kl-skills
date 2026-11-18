@@ -26,11 +26,11 @@ Los nombres cortos permitidos y los nombres vagos son archivos de datos en `data
 
 ## Hooks que la respaldan
 
-`code-check` se ejecuta con cada archivo de Python que se escribe. Informa y nunca bloquea.
+`code-check` se ejecuta con cada archivo de código que se escribe: Python y los lenguajes de `data/languages.json` (JavaScript, TypeScript, Rust, Swift, Go, shell y más). En un repositorio git solo señala los nombres que no estaban en el último commit, para que arreglar una línea no acabe renombrando todo el archivo. Informa y nunca bloquea.
 
 ## Límites
 
-La revisión solo lee Python.
+Python se lee con su propio analizador. Los demás lenguajes se leen con patrones, así que a veces un nombre se detecta por error. Los lenguajes que cierran bloques con `end` (Ruby, Lua, Julia, Elixir) solo pasan la revisión de nombres.
 
 ---
 

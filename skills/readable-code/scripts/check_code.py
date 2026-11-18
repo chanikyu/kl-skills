@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""readable-code — 파이썬 코드에서 기계로 확인되는 두 가지만 본다.
+"""readable-code — 코드에서 기계로 확인되는 두 가지만 본다.
 
     check_code.py [--all] [--limit N] FILE [FILE...]
 
@@ -10,9 +10,13 @@
   uncommented-long-function 긴 함수 안에 주석이 한 줄도 없다
   no-module-docstring       파일이 무엇을 하는 파일인지 맨 위에 안 적혀 있다
 
-파이썬에 들어 있는 분석기(ast)로 구문을 그대로 읽으므로, 문자열이나 주석 안의 글자를
+파이썬은 들어 있는 분석기(ast)로 구문을 그대로 읽으므로, 문자열이나 주석 안의 글자를
 변수로 착각하지 않는다. 주석 위치는 tokenize 로 얻는다 — `"# 이건 문자열"` 을 주석으로
 세지 않기 위해서다.
+
+다른 언어(JavaScript·TypeScript·Rust·Swift·Go·셸 등, 목록은 data/languages.json)는
+other_languages.py 가 규칙 파일의 패턴으로 이름과 함수 자리를 찾고, 판정은 여기서 파이썬과
+같은 기준으로 한다. 패턴이라 드물게 잘못 잡을 수 있다.
 
 판정 기준은 전부 `data/` 의 파일에서 읽는다. 어떤 짧은 이름을 허용할지, 어떤 긴 이름을
 모호하다고 볼지는 그 파일을 고친다. 코드를 고치지 않는다.
@@ -28,6 +32,8 @@ import os
 import subprocess
 import sys
 import tokenize
+
+import other_languages
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(HERE, "..", "data")
@@ -69,18 +75,30 @@ def committed_source(path):
     return shown.stdout.decode("utf-8", "replace")
 
 
-def drop_old_names(findings, old_source):
+def old_names_in(old_source, lang):
+    """마지막 커밋 때 파일에 있던 이름들. 옛 파일을 읽지 못하면 None.
+
+    lang 이 None 이면 파이썬이다. 옛 파일이 깨져 있으면 비교할 이름이 없으므로 None 을
+    줘서 전부 남기게 한다.
+    """
+    if lang is not None:
+        return set(other_languages.parse(old_source, lang).names)
+    try:
+        return set(stored_names(ast.parse(old_source)))
+    except SyntaxError:
+        return None
+
+
+def drop_old_names(findings, old_names):
     """마지막 커밋에 이미 있던 이름에 대한 지적을 뺀다.
 
     줄이 아니라 이름으로 가르는 까닭: 옛 이름 `s` 가 처음 나오는 줄을 고치면 그 줄은
     "바뀐 줄"이 되어 `s` 를 지적하고, 함수 전체의 `s` 를 바꾸라고 부추긴다. 기존 함수의
     def 줄에 인자 하나를 더해도 그 함수의 빠진 설명문을 지적하게 된다(2026-11-18 재현).
-    둘 다 손대지 않은 것을 "김에" 고치게 만든다. 옛 파일이 깨져 있으면 비교할 이름이
-    없으므로 전부 남긴다. 구문 오류는 이름과 상관없이 남긴다 — 숨기면 "깨끗하다"로 읽힌다.
+    둘 다 손대지 않은 것을 "김에" 고치게 만든다. 구문 오류는 이름과 상관없이 남긴다 —
+    숨기면 "깨끗하다"로 읽힌다.
     """
-    try:
-        old_names = set(stored_names(ast.parse(old_source)))
-    except SyntaxError:
+    if old_names is None:
         return findings
     kept = []
     for finding in findings:
@@ -139,6 +157,57 @@ def body_span(node):
     return last - node.body[0].lineno + 1
 
 
+def judge_name(add, name, lineno, short_ok, vague):
+    """이름 하나를 기준에 맞춰 보고, 걸리면 add 로 지적을 남긴다.
+
+    파이썬과 다른 언어가 같이 쓴다. 기준을 두 곳에 두면 그 둘이 먼저 어긋난다.
+    """
+    low = name.lower().strip("_")
+    if len(name.strip("_")) <= 2 and name not in short_ok:
+        add(lineno, "warn", "vague-name",
+            "이름 '%s' 로는 무엇을 담았는지 알 수 없다" % name,
+            "담긴 것을 그대로 쓴다: s -> text, p -> path, df -> samples", name)
+    elif low in vague:
+        add(lineno, "warn", "vague-name",
+            "이름 '%s' 는 길지만 무엇인지 안 알려준다" % name,
+            "'무엇의' 를 붙인다: data -> allele_counts, tmp -> merged_rows", name)
+
+
+def check_other(path, source, lang, cfg, short_ok, vague):
+    """파이썬이 아닌 파일 하나를 검사해 찾은 것들의 목록을 준다.
+
+    이름과 함수 자리는 other_languages 가 규칙 파일의 패턴으로 찾고, 판정은 파이썬과 같다.
+    설명문은 함수 바로 위의 주석(/** */, ///, #' 등)이다. 중괄호를 쓰지 않는 언어는
+    블록을 찾지 않으므로 이름만 본다.
+    """
+    found = []
+
+    def add(line, sev, code, msg, fix="", name=None):
+        found.append({"path": path, "line": line, "sev": sev, "code": code,
+                      "msg": msg, "fix": fix, "name": name})
+
+    parsed = other_languages.parse(source, lang)
+    # 메시지와 등급은 파이썬 쪽 check() 와 같게 둔다. 언어가 달라도 같은 지적은 같게 읽혀야 한다.
+    if not parsed.has_header_comment:
+        add(1, "note", "no-module-docstring",
+            "이 파일이 무엇을 하는 파일인지 맨 위에 안 적혀 있다",
+            "파일 첫머리에 무엇을 하는 파일인지 주석 한 줄을 둔다")
+    for name, lineno in sorted(parsed.names.items(), key=lambda kv: kv[1]):
+        judge_name(add, name, lineno, short_ok, vague)
+    for block in parsed.blocks:
+        label = "함수" if block.kind == "functions" else "타입"
+        if block.body_lines >= cfg.min_body and not block.has_doc:
+            add(block.line, "warn", "no-docstring",
+                "%s '%s' 가 %d줄인데 설명 주석이 없다" % (label, block.name, block.body_lines),
+                "바로 위에 무엇을 하는지, 왜 이렇게 했는지 한두 줄 주석", block.name)
+        if block.kind == "functions" and block.body_lines >= cfg.min_commented \
+                and not block.has_comment_inside:
+            add(block.line, "warn", "uncommented-long-function",
+                "함수 '%s' 가 %d줄인데 안에 주석이 한 줄도 없다" % (block.name, block.body_lines),
+                "판단이 들어간 자리마다 '왜 그렇게 했는지' 를 적는다", block.name)
+    return found
+
+
 def check(path, source, cfg, short_ok, vague):
     """한 파일을 검사해 찾은 것들의 목록을 준다.
 
@@ -165,15 +234,7 @@ def check(path, source, cfg, short_ok, vague):
             '파일 첫 줄에 """무엇을 하는 파일인지 한 줄""" 을 둔다')
 
     for name, lineno in sorted(stored_names(tree).items(), key=lambda kv: kv[1]):
-        low = name.lower().strip("_")
-        if len(name.strip("_")) <= 2 and name not in short_ok:
-            add(lineno, "warn", "vague-name",
-                "이름 '%s' 로는 무엇을 담았는지 알 수 없다" % name,
-                "담긴 것을 그대로 쓴다: s -> text, p -> path, df -> samples", name)
-        elif low in vague:
-            add(lineno, "warn", "vague-name",
-                "이름 '%s' 는 길지만 무엇인지 안 알려준다" % name,
-                "'무엇의' 를 붙인다: data -> allele_counts, tmp -> merged_rows", name)
+        judge_name(add, name, lineno, short_ok, vague)
 
     # 설명문과 주석은 다른 것을 막는다. 설명문은 "무엇을 하는 함수인가"를,
     # 주석은 "이 자리에서 왜 이렇게 했나"를 남긴다. 그래서 둘을 따로 본다.
@@ -223,22 +284,28 @@ def main(argv=None):
 
     short_ok = load_names("short-names-ok.txt", cfg.data_dir)
     vague = set(name.lower() for name in load_names("vague-names.txt", cfg.data_dir))
+    languages = other_languages.load_languages(cfg.data_dir or DATA_DIR)
 
     found = []
     narrowed_count = 0
     for path in cfg.files:
-        if not path.endswith(".py"):
+        # 파이썬이면 lang 은 None, 규칙 파일에 없는 확장자는 건너뛴다.
+        lang = None if path.endswith(".py") else other_languages.language_for(path, languages)
+        if lang is None and not path.endswith(".py"):
             continue
         try:
             source = open(path, encoding="utf-8", errors="replace").read()
         except OSError as err:
             print("읽을 수 없다: %s (%s)" % (path, err), file=sys.stderr)
             continue
-        file_found = check(path, source, cfg, short_ok, vague)
+        if lang is None:
+            file_found = check(path, source, cfg, short_ok, vague)
+        else:
+            file_found = check_other(path, source, lang, cfg, short_ok, vague)
         old_source = committed_source(path) if cfg.changed else None
         if old_source is not None:
             narrowed_count += 1
-            file_found = drop_old_names(file_found, old_source)
+            file_found = drop_old_names(file_found, old_names_in(old_source, lang))
         found += file_found
 
     # 등급을 나눈다. 경고는 기본 출력, 참고는 --all 일 때만 — 참고 쪽은 일부러

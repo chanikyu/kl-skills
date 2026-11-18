@@ -89,7 +89,7 @@ Una skill se carga cuando Claude juzga que la conversación encaja con su descri
 | Se escribe un archivo | `wiki-index-check` | Avisa de una página de la wiki que falta en el índice |
 | Se escribe un archivo | `wiki-graph` | Vuelve a dibujar el grafo de la wiki |
 | Se escribe un archivo | `prose-check` | Señala los puntos difíciles de leer en las páginas de la wiki |
-| Se escribe un archivo | `code-check` | Señala nombres vagos de Python y docstrings que faltan |
+| Se escribe un archivo | `code-check` | Señala nombres vagos y docstrings que faltan en el código (Python, TypeScript, Rust, Swift, Go y más) |
 | Se escribe un archivo | `plan-drift` | Revisa el marco del plan y sus desvíos |
 | Se ejecuta Bash | `after-bash` | Detecta ediciones de la wiki y commits hechos en la shell |
 | Termina la respuesta | `wiki-sync` | Pone el grafo al día, sin importar cómo se editaron las páginas |

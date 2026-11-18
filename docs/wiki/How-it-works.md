@@ -28,7 +28,7 @@
 | A file is written | `wiki-index-check` | Flags a wiki page missing from the index | — |
 | A file is written | `wiki-graph` | Redraws the wiki graph | — |
 | A file is written | `prose-check` | Flags hard-to-read spots in wiki pages | — |
-| A file is written | `code-check` | Flags vague Python names and missing docstrings | — |
+| A file is written | `code-check` | Flags vague names and missing docstrings in code (Python, TypeScript, Rust, Swift, Go and more) | — |
 | A file is written | `plan-drift` | Checks a plan's frame and drift | — |
 | Bash runs | `after-bash` | Catches wiki edits and commits made in the shell | — |
 | The answer ends | `wiki-sync` | Brings the graph up to date, however pages were edited | — |

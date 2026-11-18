@@ -89,7 +89,7 @@ KL-SKILLS GATES v<version> — loaded, 12 rules enforced
 | ファイルを書いたとき | `wiki-index-check` | 目次にない wiki ページを知らせる |
 | ファイルを書いたとき | `wiki-graph` | wiki のグラフを描き直す |
 | ファイルを書いたとき | `prose-check` | wiki ページの読みにくい箇所を知らせる |
-| ファイルを書いたとき | `code-check` | あいまいな Python の名前と抜けた docstring を知らせる |
+| ファイルを書いたとき | `code-check` | コード(Python・TypeScript・Rust・Swift・Go など)のあいまいな名前と抜けた docstring を知らせる |
 | ファイルを書いたとき | `plan-drift` | 計画書の枠組みと逸脱を確認する |
 | Bash を実行したとき | `after-bash` | シェルでの wiki の編集とコミットを捉える |
 | 回答が終わったとき | `wiki-sync` | どう編集されても、グラフを最新にする |

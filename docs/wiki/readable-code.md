@@ -26,11 +26,11 @@ Allowed short names and vague names are data files in `data/`.
 
 ## Hooks that back it
 
-`code-check` runs on every Python file that is written. It reports and never blocks.
+`code-check` runs on every code file that is written: Python, and the languages listed in `data/languages.json` (JavaScript, TypeScript, Rust, Swift, Go, shell and more). In a git repository it points only at names that were not in the last commit, so a one-line fix does not turn into renaming the whole file. It reports and never blocks.
 
 ## Limits
 
-The check reads Python only.
+Python is read with its own parser. The other languages are read with patterns, so a name is occasionally caught by mistake. Languages that close blocks with `end` (Ruby, Lua, Julia, Elixir) get the name check only.
 
 ---
 

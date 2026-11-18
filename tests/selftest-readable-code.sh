@@ -113,13 +113,44 @@ esac
 "$PY" "$CHECK" --exit-zero "$TMP/bad.py" >/dev/null 2>&1 && ok "--exit-zero 는 0으로 끝난다" \
   || bad "--exit-zero 인데 1로 끝났다"
 
-# --- 파이썬이 아닌 파일은 손대지 않는다
+# --- 코드가 아닌 파일(규칙 파일에 없는 확장자)은 손대지 않는다
 printf 'a = 1 뭐든\n' > "$TMP/notes.txt"
 out3="$("$PY" "$CHECK" "$TMP/notes.txt" 2>&1)"
 case "$out3" in
-  *"경고 0건"*) ok "파이썬이 아닌 파일은 건너뛴다" ;;
-  *)            bad "파이썬 아닌 파일을 검사했다: $out3" ;;
+  *"경고 0건"*) ok "코드가 아닌 파일은 건너뛴다" ;;
+  *)            bad "코드가 아닌 파일을 검사했다: $out3" ;;
 esac
+
+# --- 다른 언어: languages.json 의 언어마다 예제가 하나씩 있다(tests/fixtures/readable-code).
+# 예제 첫머리 "expect:" 에 적힌 지적만 정확히 나와야 한다. 하나라도 더 나오면 패턴이 엉뚱한
+# 것을 잡은 것이고, 빠지면 놓친 것이다. 예제마다 주석·문자열 속 가짜 선언도 들어 있다.
+lang_report="$("$PY" - "$CHECK" "$REPO/tests/fixtures/readable-code" \
+               "$REPO/skills/readable-code/data/languages.json" <<'PYEOF'
+import glob, json, os, re, subprocess, sys
+checker, folder, rules = sys.argv[1], sys.argv[2], sys.argv[3]
+fixtures = sorted(glob.glob(os.path.join(folder, "*")))
+for fixture in fixtures:
+    head = open(fixture, encoding="utf-8").read().splitlines()[:3]
+    expected = set()
+    for line in head:
+        if "expect:" in line:
+            expected = set(line.split("expect:", 1)[1].split())
+    output = subprocess.run([sys.executable, checker, "--exit-zero", fixture],
+                            capture_output=True, text=True).stdout
+    got = {"%s:%s" % m.groups() for m in re.finditer(r"\[([\w-]+)\][^'\n]*'([^']+)'", output)}
+    name = os.path.basename(fixture)
+    if got == expected:
+        print("ok    예제 %s: 기대한 지적만 나온다" % name)
+    else:
+        print("FAIL  예제 %s: 빠짐 %s, 더 나옴 %s" % (name, sorted(expected - got), sorted(got - expected)))
+covered = {os.path.splitext(fixture)[1].lower() for fixture in fixtures}
+for language in json.load(open(rules, encoding="utf-8"))["languages"]:
+    if covered.isdisjoint(language["extensions"]):
+        print("FAIL  %s 에 예제가 없다 — tests/fixtures/readable-code 에 하나 더한다" % language["name"])
+PYEOF
+)"
+printf '%s\n' "$lang_report"
+fails=$((fails + $(printf '%s\n' "$lang_report" | grep -c '^FAIL')))
 
 # --- 구문이 깨진 파일: 그 사실만 보고하고 터지지 않는다
 printf 'def broken(:\n    pass\n' > "$TMP/broken.py"

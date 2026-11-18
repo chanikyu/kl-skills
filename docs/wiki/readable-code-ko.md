@@ -26,11 +26,11 @@
 
 ## 받쳐 주는 훅
 
-`code-check` 는 Python 파일이 쓰일 때마다 돈다. 알리기만 하고 막지는 않는다.
+`code-check` 는 코드 파일이 쓰일 때마다 돈다. Python 과, `data/languages.json` 에 적힌 언어(JavaScript·TypeScript·Rust·Swift·Go·셸 등)를 읽는다. git 저장소의 파일이면 마지막 커밋에 없던 이름만 짚는다. 한 줄을 고쳤는데 파일 전체의 이름을 바꾸게 되지 않게 하려는 것이다. 알리기만 하고 막지는 않는다.
 
 ## 한계
 
-이 검사는 Python 만 읽는다.
+Python 은 전용 분석기로 읽는다. 다른 언어는 패턴으로 읽으므로 드물게 이름을 잘못 잡을 수 있다. `end` 로 블록을 닫는 언어(Ruby·Lua·Julia·Elixir)는 이름만 본다.
 
 ---
 
