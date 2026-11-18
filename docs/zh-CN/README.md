@@ -102,6 +102,7 @@ KL-SKILLS GATES v<version> — loaded, 12 rules enforced
 
 ## 更新记录
 
+- **0.25** — 回答里的金额：回答报出金额并询问是否继续，却没说明这笔钱是否真的会被收取时，`answer-check` 会拦下（`data/charge-words.txt`）
 - **0.24** — 更多语言、只看新名称：`code-check` 也读 TypeScript、Rust、Swift、Go 等（`data/languages.json`），只指出上次提交中没有的名称；`task-checklist` 遇到两种理解时先问，每一项后面写 `→ 确认：`
 - **0.23** — 领域术语：`answer-check` 会在回答和幻灯片中找出该领域不用的词（`data/domain-terms.tsv`）
 - **0.22** — `task-checklist` 及其两个检查、`skill-match`，以及这个文档 wiki

@@ -102,6 +102,7 @@ When a gate sends an answer back, Claude Code shows `Stop hook feedback:` with t
 
 ## What's new
 
+- **0.25** — money in answers: `answer-check` blocks an answer that asks to go ahead with a cost but never says whether that money is actually charged (`data/charge-words.txt`)
 - **0.24** — more languages, new names only: `code-check` also reads TypeScript, Rust, Swift, Go and more (`data/languages.json`) and points only at names not in the last commit; `task-checklist` asks first when a request reads two ways and ends each item with `→ check:`
 - **0.23** — field terms: `answer-check` flags words the field does not use, in answers and in slides (`data/domain-terms.tsv`)
 - **0.22** — `task-checklist` with its two gates, `skill-match`, and this documentation wiki

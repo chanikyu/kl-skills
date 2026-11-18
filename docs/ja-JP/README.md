@@ -102,6 +102,7 @@ KL-SKILLS GATES v<version> — loaded, 12 rules enforced
 
 ## 新着
 
+- **0.25** — 回答の中の金額: 金額を示して進めるか尋ねるのに、実際に請求されるお金かを書いていない回答を `answer-check` が止める（`data/charge-words.txt`）
 - **0.24** — 他の言語と新しい名前だけ: `code-check` が TypeScript・Rust・Swift・Go なども読み（`data/languages.json`）、直前のコミットになかった名前だけを指摘する。`task-checklist` は二通りに読める依頼を先に尋ね、各項目に `→ 確認:` を付ける
 - **0.23** — 分野の用語: 回答とスライドで分野が使わない言葉を `answer-check` が指摘する（`data/domain-terms.tsv`）
 - **0.22** — `task-checklist` とその 2 つのゲート、`skill-match`、そしてこのドキュメント wiki

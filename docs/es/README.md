@@ -102,6 +102,7 @@ Cuando un gate devuelve una respuesta, Claude Code muestra `Stop hook feedback:`
 
 ## Novedades
 
+- **0.25** — importes en las respuestas: `answer-check` frena una respuesta que pide seguir adelante con un coste sin decir si ese dinero se cobra de verdad (`data/charge-words.txt`)
 - **0.24** — más lenguajes y solo nombres nuevos: `code-check` también lee TypeScript, Rust, Swift, Go y más (`data/languages.json`) y solo señala nombres que no estaban en el último commit; `task-checklist` pregunta primero si algo se entiende de dos maneras y termina cada punto con `→ comprobar:`
 - **0.23** — términos del campo: `answer-check` señala palabras que el campo no usa, en respuestas y diapositivas (`data/domain-terms.tsv`)
 - **0.22** — `task-checklist` con sus dos gates, `skill-match` y esta wiki de documentación
