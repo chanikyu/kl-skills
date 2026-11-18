@@ -21,15 +21,16 @@
 ## 文件和脚本
 
 ```text
-~/.claude/checklists/<session>.md        this instruction's list
-~/.claude/checklists/<session>.prev.md   the previous instruction's list, kept
+~/.claude/checklists/<session>.md         this instruction's list, open items carried over on top
+~/.claude/checklists/<session>.prev.md    the previous instruction's whole list, kept
+~/.claude/checklists/<session>.carry.md   the open items that were carried over
 ```
 
 `KL_CHECKLIST_DIR` 可以移动这个文件夹。
 
 ## 背后的钩子检查
 
-`checklist-start` 把上一份清单挪到一边，并说明新清单写在哪里。如果清单缺失或还有未完成的项，`checklist-check` 会把回答退回一次。
+`checklist-start` 把上一份清单整份保存为 `.prev.md`，把未完成的项移到新清单顶部，再说明新项加在哪里。如果清单缺失、还有未完成的项，或者移过来的项没有关闭就消失了，`checklist-check` 会把回答退回一次。
 
 ## 局限
 

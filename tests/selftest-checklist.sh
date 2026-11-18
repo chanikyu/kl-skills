@@ -1,5 +1,5 @@
 #!/bin/sh
-# Checks the two checklist gates: checklist-start moves the last turn's list aside
+# Checks the two checklist gates: checklist-start keeps the last list, carries its open items
 # and says where to write the new one; checklist-check blocks the answer once when
 # the list is missing or has open items, and never blocks twice.
 set -u
@@ -28,12 +28,56 @@ check() { printf '{"session_id":"s1"%s}' "${1:-}" | sh "$REPO/hooks/run.sh" chec
 out="$(start "README 고치고 커밋해줘")"
 case "$out" in *"$LIST"*) ok "체크리스트를 쓸 경로를 알린다" ;; *) bad "경로를 알리지 않았다: $out" ;; esac
 case "$out" in *"질문: A인가 B인가"*"→ 확인:"*) ok "뜻이 둘이면 먼저 묻기와 '→ 확인:' 을 매번 알린다" ;; *) bad "질문·확인 안내가 없다: $out" ;; esac
-mkdir -p "$KL_CHECKLIST_DIR"; printf -- '- [ ] 지난 턴에 남은 일\n' > "$LIST"
+mkdir -p "$KL_CHECKLIST_DIR"; printf -- '# 지시: 끝난 일\n- [x] 다 한 일\n- [~] 못 한 일 — 사용자가 미뤘다\n' > "$LIST"
 start "다음 지시" >/dev/null
-[ ! -f "$LIST" ] && [ -f "$KL_CHECKLIST_DIR/s1.prev.md" ] && ok "새 지시가 오면 지난 목록은 .prev 로 보관한다" \
-  || bad "지난 목록을 치우지 않았다"
+[ ! -f "$LIST" ] && [ -f "$KL_CHECKLIST_DIR/s1.prev.md" ] && ok "다 끝난 목록은 새 지시가 오면 .prev 로 보관한다" \
+  || bad "다 끝난 목록을 치우지 않았다"
 out="$(start "")"
 [ -z "$out" ] && ok "빈 메시지에는 조용하다" || bad "빈 메시지에 말했다"
+
+# --- 안 끝난 항목은 새 지시가 와도 사라지지 않는다. 2026-11-18 사용자: "중간에 끊겨서 더 깊은 대화를 하면
+# --- 체크리스트가 사라지는 거 같아. 그러면 안 되거든" — 곁 질문 하나에 하던 일의 목록이 .prev 로 치워졌다.
+printf -- '# 지시: 릴리스\n- [x] 커밋\n- [ ] 푸시 → 확인: push 종료 0\n- [ ] 보고\n' > "$LIST"
+out="$(start "\$8 이게 뭔데")"
+[ -f "$KL_CHECKLIST_DIR/s1.prev.md" ] && grep -q '\[x\] 커밋' "$KL_CHECKLIST_DIR/s1.prev.md" \
+  && ok "지난 목록 전체는 .prev 에 그대로 남긴다" || bad "지난 목록을 .prev 에 남기지 않았다"
+[ -f "$LIST" ] && grep -q '^- \[ \] 푸시 → 확인: push 종료 0$' "$LIST" && grep -q '^- \[ \] 보고$' "$LIST" \
+  && ok "안 끝난 항목은 새 목록으로 넘어온다" || bad "안 끝난 항목이 새 목록에 없다: $(cat "$LIST" 2>/dev/null)"
+grep -q '커밋' "$LIST" && bad "끝난 항목까지 넘어왔다" || ok "끝난 항목은 넘어오지 않는다"
+grep -q '릴리스' "$LIST" && ok "넘어온 항목에 원래 지시 제목이 붙는다" || bad "원래 지시 제목이 없다"
+case "$out" in *"넘어온"*"2개"*"푸시"*) ok "메시지마다 넘어온 항목을 보여 준다" ;; *) bad "넘어온 항목을 알리지 않았다: $out" ;; esac
+case "$out" in *"덮어쓰지"*) ok "덮어쓰지 말고 덧붙이라고 알린다" ;; *) bad "덮어쓰지 말라는 말이 없다: $out" ;; esac
+
+# 답이 끝날 때: 넘어온 항목도 안 끝났으면 막는다
+printf -- '\n## 지시: $8 이게 뭔데\n- [x] 질문에 답한다\n' >> "$LIST"
+out="$(check)"
+case "$out" in *'"decision": "block"'*"2개 남았다"*"푸시"*) ok "넘어온 항목이 남았으면 막는다" ;; *) bad "넘어온 항목을 놓쳤다: $out" ;; esac
+
+# 넘어온 항목을 목록에서 지우면(덮어쓰기) 막는다 — 끝난 것처럼 보이지만 사라진 것이다
+printf -- '# 지시: $8 이게 뭔데\n- [x] 질문에 답한다\n' > "$LIST"
+out="$(check)"
+case "$out" in *'"decision": "block"'*"사라졌다"*"푸시"*"보고"*) ok "넘어온 항목이 사라지면 막는다" ;; *) bad "사라진 항목을 놓쳤다: $out" ;; esac
+
+# 넘어온 항목을 닫으면 통과한다. '→ 확인:' 뒤에 결과를 덧붙여도 같은 항목으로 본다
+printf -- '## 넘어온 항목 — 지시: 릴리스\n- [x] 푸시 → 확인: push 종료 0, 3bcebc8\n- [~] 보고 — 사용자가 미뤘다\n\n# 지시: $8\n- [x] 질문에 답한다\n' > "$LIST"
+out="$(check)"
+[ -z "$out" ] && ok "넘어온 항목을 닫으면 통과한다(확인 결과를 덧붙여도)" || bad "닫은 넘어온 항목을 막았다: $out"
+
+# 다 닫힌 뒤 새 지시가 오면 넘어올 것이 없다: 목록을 치우고 넘어온 기록도 지운다
+start "그다음 지시" >/dev/null
+[ ! -f "$LIST" ] && [ ! -f "$KL_CHECKLIST_DIR/s1.carry.md" ] && ok "다 닫힌 뒤에는 넘어온 기록도 지운다" \
+  || bad "다 닫혔는데 목록이나 넘어온 기록이 남았다"
+out="$(check)"
+case "$out" in *"사라졌다"*) bad "지난번에 넘어온 항목을 이번에도 찾았다: $out" ;; *) ok "닫힌 넘어온 항목은 다음 지시를 막지 않는다" ;; esac
+# 넘어온 항목을 지운 채 두 번째 Stop(막지 않음)까지 지나가도, 다음 지시에서 다시 넘어온다
+printf -- '# 지시: 하던 일\n- [ ] 남은 일\n' > "$LIST"
+start "곁 질문" >/dev/null
+printf -- '# 지시: 곁 질문\n- [x] 답\n' > "$LIST"
+check ',"stop_hook_active":true' >/dev/null
+start "다음 지시" >/dev/null
+grep -q '^- \[ \] 남은 일$' "$LIST" && ok "지워진 넘어온 항목은 다음 지시에서 다시 넘어온다" \
+  || bad "지워진 넘어온 항목이 영영 사라졌다: $(cat "$LIST" 2>/dev/null)"
+rm -f "$LIST" "$KL_CHECKLIST_DIR/s1.prev.md" "$KL_CHECKLIST_DIR/s1.carry.md"
 
 # --- 기계가 보낸 알림은 지시가 아니다: 하던 목록을 치우지 않는다
 # (2026-11-13: 백그라운드 작업 알림이 UserPromptSubmit 로 들어와 작업 중인 목록을 .prev 로 치웠다)

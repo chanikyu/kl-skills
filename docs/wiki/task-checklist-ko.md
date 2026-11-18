@@ -21,16 +21,17 @@
 ## 파일과 스크립트
 
 ```text
-~/.claude/checklists/<session>.md        this instruction's list
-~/.claude/checklists/<session>.prev.md   the previous instruction's list, kept
+~/.claude/checklists/<session>.md         this instruction's list, open items carried over on top
+~/.claude/checklists/<session>.prev.md    the previous instruction's whole list, kept
+~/.claude/checklists/<session>.carry.md   the open items that were carried over
 ```
 
 `KL_CHECKLIST_DIR` 로 폴더를 옮긴다.
 
 ## 받쳐 주는 훅
 
-`checklist-start` 는 이전 목록을 옆으로 치워 두고, 새 목록을 어디에 쓸지 알려 준다.
-`checklist-check` 는 목록이 없거나 열린 항목이 남아 있으면 답을 한 번 되돌려 보낸다.
+`checklist-start` 는 이전 목록을 `.prev.md` 로 보관하고, 안 끝난 항목을 새 목록 맨 위로 넘긴 뒤 새 항목을 어디에 덧붙일지 알려 준다.
+`checklist-check` 는 목록이 없거나, 열린 항목이 남았거나, 넘어온 항목이 닫히지 않은 채 사라졌으면 답을 한 번 되돌려 보낸다.
 
 ## 한계
 

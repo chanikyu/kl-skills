@@ -21,15 +21,16 @@ No hace falta decir nada: el gate `checklist-start` pide una lista de comprobaci
 ## Archivos y scripts
 
 ```text
-~/.claude/checklists/<session>.md        this instruction's list
-~/.claude/checklists/<session>.prev.md   the previous instruction's list, kept
+~/.claude/checklists/<session>.md         this instruction's list, open items carried over on top
+~/.claude/checklists/<session>.prev.md    the previous instruction's whole list, kept
+~/.claude/checklists/<session>.carry.md   the open items that were carried over
 ```
 
 `KL_CHECKLIST_DIR` mueve la carpeta.
 
 ## Hooks que la respaldan
 
-`checklist-start` aparta la lista anterior y dice dónde escribir la nueva. `checklist-check` devuelve la respuesta una vez si falta la lista o si tiene puntos pendientes.
+`checklist-start` guarda la lista anterior como `.prev.md`, pasa sus puntos pendientes al principio de la nueva lista y dice dónde añadir los nuevos. `checklist-check` devuelve la respuesta una vez si falta la lista, si tiene puntos pendientes o si un punto heredado desapareció sin cerrarse.
 
 ## Límites
 

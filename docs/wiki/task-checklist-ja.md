@@ -21,15 +21,16 @@
 ## ファイルとスクリプト
 
 ```text
-~/.claude/checklists/<session>.md        this instruction's list
-~/.claude/checklists/<session>.prev.md   the previous instruction's list, kept
+~/.claude/checklists/<session>.md         this instruction's list, open items carried over on top
+~/.claude/checklists/<session>.prev.md    the previous instruction's whole list, kept
+~/.claude/checklists/<session>.carry.md   the open items that were carried over
 ```
 
 `KL_CHECKLIST_DIR` でフォルダを移せる。
 
 ## このスキルを支えるフック
 
-`checklist-start` は前のリストを脇に移し、新しいリストをどこに書くかを伝える。`checklist-check` は、リストがないか未完了の項目があると、回答を1回差し戻す。
+`checklist-start` は前のリストを `.prev.md` として残し、未完了の項目を新しいリストの先頭に引き継いでから、新しい項目をどこに足すかを伝える。`checklist-check` は、リストがないか、未完了の項目があるか、引き継いだ項目が閉じられないまま消えていると、回答を1回差し戻す。
 
 ## 制限
 

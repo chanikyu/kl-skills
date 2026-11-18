@@ -21,15 +21,16 @@ Nothing to say: the `checklist-start` gate asks for a checklist on every message
 ## Files and scripts
 
 ```text
-~/.claude/checklists/<session>.md        this instruction's list
-~/.claude/checklists/<session>.prev.md   the previous instruction's list, kept
+~/.claude/checklists/<session>.md         this instruction's list, open items carried over on top
+~/.claude/checklists/<session>.prev.md    the previous instruction's whole list, kept
+~/.claude/checklists/<session>.carry.md   the open items that were carried over
 ```
 
 `KL_CHECKLIST_DIR` moves the folder.
 
 ## Hooks that back it
 
-`checklist-start` moves the previous list aside and says where to write the new one. `checklist-check` sends the answer back once if the list is missing or has open items.
+`checklist-start` keeps the previous list as `.prev.md`, carries its open items to the top of the new list, and says where to add the new items. `checklist-check` sends the answer back once if the list is missing, has open items, or lost a carried item without closing it.
 
 ## Limits
 

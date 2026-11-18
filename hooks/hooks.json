@@ -107,7 +107,7 @@
             "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" checklist-check",
             "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\run.ps1\" checklist-check",
             "timeout": 10,
-            "description": "Block the answer once if this instruction's checklist is missing or still has open '- [ ]' items, so the rest gets done before the answer reaches the person. Capped by stop_hook_active.",
+            "description": "Block the answer once if the checklist is missing, still has open '- [ ]' items, or lost an item carried over from an earlier instruction without closing it, so the rest gets done before the answer reaches the person. Capped by stop_hook_active.",
             "id": "stop:checklist-check",
             "statusMessage": "Checking the checklist..."
           }
@@ -138,7 +138,7 @@
             "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" checklist-start",
             "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\run.ps1\" checklist-start",
             "timeout": 20,
-            "description": "Every message: move the last instruction's checklist aside and tell the model where to write this instruction's checklist (~/.claude/checklists/<session>.md).",
+            "description": "Every message: keep the last instruction's checklist as <session>.prev.md, carry its open items to the top of the new list (~/.claude/checklists/<session>.md) and show them, then tell the model where to add this instruction's items.",
             "id": "prompt:checklist-start"
           }
         ]
