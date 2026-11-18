@@ -12,8 +12,8 @@ Nothing to say: the `checklist-start` gate asks for a checklist on every message
 
 ## What it does
 
-1. Read the whole message: numbered items, requests buried in sentences, decisions you already made.
-2. Split it into items that can be checked — "tests pass" rather than "improve the tests". A question in the message is an item too.
+1. Read the whole message: numbered items, requests buried in sentences, decisions you already made. If it can be read two ways, do not pick one and start: write `- [ ] question: A or B` as the first item and ask.
+2. Split it into items that can be checked — "tests pass" rather than "improve the tests". End each item with `→ check: …`, saying what will show it is done. A question in the message is an item too.
 3. Write them to the session's checklist, one per line: `- [ ] item`.
 4. Mark each item `- [x]` as soon as it is done; close one that cannot be done as `- [~] item — reason`.
 5. Before ending, open the list again and finish whatever is still `- [ ]`.

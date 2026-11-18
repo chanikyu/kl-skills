@@ -67,6 +67,14 @@ printf -- '- [ ]\n- [x] 커밋하기\n' > "$LIST"
 out="$(check)"
 case "$out" in *"- [ ] - [x]"*) bad "빈 칸이 다음 줄과 붙어 보였다: $out" ;; *'"decision": "block"'*) ok "빈 칸이 다음 줄 항목과 붙지 않는다" ;; *) bad "예상 밖 출력: $out" ;; esac
 
+# --- "→ 확인:" 을 붙인 항목도 같게 센다 (task-checklist 2단계의 형식)
+printf -- '- [x] 게이트 추가 → 확인: 막는 시험 통과\n- [ ] 커밋하기 → 확인: git log 에 보인다\n' > "$LIST"
+out="$(check)"
+case "$out" in *'"decision": "block"'*"1개 남았다"*"커밋하기 → 확인: git log"*) ok "확인 방법이 붙은 안 끝난 항목을 그대로 짚는다" ;; *) bad "확인 방법이 붙은 항목을 잘못 셌다: $out" ;; esac
+printf -- '- [x] 게이트 추가 → 확인: 막는 시험 통과\n- [~] 푸시 → 확인: 원격 — 사용자가 미뤘다\n' > "$LIST"
+out="$(check)"
+[ -z "$out" ] && ok "확인 방법이 붙은 항목도 끝났으면 통과한다" || bad "끝난 항목을 막았다: $out"
+
 # --- 다 끝났으면 조용하다
 printf -- '- [x] README 고치기\n- [X] 커밋하기\n' > "$LIST"
 out="$(check)"

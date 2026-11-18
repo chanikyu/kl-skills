@@ -12,8 +12,8 @@ No hace falta decir nada: el gate `checklist-start` pide una lista de comprobaci
 
 ## Qué hace
 
-1. Lee el mensaje entero: puntos numerados, peticiones escondidas en las frases, decisiones que ya tomaste.
-2. Lo divide en puntos que se pueden comprobar: «los tests pasan» en lugar de «mejorar los tests». Una pregunta del mensaje también es un punto.
+1. Lee el mensaje entero: puntos numerados, peticiones escondidas en las frases, decisiones que ya tomaste. Si se puede entender de dos maneras, no elige una y empieza: escribe `- [ ] pregunta: ¿A o B?` como primer punto y pregunta.
+2. Lo divide en puntos que se pueden comprobar: «los tests pasan» en lugar de «mejorar los tests». Cada punto termina con `→ comprobar: …`, que dice qué mostrará que está hecho. Una pregunta del mensaje también es un punto.
 3. Los escribe en la lista de comprobación de la sesión, uno por línea: `- [ ] item`.
 4. Marca cada punto como `- [x]` en cuanto está hecho; uno que no se puede hacer se cierra como `- [~] item — reason`.
 5. Antes de terminar, vuelve a abrir la lista y acaba lo que siga en `- [ ]`.
