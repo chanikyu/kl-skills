@@ -49,7 +49,8 @@ def main():
 
     try:
         finished = subprocess.run(
-            [sys.executable, CHECKER, "--exit-zero", "--limit", LIMIT, file_path],
+            # --changed: 옛 이름까지 지적하면 "김에" 고치게 된다. git 밖 파일·새 파일은 전부 본다.
+            [sys.executable, CHECKER, "--exit-zero", "--changed", "--limit", LIMIT, file_path],
             stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, timeout=30,
         )
     except (OSError, subprocess.SubprocessError):
@@ -59,7 +60,8 @@ def main():
     # 마지막 줄은 집계다. 그 줄만 남았으면 지적이 없다는 뜻이므로 아무 말도 하지 않는다.
     if finished.returncode == 0 and len(report.splitlines()) > 1:
         tell_model("PostToolUse",
-                   report + "\n(readable-code: 이름과 설명을 다시 볼 자리다. 막지는 않는다)")
+                   report + "\n(readable-code: 이름과 설명을 다시 볼 자리다. 막지는 않는다."
+                            " 손대지 않은 줄은 고치지 말고 알리기만 한다)")
     return 0
 
 

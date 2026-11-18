@@ -63,6 +63,113 @@ out="$(gate "$TMP/.venv/lib/site-packages/vendored.py")"
 out="$(gate "$TMP/does-not-exist.py")"
 [ -z "$out" ] && ok "없는 파일에는 조용하다" || bad "없는 파일에 말했다: $out"
 
+# --- git 저장소의 파일은 마지막 커밋에 없던 이름만 지적한다. 옛 이름까지 지적하면 "김에" 고치게 된다.
+if command -v git >/dev/null 2>&1; then
+  GREPO="$TMP/repo with space"
+  mkdir -p "$GREPO/pkg"
+  # 사용자의 전역 설정(서명, 커밋 훅)이 시험 저장소에 끼어들지 않게 막는다.
+  gc() { dir="$1"; shift
+         git -C "$dir" -c user.name=t -c user.email=t@example.com -c commit.gpgsign=false \
+             -c core.hooksPath=/dev/null "$@" >/dev/null 2>&1; }
+  OLD="$GREPO/pkg/old.py"
+  write_old() {  # 이미 있던 파일. 나쁜 이름과 설명문 없는 함수가 일부러 남아 있다.
+    cat > "$OLD" <<EOF
+"""이미 있던 파일."""
+
+
+def f(p):
+    s = p
+    return s
+
+
+def long_one(count):
+    total = count
+    total += 1
+    total += 2
+    total += ${1:-3}
+    return total
+EOF
+  }
+  write_old
+  gc "$GREPO" init -q
+  gc "$GREPO" add -A
+  gc "$GREPO" commit -q -m init
+
+  out="$(gate "$OLD")"
+  [ -z "$out" ] && ok "커밋 그대로인 파일에는 조용하다" || bad "바뀐 것 없는 파일에 말했다: $out"
+
+  write_old 4   # 기존 함수 본문의 숫자 한 줄만 바꾼다
+  out="$(gate "$OLD")"
+  [ -z "$out" ] && ok "한 줄만 고치면 손대지 않은 줄의 이름·설명문은 지적하지 않는다" \
+                || bad "손대지 않은 줄을 지적했다: $out"
+
+  write_old
+  sed '/total += 2/d' "$OLD" > "$OLD.tmp" && mv "$OLD.tmp" "$OLD"   # 지우기만 한 변경
+  out="$(gate "$OLD")"
+  [ -z "$out" ] && ok "줄을 지우기만 한 변경에는 조용하다" || bad "지운 변경에 말했다: $out"
+
+  write_old
+  sed 's/    s = p$/    s = p.strip()/' "$OLD" > "$OLD.tmp" && mv "$OLD.tmp" "$OLD"
+  out="$(gate "$OLD")"
+  [ -z "$out" ] && ok "옛 이름이 든 줄을 고쳐도 그 옛 이름은 지적하지 않는다" \
+                || bad "고친 줄의 옛 이름을 지적했다(함수 전체 이름을 바꾸라는 뜻이 된다): $out"
+
+  write_old
+  sed 's/def long_one(count):/def long_one(count, step=1):/' "$OLD" > "$OLD.tmp" && mv "$OLD.tmp" "$OLD"
+  out="$(gate "$OLD")"
+  [ -z "$out" ] && ok "기존 함수에 인자를 더해도 그 함수의 빠진 설명문은 지적하지 않는다" \
+                || bad "기존 함수의 설명문을 요구했다: $out"
+
+  write_old
+  cat >> "$OLD" <<'EOF'
+
+
+def helper(rows):
+    tmp = rows
+    tmp = tmp + rows
+    tmp = tmp + rows
+    tmp = tmp + rows
+    return tmp
+EOF
+  out="$(gate "$OLD")"
+  case "$out" in
+    *"'tmp'"*) ok "새로 쓴 줄의 나쁜 이름은 그대로 지적한다" ;;
+    *)         bad "새로 쓴 나쁜 이름을 놓쳤다: $out" ;;
+  esac
+  case "$out" in
+    *"'helper'"*) ok "새로 쓴 함수의 빠진 설명문은 그대로 지적한다" ;;
+    *)            bad "새 함수의 설명문 빠짐을 놓쳤다: $out" ;;
+  esac
+  case "$out" in
+    *"'f'"*|*"'p'"*|*"'s'"*|*"'long_one'"*) bad "새 줄과 함께 옛 줄까지 지적했다: $out" ;;
+    *)                                       ok "새 줄을 더해도 옛 줄은 지적하지 않는다" ;;
+  esac
+  case "$out" in
+    *"없던 이름만"*) ok "새 이름만 봤다고 밝힌다" ;;
+    *)               bad "새 이름만 봤다는 말이 없다: $out" ;;
+  esac
+
+  cp "$TMP/bad.py" "$GREPO/pkg/new.py"   # 저장소 안이지만 아직 커밋한 적 없는 새 파일
+  out="$(gate "$GREPO/pkg/new.py")"
+  case "$out" in
+    *vague-name*) ok "커밋한 적 없는 새 파일은 전부 본다" ;;
+    *)            bad "새 파일을 건너뛰었다: $out" ;;
+  esac
+
+  FRESH="$TMP/fresh"   # 커밋이 하나도 없는 저장소 — 비교할 HEAD 가 없다
+  mkdir -p "$FRESH"
+  cp "$TMP/bad.py" "$FRESH/staged.py"
+  gc "$FRESH" init -q
+  gc "$FRESH" add staged.py
+  out="$(gate "$FRESH/staged.py")"
+  case "$out" in
+    *vague-name*) ok "커밋이 없는 저장소의 파일은 전부 본다" ;;
+    *)            bad "커밋 없는 저장소에서 아무 말도 안 했다: $out" ;;
+  esac
+else
+  echo "skip  no git — 바뀐 줄만 보는 시험을 건너뛴다"
+fi
+
 printf 'not json' | sh "$REPO/hooks/run.sh" code-check >/dev/null 2>&1 \
   && ok "깨진 입력에도 0으로 끝난다" || bad "깨진 입력에 터졌다"
 printf '' | sh "$REPO/hooks/run.sh" code-check >/dev/null 2>&1 \

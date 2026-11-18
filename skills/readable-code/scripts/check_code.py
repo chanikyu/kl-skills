@@ -25,6 +25,7 @@ import argparse
 import ast
 import io
 import os
+import subprocess
 import sys
 import tokenize
 
@@ -48,6 +49,47 @@ def load_names(filename, data_dir=None):
     except OSError:
         pass
     return out
+
+
+def committed_source(path):
+    """마지막 커밋에 들어 있던 이 파일의 내용. 없으면 None.
+
+    git 이 없거나, 저장소 밖이거나, 아직 커밋한 적 없는 파일이면 None 이다. 그런 파일은
+    통째로 새로 쓴 것이라 전부 검사하는 게 맞다. --no-textconv 는 사용자가 걸어 둔 변환
+    도구 대신 저장된 내용 그대로를 받으려는 것이다.
+    """
+    folder, name = os.path.split(os.path.abspath(path))
+    try:
+        shown = subprocess.run(["git", "-C", folder, "show", "--no-textconv", "HEAD:./" + name],
+                               stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    except OSError:
+        return None
+    if shown.returncode != 0:
+        return None
+    return shown.stdout.decode("utf-8", "replace")
+
+
+def drop_old_names(findings, old_source):
+    """마지막 커밋에 이미 있던 이름에 대한 지적을 뺀다.
+
+    줄이 아니라 이름으로 가르는 까닭: 옛 이름 `s` 가 처음 나오는 줄을 고치면 그 줄은
+    "바뀐 줄"이 되어 `s` 를 지적하고, 함수 전체의 `s` 를 바꾸라고 부추긴다. 기존 함수의
+    def 줄에 인자 하나를 더해도 그 함수의 빠진 설명문을 지적하게 된다(2026-11-18 재현).
+    둘 다 손대지 않은 것을 "김에" 고치게 만든다. 옛 파일이 깨져 있으면 비교할 이름이
+    없으므로 전부 남긴다. 구문 오류는 이름과 상관없이 남긴다 — 숨기면 "깨끗하다"로 읽힌다.
+    """
+    try:
+        old_names = set(stored_names(ast.parse(old_source)))
+    except SyntaxError:
+        return findings
+    kept = []
+    for finding in findings:
+        if finding["code"] == "no-module-docstring":
+            continue   # 파일이 이미 있었으니 맨 위 설명문도 옛것이다
+        if finding["code"] != "syntax-error" and finding["name"] in old_names:
+            continue
+        kept.append(finding)
+    return kept
 
 
 def comment_lines(source):
@@ -105,9 +147,9 @@ def check(path, source, cfg, short_ok, vague):
     """
     found = []
 
-    def add(line, sev, code, msg, fix=""):
+    def add(line, sev, code, msg, fix="", name=None):
         found.append({"path": path, "line": line, "sev": sev, "code": code,
-                      "msg": msg, "fix": fix})
+                      "msg": msg, "fix": fix, "name": name})
 
     try:
         tree = ast.parse(source)
@@ -127,11 +169,11 @@ def check(path, source, cfg, short_ok, vague):
         if len(name.strip("_")) <= 2 and name not in short_ok:
             add(lineno, "warn", "vague-name",
                 "이름 '%s' 로는 무엇을 담았는지 알 수 없다" % name,
-                "담긴 것을 그대로 쓴다: s -> text, p -> path, df -> samples")
+                "담긴 것을 그대로 쓴다: s -> text, p -> path, df -> samples", name)
         elif low in vague:
             add(lineno, "warn", "vague-name",
                 "이름 '%s' 는 길지만 무엇인지 안 알려준다" % name,
-                "'무엇의' 를 붙인다: data -> allele_counts, tmp -> merged_rows")
+                "'무엇의' 를 붙인다: data -> allele_counts, tmp -> merged_rows", name)
 
     # 설명문과 주석은 다른 것을 막는다. 설명문은 "무엇을 하는 함수인가"를,
     # 주석은 "이 자리에서 왜 이렇게 했나"를 남긴다. 그래서 둘을 따로 본다.
@@ -146,7 +188,7 @@ def check(path, source, cfg, short_ok, vague):
             add(node.lineno, "warn", "no-docstring",
                 "%s '%s' 가 %d줄인데 설명문이 없다" % (
                     "클래스" if isinstance(node, ast.ClassDef) else "함수", node.name, span),
-                "무엇을 하는지, 왜 이렇게 했는지 한두 줄")
+                "무엇을 하는지, 왜 이렇게 했는지 한두 줄", node.name)
         if isinstance(node, ast.ClassDef):
             continue
         last = max((getattr(child, "end_lineno", None) or child.lineno) for child in node.body)
@@ -154,7 +196,7 @@ def check(path, source, cfg, short_ok, vague):
         if span >= cfg.min_commented and not inside:
             add(node.lineno, "warn", "uncommented-long-function",
                 "함수 '%s' 가 %d줄인데 안에 주석이 한 줄도 없다" % (node.name, span),
-                "판단이 들어간 자리마다 '왜 그렇게 했는지' 를 적는다")
+                "판단이 들어간 자리마다 '왜 그렇게 했는지' 를 적는다", node.name)
 
     return found
 
@@ -175,12 +217,15 @@ def main(argv=None):
                     help="안에 주석을 요구할 본문 줄 수 (기본 20)")
     parser.add_argument("--data-dir", default=None, help="판정 기준 파일을 둔 디렉토리")
     parser.add_argument("--exit-zero", action="store_true", help="찾아도 0으로 끝낸다(훅용)")
+    parser.add_argument("--changed", action="store_true",
+                        help="git 저장소의 파일이면 마지막 커밋에 없던 이름만 지적한다")
     cfg = parser.parse_args(argv)
 
     short_ok = load_names("short-names-ok.txt", cfg.data_dir)
     vague = set(name.lower() for name in load_names("vague-names.txt", cfg.data_dir))
 
     found = []
+    narrowed_count = 0
     for path in cfg.files:
         if not path.endswith(".py"):
             continue
@@ -189,7 +234,12 @@ def main(argv=None):
         except OSError as err:
             print("읽을 수 없다: %s (%s)" % (path, err), file=sys.stderr)
             continue
-        found += check(path, source, cfg, short_ok, vague)
+        file_found = check(path, source, cfg, short_ok, vague)
+        old_source = committed_source(path) if cfg.changed else None
+        if old_source is not None:
+            narrowed_count += 1
+            file_found = drop_old_names(file_found, old_source)
+        found += file_found
 
     # 등급을 나눈다. 경고는 기본 출력, 참고는 --all 일 때만 — 참고 쪽은 일부러
     # 위양성을 감수한 검사라서 매번 보이면 잡음이 된다.
@@ -214,7 +264,10 @@ def main(argv=None):
         tail += ", 참고 %d건" % len(notes)
     elif notes:
         tail += " (참고 %d건은 --all 로 본다)" % len(notes)
-    print("readable-code: %s — 파일 %d개" % (tail, len(cfg.files)))
+    files_text = "파일 %d개" % len(cfg.files)
+    if narrowed_count:
+        files_text += ", 그중 %d개는 마지막 커밋에 없던 이름만 봤다" % narrowed_count
+    print("readable-code: %s — %s" % (tail, files_text))
     return 0 if (cfg.exit_zero or not warns) else 1
 
 
