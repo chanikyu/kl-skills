@@ -17,7 +17,7 @@ import os
 import subprocess
 import sys
 
-from _hook_output import tell_model
+from _hook_output import read_payload, tell_model
 from _work_files import is_not_own_code, is_skipped
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -53,7 +53,7 @@ def main():
     """게이트 본체. 어떤 경우에도 0으로 끝낸다 — 훅이 터지면 그 사건이
     걸린 모든 세션이 깨진다.
     """
-    raw_payload = sys.stdin.read()
+    raw_payload = read_payload()
     try:
         event = json.loads(raw_payload) if raw_payload.strip() else {}
     except ValueError:

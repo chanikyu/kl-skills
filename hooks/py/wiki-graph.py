@@ -18,6 +18,8 @@ import os
 import subprocess
 import sys
 
+from _hook_output import read_payload
+
 # hooks/py/wiki-graph.py -> hooks/py -> hooks -> the plugin root. Three levels:
 # one short and the builder path lands in hooks/skills/, which does not exist.
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -38,7 +40,7 @@ def wiki_page(path, root):
 
 def main():
     """위키 페이지가 쓰였으면 그래프를 다시 만든다. 늘 0으로 끝낸다."""
-    raw = sys.stdin.read()
+    raw = read_payload()
     try:
         event = json.loads(raw) if raw.strip() else {}
     except ValueError:

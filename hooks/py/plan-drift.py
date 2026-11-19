@@ -21,7 +21,7 @@ import re
 import subprocess
 import sys
 
-from _hook_output import tell_model
+from _hook_output import read_payload, tell_model
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SCRIPTS = os.path.join(PLUGIN_ROOT, "skills", "planner", "scripts")
@@ -92,7 +92,7 @@ def run_script(name, args):
 def main():
     """사건을 읽고, 해당하는 검사를 돌려, 경고가 있을 때만 알린다. 늘 0으로 끝난다."""
     plain = "--plain" in sys.argv
-    raw_payload = sys.stdin.read()
+    raw_payload = read_payload()
     try:
         event = json.loads(raw_payload) if raw_payload.strip() else {}
     except ValueError:

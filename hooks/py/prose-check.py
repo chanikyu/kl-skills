@@ -17,7 +17,7 @@ import os
 import subprocess
 import sys
 
-from _hook_output import tell_model
+from _hook_output import read_payload, tell_model
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CHECKER = os.path.join(PLUGIN_ROOT, "skills", "natural-answering", "scripts", "check_prose.py")
@@ -41,7 +41,7 @@ def wiki_page(path, root):
 
 def main():
     """위키 페이지가 쓰였으면 글 검사 결과를 보여준다. 늘 0으로 끝낸다."""
-    raw = sys.stdin.read()
+    raw = read_payload()
     try:
         event = json.loads(raw) if raw.strip() else {}
     except ValueError:

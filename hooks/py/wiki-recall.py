@@ -19,7 +19,7 @@ import os
 import subprocess
 import sys
 
-from _hook_output import is_machine_prompt, tell_model
+from _hook_output import is_machine_prompt, read_payload, tell_model
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 RECALL = os.path.join(PLUGIN_ROOT, "skills", "wiki-recall", "scripts", "recall.py")
@@ -30,7 +30,7 @@ MIN_COVERAGE = os.environ.get("WIKI_RECALL_MIN_COVERAGE", "0.4")
 
 def main():
     """메시지를 받아 위키를 찾고, 관련이 분명할 때만 넘긴다. 늘 0으로 끝난다."""
-    raw_payload = sys.stdin.read()
+    raw_payload = read_payload()
     try:
         event = json.loads(raw_payload) if raw_payload.strip() else {}
     except ValueError:

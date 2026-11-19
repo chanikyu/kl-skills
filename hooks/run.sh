@@ -24,6 +24,13 @@ set -u
 ROOT="${CLAUDE_PLUGIN_ROOT:-$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)}"
 GATE="${1:-}"
 
+# Python 3.6 with a non-UTF-8 locale (LANG unset or C) reads and writes stdio as ascii, so every
+# gate that prints Korean dies with UnicodeEncodeError (reproduced 2026-11-19; 3.7+ switches to
+# UTF-8 by itself). Claude Code speaks UTF-8 either way. Exported before both branches so the
+# Python scripts the Rust gate starts inherit it too. surrogateescape lets a non-UTF-8 file name
+# (3.6 decodes those with the locale) go back out as the bytes it came in as.
+export PYTHONIOENCODING=utf-8:surrogateescape
+
 target() {
   os="${KL_OS:-$(uname -s)}"
   arch="${KL_ARCH:-$(uname -m)}"

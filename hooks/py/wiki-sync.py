@@ -30,6 +30,8 @@ from pathlib import Path
 # 3.8 이하는 함수를 만들 때 멈추고, 3.7·3.8 의 해법인 from __future__ import annotations 는 3.6 에서 문법 오류다.
 from typing import List
 
+from _hook_output import read_payload
+
 PLUGIN_ROOT = Path(__file__).resolve().parents[2]
 BUILDER = PLUGIN_ROOT / "skills" / "graph-doc-memory" / "scripts" / "build_graph.py"
 CHECKER = PLUGIN_ROOT / "skills" / "natural-answering" / "scripts" / "check_prose.py"
@@ -78,7 +80,7 @@ def run(cmd: List[str]) -> str:
 
 def main() -> int:
     """세션 끝에 한 번: 바뀐 페이지를 찾아 그래프를 맞추고 글을 검사한다."""
-    sys.stdin.read()          # 파이프를 비운다. 안 읽으면 호출한 쪽이 깨진 파이프를 본다
+    read_payload()          # 파이프를 비운다. 안 읽으면 호출한 쪽이 깨진 파이프를 본다
     root = wiki_root()
     if not root.is_dir():
         return 0

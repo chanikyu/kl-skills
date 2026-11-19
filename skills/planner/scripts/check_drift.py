@@ -84,12 +84,17 @@ def read_commits(plan_path, days):
     return commits
 
 
+def parse_day(text):
+    """'YYYY-MM-DD' 를 날짜로. date.fromisoformat 은 3.7 부터라 기본 python3 가 3.6 인 서버에서 죽는다."""
+    return datetime.datetime.strptime(text, "%Y-%m-%d").date()
+
+
 def analyse(goals, work_items, today, options):
     """한 일들을 목표와 대조해 (등급, 이름, 설명) 목록과 요약 줄을 만든다."""
     found = []
     since = today - datetime.timedelta(days=options.days)
     recent = [item for item in work_items
-              if datetime.date.fromisoformat(item["date"]) >= since]
+              if parse_day(item["date"]) >= since]
 
     # 같은 날 같은 목표의 일은 한 건이다 — 진행 기록과 커밋이 같은 일을 두 번 적었을 수 있다.
     seen_keys, counted = set(), []
@@ -189,7 +194,7 @@ def main(argv=None):
     parser.add_argument("--all", action="store_true", help="참고 등급까지 보여준다")
     options = parser.parse_args(argv)
 
-    today = datetime.date.fromisoformat(options.today) if options.today else datetime.date.today()
+    today = parse_day(options.today) if options.today else datetime.date.today()
     goals, progress = read_plan(options.plan)
     commits = [] if options.no_git else read_commits(options.plan, options.days)
     found, summary = analyse(goals, progress + commits, today, options)

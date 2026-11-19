@@ -33,6 +33,7 @@ import tempfile
 
 # 사람 메시지와 기계 글을 가르는 규칙은 hook-replay 스킬과 같이 쓴다.
 from _checklist import checklist_dir
+from _hook_output import read_payload
 from _transcript import read_turns, tool_calls_since_last_human
 from _work_files import is_work_file
 
@@ -282,7 +283,7 @@ def check_terms(answer_text, paths):
 
 def main():
     """답변을 검사하고, 처음 한 번만 막는다. 늘 0으로 끝난다(막는 것은 stdout 으로 알린다)."""
-    raw_payload = sys.stdin.read()
+    raw_payload = read_payload()
     try:
         event = json.loads(raw_payload) if raw_payload.strip() else {}
     except ValueError:
