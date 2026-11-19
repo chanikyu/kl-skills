@@ -53,7 +53,7 @@
             "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\run.ps1\" code-check",
             "timeout": 30,
             "statusMessage": "Checking names and comments...",
-            "description": "A code file was written (Python, or a language in skills/readable-code/data/languages.json): report vague names, missing docstrings and long functions with no comment inside. In a git repository only names that were not in the last commit are reported. Caches, virtualenvs, scratch paths, vendor folders and .min. files are skipped. Reports; never blocks.",
+            "description": "A code file was written (Python, or a language in skills/readable-code/data/languages.json): report vague names, missing docstrings and long functions with no comment inside; in Python also machine-only absolute paths and long tables of values (skills/no-hardcoding). In a git repository only names that were not in the last commit are reported. Caches, virtualenvs, scratch paths, vendor folders and .min. files are skipped. Reports; never blocks.",
             "id": "post-write:code-check"
           },
           {

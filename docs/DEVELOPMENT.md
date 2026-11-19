@@ -32,8 +32,11 @@ python3 .claude/skills/plugin-release/scripts/release.py verify
 - Doing it by hand skips steps. On 2026-11-11 an install ran before CI finished and froze an old binary in the cache.
 - `version-files.txt` lists the other files that carry the version (`crates/kl-gate/Cargo.toml`), so the banner
   always names the installed version.
-- CI runs only for commits that touch `crates/`, `hooks/`, `Cargo.toml` or the workflow. `ship` sees when a commit
-  touches none of them (skills or docs only) and installs without waiting.
+- Two workflows. `build.yml` builds the binaries for commits that touch `crates/`, `hooks/`, `Cargo.toml` or the
+  workflow. `tests.yml` builds nothing and runs the selftests, plus a real python 3.6 job, for commits that touch
+  `hooks/`, `skills/`, `tests/`, `scripts/`, `.claude/`, `.claude-plugin/`, `docs/` or `README.md`. `ship` waits
+  for every run on the commit, and installs without waiting only when a commit touches none of these (say, only
+  `results/`).
 - A frozen binary cannot be fixed by updating, because the version number is the same. `verify` says so;
   uninstall and install again. Check `~/.claude/plugins/data/kl-skills/` first.
 - Docs-only changes need no version bump. The installed copy does not read the README.
@@ -108,8 +111,8 @@ for t in tests/selftest*.sh; do sh "$t"; done     # every selftest
 claude plugin validate .                          # plugin and skill format
 ```
 
-The five targets build in CI (Windows and macOS SDK licences). For skills or docs changes CI does not run, so run
-the selftests yourself.
+The five targets build in CI (Windows and macOS SDK licences). Skills and docs changes get the selftests in CI
+(`tests.yml`) but no build. Run the selftests yourself before pushing anyway; CI is the second look.
 
 ## README images
 
@@ -175,6 +178,7 @@ tests/
   selftest-prose.sh            omissions caught, clean writing silent
   selftest-readable-code.sh    vague names and missing docstrings; one sample per language in fixtures/readable-code/
   selftest-code-check.sh       the same check as a hook
+  selftest-no-hardcoding.sh    machine-only paths and value tables in python code; silence on command lines and own names
   selftest-answer-check.sh     re-asks, the work report, blocking once
   selftest-pipeline-debug.sh   a blank in the second stage shows up as a number
   selftest-planner.sh          plan frame, goal links and drift

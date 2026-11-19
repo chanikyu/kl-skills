@@ -128,6 +128,9 @@ BUILTIN_GENERICS = {"list", "dict", "tuple", "set", "frozenset", "type"}
 NEWER_NAMES = {"fromisoformat": "3.7", "isascii": "3.7", "reconfigure": "3.7", "capture_output": "3.7",
                "missing_ok": "3.8", "dirs_exist_ok": "3.8",
                "removeprefix": "3.9", "removesuffix": "3.9", "is_relative_to": "3.9"}
+# 이 검사는 CI 에서 진짜 3.6 으로도 돈다(.github/workflows/tests.yml). 3.8 에 생긴 노드를 바로 부르면
+# 검사기가 먼저 죽으므로 없으면 건너뛴다 — 3.6 에서는 그 문법이 ast.parse 의 구문 오류로 먼저 걸린다.
+NAMED_EXPR = getattr(ast, "NamedExpr", None)
 
 
 def too_new(annotation):
@@ -152,11 +155,12 @@ for path in paths:
         if isinstance(node, ast.ImportFrom) and node.module == "__future__" \
                 and any(alias.name == "annotations" for alias in node.names):
             hits.append("%s:%d from __future__ import annotations" % (shown, node.lineno))
-        if isinstance(node, ast.NamedExpr):
+        if NAMED_EXPR is not None and isinstance(node, NAMED_EXPR):
             hits.append("%s:%d :=" % (shown, node.lineno))
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            params = node.args.posonlyargs + node.args.args + node.args.kwonlyargs
-            if node.args.posonlyargs:
+            posonly = getattr(node.args, "posonlyargs", [])
+            params = posonly + node.args.args + node.args.kwonlyargs
+            if posonly:
                 hits.append("%s:%d %s: positional-only /" % (shown, node.lineno, node.name))
             marks = [p.annotation for p in params if p.annotation] + ([node.returns] if node.returns else [])
             if any(too_new(mark) for mark in marks):

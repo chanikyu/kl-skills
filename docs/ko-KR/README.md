@@ -86,7 +86,7 @@ KL-SKILLS GATES v<버전> — loaded, 12 rules enforced
 | 파일 쓰기 | `wiki-index-check` | 위키 목차에 없는 페이지를 알린다 |
 | 파일 쓰기 | `wiki-graph` | 위키 그래프를 다시 그린다 |
 | 파일 쓰기 | `prose-check` | 위키 글에서 읽기 어려운 자리를 알린다 |
-| 파일 쓰기 | `code-check` | 코드(파이썬·TypeScript·Rust·Swift·Go 등)의 모호한 이름과 빠진 설명문을 알린다 |
+| 파일 쓰기 | `code-check` | 코드(파이썬·TypeScript·Rust·Swift·Go 등)의 모호한 이름과 빠진 설명문을, 파이썬에서는 이 기계에서만 맞는 절대경로와 긴 값 목록도 알린다 |
 | 파일 쓰기 | `plan-drift` | 계획서의 틀과 이탈을 본다 |
 | Bash 실행 | `after-bash` | 쉘로 고친 위키와 커밋을 알아챈다 |
 | 답 끝 | `wiki-sync` | 어떻게 고쳤든 그래프를 최신으로 맞춘다 |

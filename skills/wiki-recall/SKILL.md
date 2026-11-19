@@ -15,7 +15,7 @@ description: Pull what the wiki already knows into the answer instead of working
 핵심 줄 두어 개**를 붙여 준다. 관련이 약하면 아무것도 붙이지 않는다.
 
 붙은 것은 단서다. 줄 몇 개는 검색이 고른 일부라서, **인용하거나 숫자를 다시 말하려면 그 페이지를
-열어서 확인한다**(`stable-claims.md` R0 — 파일이 있으면 연다).
+열어서 확인한다**(근거 파일이 있으면 연다).
 
 ## 깊게 가져오기 — CAG 와 RAG
 
@@ -63,4 +63,4 @@ scripts/recall.py "질문" --mode rag --top 5
 | 위키에 무엇을 어떻게 쓰나 | `llm-wiki-docs` 스킬 |
 | 위키를 그래프로 보기 | `graph-doc-memory` 스킬 (이 스킬은 그 그래프의 링크를 쓴다) |
 | 위키에서 찾아 답에 쓰기 | 이 스킬 |
-| 숫자를 다시 말하기 전에 파일을 연다 | `stable-claims.md` R0 |
+| 숫자를 다시 말하기 전에 파일을 연다 | 따로 둔 문서 없음 — 이 줄이 규칙이다 |

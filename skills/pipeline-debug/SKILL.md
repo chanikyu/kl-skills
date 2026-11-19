@@ -94,6 +94,6 @@ assert merged["site"].notna().all(), "메타데이터가 없는 샘플이 섞였
 |---|---|
 | 일반 디버깅 절차 (원인 → 패턴 → 가설 → 고치기) | `superpowers:systematic-debugging` |
 | **파이프라인에서 원인 단계를 찾는 법** | 이 스킬 |
-| 재현 못 하는 지적은 결함이 아니다 · 고치기 전에 실패 테스트 | `rules/common/code-verification.md` |
-| 중간 파일을 저장하고 덮어쓰지 않기 | `analysis-artifacts` 스킬 |
+| 재현 못 하는 지적은 결함이 아니다 · 고치기 전에 실패 테스트 | 따로 둔 문서 없음 — 이 줄이 규칙이다 |
+| 중간 파일을 저장하고 덮어쓰지 않기 | 따로 둔 문서 없음 — 이 줄이 규칙이다 |
 | 결과를 보고하는 글 | `natural-answering` 스킬 |

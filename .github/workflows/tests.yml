@@ -1,0 +1,65 @@
+name: selftests
+
+# build.yml runs the selftests too, but only when what goes into the binaries changes, because
+# it also rebuilds and commits bin/. A commit that changed only a skill, a test or a document
+# reached no CI at all: 5346416 and 455b04e (2026-11) went in untested. This workflow builds
+# nothing and commits nothing, so it can run on every path the tests read. bin/ is not listed,
+# so the binary commit build.yml pushes does not start it.
+#
+# hooks/** is in both workflows so the python 3.6 job below also sees gate changes. On such a
+# commit the selftests run twice, which costs a minute and nothing else.
+on:
+  push:
+    paths:
+      - 'hooks/**'
+      - 'skills/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - '.claude/skills/**'
+      - '.claude-plugin/**'
+      - 'docs/**'
+      - 'README.md'
+      - '.github/workflows/tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  selftests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      # Same loop as build.yml, so a new tests/selftest*.sh is picked up without editing this file.
+      - name: selftests
+        run: for t in tests/selftest*.sh; do echo "== $t"; sh "$t" || exit 1; done
+
+  python36:
+    # The gates run with whatever python3 the machine has. On 2026-11-19 a server whose python3
+    # is 3.6.8 showed failures the selftests on a newer python had not: the C locale killing the
+    # gates that print Korean, date.fromisoformat (3.7), and input that is not UTF-8.
+    # tests/selftest.sh only imitates 3.6 on a newer python; here the real one runs. The
+    # maintainer's tools (.claude/skills, scripts/) need 3.7+ and are left out on purpose.
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      # The runner image ships Miniconda at $CONDA. conda-forge still has python 3.6.15 for
+      # linux-64; --override-channels keeps the defaults channel (and its terms) out of it.
+      - name: python 3.6 from conda-forge
+        run: |
+          "$CONDA/bin/conda" create --yes --quiet --prefix "$RUNNER_TEMP/py36" --override-channels -c conda-forge python=3.6
+          echo "$RUNNER_TEMP/py36/bin" >> "$GITHUB_PATH"
+
+      - name: python3 is 3.6
+        run: python3 -c 'import sys; assert sys.version_info[:2] == (3, 6), sys.version; print(sys.version)'
+
+      # The real 3.6 parser reads every gate and every skill script a gate or the model runs.
+      - name: every gate and skill script parses on 3.6
+        run: python3 -m compileall -q hooks/py skills
+
+      # Every gate fed input that is not UTF-8, one Korean-printing gate in the C locale, and the
+      # check for names newer than 3.6 — all on 3.6 itself.
+      - name: selftest.sh on 3.6
+        run: sh tests/selftest.sh

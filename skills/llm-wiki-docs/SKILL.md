@@ -60,7 +60,7 @@ uses, is in the `natural-answering` skill: `references/document-structure.md`.)
 **Do not split them by where the writing came from.** "Summarise the project's README into a
 wiki page" sounds tidy and produces the worst document in the repository. The same fact now
 lives twice. The README gets updated, the summary does not, and the stale half is the one
-that reads like a conclusion. That is the drift `source-of-truth.md` exists to prevent.
+that reads like a conclusion. That is drift: one fact kept in two places, and only one of them kept up.
 
 Split them by one question instead:
 
@@ -95,7 +95,8 @@ filed or everything does. Three events, and nothing else:
 
 1. **A decision was made** — what was chosen, what was rejected, why, and what would
    invalidate the reason
-2. **A number came out** — with the six columns `stable-claims.md` requires
+2. **A number came out** — with the six things listed under *Analysis result pages* below
+   (value, method, dataset, filters, n, result-file path)
 3. **Something was learned that outlives this project** — a tool's trap, an external
    dataset's conditions
 
@@ -210,7 +211,7 @@ number: the value, how it was measured (package.function and key arguments), the
 the filters or gates applied, n, and **the path to the result file**. Without the source file
 path the number cannot be checked later, and a number that cannot be checked quietly drifts
 every time it is re-quoted. The result files themselves belong wherever the analysis saved
-them (see the `analysis-artifacts` skill) — the wiki cites those paths, it does not copy the
+them — the wiki cites those paths, it does not copy the
 data.
 
 ## What keeps this from rotting
