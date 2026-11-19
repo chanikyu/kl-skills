@@ -3,3 +3,5 @@ target/
 .claude/settings.local.json
 __pycache__/
 *.pyc
+# cargo test 가 만든다. 배포하는 바이너리는 CI 가 빌드해 bin/ 에 올리므로 추적하지 않는다
+/Cargo.lock
