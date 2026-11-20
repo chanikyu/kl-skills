@@ -67,6 +67,17 @@ case "$out" in *"===== "*"몇 다리까지"*) ok "--full 이면 본문 전체를
 "$PY" "$REPO/skills/graph-doc-memory/scripts/build_graph.py" --root "$TMP" --quiet
 out="$("$PY" "$RECALL" "로컬 그래프 깊이 슬라이더" --mode rag --min-coverage 0.4 2>&1)"
 case "$out" in *"링크로 이어진"*plugin-update.md*|*plugin-update.md*"링크로 이어진"*) ok "링크로 이어진 이웃 페이지를 같이 준다" ;; *) bad "이웃을 못 붙였다: $out" ;; esac
+# --- 2026-11-20: 이웃은 모두 합쳐 --top 보다 2장까지만. 두 번째 상위 페이지의 이웃이 한도를
+#     넘어 한 장 더 붙었다(멈춤이 안쪽 반복만 끝냈다)
+mkdir -p "$TMP/neighbours/notes/wiki"
+printf '# 딸기 농장\n\n딸기 수확 순서를 적는다.\n\n[이웃1](n1.md) [이웃2](n2.md) [이웃3](n3.md)\n' > "$TMP/neighbours/notes/wiki/a.md"
+printf '# 딸기 가격\n\n딸기 수확 뒤 가격을 적는다.\n\n[이웃4](n4.md) [이웃5](n5.md) [이웃6](n6.md)\n' > "$TMP/neighbours/notes/wiki/b.md"
+for neighbour_number in 1 2 3 4 5 6; do
+  printf '# 이웃 %s\n\n다른 이야기 %s.\n' "$neighbour_number" "$neighbour_number" > "$TMP/neighbours/notes/wiki/n$neighbour_number.md"
+done
+"$PY" "$REPO/skills/graph-doc-memory/scripts/build_graph.py" --root "$TMP/neighbours" --quiet
+pages="$("$PY" "$RECALL" "딸기 수확" --root "$TMP/neighbours" --mode rag --top 2 --min-coverage 0.4 2>&1 | grep -c '^- ')"
+[ "$pages" -eq 4 ] && ok "이웃까지 합쳐 --top 보다 2장까지만 준다" || bad "--top 2 인데 $pages 장을 줬다(4장이어야 한다)"
 
 # --- 훅: 관련이 분명할 때만, 모델에게 닿는 모양으로 붙인다
 export CLAUDE_PLUGIN_ROOT="$REPO"
@@ -118,6 +129,34 @@ assert "방식" in recall.query_words("무슨 방식이었지", stop, particles)
 assert recall.is_predicate("정했지") and recall.is_predicate("있을까")
 assert not recall.is_predicate("이미지") and not recall.is_predicate("메시지")
 PYCHECK
+# --- 2026-11-20: 조사를 떼면 한 글자만 남는 두 글자 낱말. '결과·효과·사과' 는 통째 이름씨인데
+#     '과' 를 떼어 '결·효·사' 로 잘랐다. '앱이·훅이' 는 떼야 맞다 — 위키가 더 많이 쓰는 꼴을 따른다
+"$PY" - "$RECALL" <<'PYCHECK' && ok "한 글자만 남는 조사 떼기는 위키가 더 많이 쓰는 꼴을 따른다" || bad "결과·효과를 자르거나 앱이·훅이를 못 뗀다"
+import importlib.util, sys
+spec = importlib.util.spec_from_file_location("recall", sys.argv[1])
+recall = importlib.util.module_from_spec(spec); spec.loader.exec_module(recall)
+stop, particles = recall.load_stop_tokens(), recall.load_word_list("particles.txt")
+wiki = "결과를 본다. 효과가 컸다. 사과 한 개. 앱을 켠다. 앱 화면이 뜬다. 훅은 돈다. 훅 하나."
+words = recall.query_words("결과와 효과, 사과", stop, particles, wiki)
+assert {"결과", "효과", "사과"} <= words and not {"결", "효", "사"} & words, words
+words = recall.query_words("앱이 느리고 훅이 안 돈다", stop, particles, wiki)
+assert {"앱", "훅"} <= words and not {"앱이", "훅이"} & words, words
+PYCHECK
+# --- 2026-11-20: "확인 8개 모두 통과" 에 구조 위키가 붙었다. 겹친 낱말이 '개·모두' 뿐이었다
+"$PY" - "$RECALL" <<'PYCHECK' && ok "'개·모두' 같은 흔한 말은 질문 낱말에서 뺀다" || bad "'개·모두' 가 질문 낱말에 남는다"
+import importlib.util, sys
+spec = importlib.util.spec_from_file_location("recall", sys.argv[1])
+recall = importlib.util.module_from_spec(spec); spec.loader.exec_module(recall)
+stop, particles = recall.load_stop_tokens(), recall.load_word_list("particles.txt")
+words = recall.query_words("확인 8개 모두 통과", stop, particles)
+assert not {"개", "모두"} & words, words
+PYCHECK
+mkdir -p "$TMP/whole/notes/wiki"
+printf '# 검사 기록\n\n검사 결과를 날마다 모아 둔다. 결과가 나쁘면 다시 잰다.\n' > "$TMP/whole/notes/wiki/check.md"
+printf '# 나무\n\n결 무늬가 고운 나무를 고른다.\n' > "$TMP/whole/notes/wiki/wood.md"
+out="$("$PY" "$RECALL" "검사 결과" --root "$TMP/whole" --mode rag --min-coverage 0.4 2>&1)"
+first="$(printf '%s\n' "$out" | grep '^- ' | head -1)"
+case "$first" in *check.md*) ok "'결과' 를 '결' 로 자르지 않고 찾는다" ;; *) bad "'검사 결과' 로 검사 기록을 못 찾았다: $out" ;; esac
 # --- 목차의 한 줄 설명으로도 찾는다. 본문에 없는 말("바이너리", "굳는")이 설명에만 있다
 mkdir -p "$TMP/summary/release/wiki"
 printf '# 배포 순서\n\nCI 가 끝난 뒤에 설치한다.\n' > "$TMP/summary/release/wiki/order.md"

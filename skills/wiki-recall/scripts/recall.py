@@ -80,11 +80,12 @@ def load_stop_tokens():
     return load_word_list("stop-tokens.txt")
 
 
-def query_words(query, stop_tokens, particles):
+def query_words(query, stop_tokens, particles, wiki_text=""):
     """질문을 낱말로 나눈다. 한국어 낱말은 끝의 조사·어미를 뗀다.
 
     겹침을 조각 수로 세면 "플러그인" 한 낱말이 조각 셋(플러/러그/그인)이 되어, 낱말 하나만
     같아도 "충분히 겹친다" 가 된다. 낱말 수로 세야 기준이 뜻대로 움직인다.
+    wiki_text 는 위키 글 전체(소문자)다. 떼고 한 글자만 남을 때 splits_off 가 견준다.
     """
     lowered = query.lower()
     words = set(LATIN_WORD.findall(lowered))
@@ -94,9 +95,9 @@ def query_words(query, stop_tokens, particles):
         if run in particles:
             continue
         for ending in sorted(particles, key=len, reverse=True):
-            # 한 글자라도 남으면 뗀다. "훅이" 의 "훅" 처럼 한 글자 낱말이 주제인 경우가 있다.
             if run.endswith(ending) and len(run) > len(ending):
-                run = run[:-len(ending)]
+                if splits_off(run[:-len(ending)], ending, wiki_text):
+                    run = run[:-len(ending)]
                 break
         if is_predicate(run):
             # "주제였어" 는 풀이말이지만 앞의 이름씨 "주제" 는 무엇을 묻는지 말한다. 그것만 남긴다.
@@ -107,6 +108,41 @@ def query_words(query, stop_tokens, particles):
         words.add(run)
     filler = load_word_list("stop-words.txt")
     return {word for word in words if word not in stop_tokens and word not in filler}
+
+
+def splits_off(stem, ending, wiki_text):
+    """조사를 떼고 stem 만 남기는 게 맞는가.
+
+    한 글자만 남을 때는 글자만 봐서 가를 수 없다. "훅이" 는 '훅'+조사지만 "결과·통과·추가" 는
+    통째로 이름씨다. 그래서 위키가 더 많이 쓰는 꼴을 따른다: 통째("결과")로 나온 수와, 그 한
+    글자가 홀로 서거나 다른 조사를 달고("앱을", "앱 ") 나온 수를 견준다. 위키 글이 없으면 뗀다.
+    실제 메시지 1,163개의 두 글자 낱말을 손으로 갈라 재니(2026-11-20), 늘 떼면 통째 이름씨
+    491번을 모두 잘랐고, 한 글자면 안 떼면 한 글자 이름씨 449번을 모두 놓쳤다. 이 규칙은
+    각각 392번·440번을 맞혔다. 남는 틀림은 위키에 없는 드문 낱말('위도' → '위')이다.
+    """
+    if len(stem) > 1 or not wiki_text:
+        return True
+    endings = one_letter_endings(wiki_text).get(stem, {})
+    other = sum(count for found, count in endings.items() if found != ending)
+    return other >= wiki_text.count(stem + ending)
+
+
+@functools.lru_cache(maxsize=1)
+def one_letter_endings(wiki_text):
+    """위키에서 홀로 선 한 글자 → 뒤에 붙은 조사별 수("" 는 조사 없음). 위키마다 한 번 센다."""
+    endings = "|".join(re.escape(ending) for ending in
+                       sorted(load_word_list("particles.txt"), key=len, reverse=True))
+    pattern = re.compile(r"(?<![가-힣])([가-힣])(" + endings + r")?(?![가-힣])")
+    found = collections.defaultdict(collections.Counter)
+    for match in pattern.finditer(wiki_text):
+        found[match.group(1)][match.group(2) or ""] += 1
+    return found
+
+
+def wiki_text_of(pages):
+    """splits_off 가 견줄 위키 글 전체(소문자)."""
+    return "\n".join((page["title"] + "\n" + page["summary"] + "\n" + page["body"]).lower()
+                     for page in pages)
 
 
 def is_predicate(word):
@@ -337,7 +373,7 @@ def recall(query, options):
     if not pages:
         return "none", [], 0
     query_tokens = tokens_of(query, stop_tokens)
-    words = query_words(query, stop_tokens, load_word_list("particles.txt"))
+    words = query_words(query, stop_tokens, load_word_list("particles.txt"), wiki_text_of(pages))
     # 제목·목차 설명 조각을 두 번 더 넣는 것으로 가중치를 준다. 따로 점수를 매기는 것보다 단순하다.
     page_tokens = [tokens_of(page["body"], stop_tokens)
                    + 2 * tokens_of(page["title"] + "\n" + page["summary"], stop_tokens)
@@ -381,13 +417,14 @@ def recall(query, options):
     by_path = {hit["path"]: hit for hit in hits}
     for hit in list(chosen[:2]):
         for neighbour_path in sorted(neighbours.get(hit["path"], ())):
+            # 더하기 전에 본다. 더한 뒤에 보면 다음 상위 페이지의 반복이 한 장을 더 붙인다.
+            if len(chosen) >= options.top + 2:
+                break
             if neighbour_path in taken or neighbour_path not in by_path:
                 continue
             taken.add(neighbour_path)
             chosen.append(dict(by_path[neighbour_path], score=hit["score"] * NEIGHBOUR_WEIGHT,
                                via=hit["title"]))
-            if len(chosen) >= options.top + 2:
-                break
     return mode, chosen, len(pages)
 
 
@@ -417,8 +454,9 @@ def excerpts(phrases, options):
                   or topic_allowed(topic_of(page["path"], root), options.cwd, asked, shared_topics)]
     common_limit = options.common_share * len(every_chunk)
     found, common, missing = {}, [], []
+    wiki_text = wiki_text_of(pages)
     for phrase in phrases:
-        words = query_words(phrase, stop_tokens, particles)
+        words = query_words(phrase, stop_tokens, particles, wiki_text)
         matches = [entry for entry in searchable
                    if words and all(page_has_word(entry[3], entry[4], word) for word in words)]
         if not matches:
