@@ -12,6 +12,8 @@
 관련이 약하면 아무것도 붙이지 않는다. 엉뚱한 페이지가 매번 붙으면 이 훅은 잡음이 되고 꺼진다.
 기준은 둘이다: 질문의 낱말을 두 개 이상 가진 페이지이면서, 드문 낱말에 무게를 둔 '질문을 덮는
 비율' 이 40% 이상일 것. 2026-11-11 실제 위키에서 관련 질문은 52~69%, 무관한 질문은 18% 였다.
+둘 다 페이지 전체가 아니라 한 덩어리(문단·표의 한 줄) 안에서 잰다. 다른 프로젝트의 주제는
+메시지가 그 이름을 말할 때만 붙인다(2026-11-20, recall.py 의 best_chunk·topic_allowed).
 """
 
 import json
@@ -41,10 +43,12 @@ def main():
             or not os.path.isfile(RECALL)):
         return 0
 
+    # 작업 폴더를 넘겨 다른 프로젝트의 위키 페이지가 붙지 않게 한다(recall.py 의 topic_allowed).
+    cwd = event.get("cwd") if isinstance(event.get("cwd"), str) else ""
     try:
         finished = subprocess.run(
             [sys.executable, RECALL, "--mode", "rag", "--top", "3",
-             "--min-shared", "2", "--min-coverage", MIN_COVERAGE],
+             "--min-shared", "2", "--min-coverage", MIN_COVERAGE] + (["--cwd", cwd] if cwd else []),
             input=prompt.encode("utf-8"), stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL, timeout=20)
     except (OSError, subprocess.SubprocessError):

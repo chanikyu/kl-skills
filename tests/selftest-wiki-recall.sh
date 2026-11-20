@@ -103,6 +103,75 @@ assert recall.page_has_word(set(), "훅 하나가 돈다", "훅")
 assert not recall.page_has_word(set(), "뇌 손상을 키웠다", "손")
 assert not recall.page_has_word(set(), "무작위 시험", "위")
 PYCHECK
+# --- 2026-11-20: "Tauri를" 의 '를' 과 "뭐였지" 같은 풀이말이 질문 낱말로 남아, 위키에 없다는
+#     이유로 가장 큰 무게를 받고 맞는 페이지의 덮는 비율을 28% 로 깎았다
+"$PY" - "$RECALL" <<'PYCHECK' && ok "조사만 남은 덩어리와 풀이말은 질문 낱말에서 뺀다" || bad "조사·풀이말이 질문 낱말에 남는다"
+import importlib.util, sys
+spec = importlib.util.spec_from_file_location("recall", sys.argv[1])
+recall = importlib.util.module_from_spec(spec); spec.loader.exec_module(recall)
+stop, particles = recall.load_stop_tokens(), recall.load_word_list("particles.txt")
+words = recall.query_words("Tauri를 고른 이유가 뭐였지?", stop, particles)
+assert words == {"tauri", "고른", "이유"}, words
+assert recall.query_words("API가 바뀔까 할까", stop, particles) == {"api"}
+# 이름씨 + 이었/였 은 이름씨를 남긴다
+assert "방식" in recall.query_words("무슨 방식이었지", stop, particles)
+assert recall.is_predicate("정했지") and recall.is_predicate("있을까")
+assert not recall.is_predicate("이미지") and not recall.is_predicate("메시지")
+PYCHECK
+# --- 목차의 한 줄 설명으로도 찾는다. 본문에 없는 말("바이너리", "굳는")이 설명에만 있다
+mkdir -p "$TMP/summary/release/wiki"
+printf '# 배포 순서\n\nCI 가 끝난 뒤에 설치한다.\n' > "$TMP/summary/release/wiki/order.md"
+printf '# 버전 번호\n\n고치기만 했으면 끝자리를 올린다.\n' > "$TMP/summary/release/wiki/version.md"
+printf '# release — index\n\n- [order](order.md) — 옛 바이너리가 설치본에 굳는 것을 막는 순서\n' > "$TMP/summary/release/wiki/index.md"
+out="$("$PY" "$RECALL" "설치본에 바이너리가 굳는 순서" --root "$TMP/summary" --mode rag --min-coverage 0.4 2>&1)"
+first="$(printf '%s\n' "$out" | grep '^- ' | head -1)"
+case "$first" in *order.md*) ok "목차의 한 줄 설명으로도 페이지를 찾는다" ;; *) bad "목차 설명으로 못 찾았다: $out" ;; esac
+# --- 2026-11-20: 덮는 비율을 페이지 전체로 재면, 긴 페이지는 질문 낱말이 서로 다른 문단에
+#     흩어져 있어도 기준을 넘었다(실제 메시지 1,163개 중 533개에 붙음). 한 덩어리 안에서 잰다
+mkdir -p "$TMP/chunk/notes/wiki"
+printf '# 장보기 기록\n\n딸기를 샀다.\n\n수박을 깎았다.\n\n자두는 비쌌다.\n' > "$TMP/chunk/notes/wiki/diary.md"
+printf '# 과일 가게\n\n딸기와 수박을 같이 판다.\n' > "$TMP/chunk/notes/wiki/shop.md"
+printf '# 날씨\n\n오늘은 맑다.\n' > "$TMP/chunk/notes/wiki/weather.md"
+out="$("$PY" "$RECALL" "딸기 수박" --root "$TMP/chunk" --mode rag --min-coverage 0.4 2>&1)"
+case "$out" in *shop.md*) ok "질문 낱말이 한 문단에 함께 있는 페이지는 붙인다" ;; *) bad "한 문단에 함께 있는데 못 찾았다: $out" ;; esac
+case "$out" in *diary.md*) bad "낱말이 다른 문단에 흩어진 페이지를 붙였다: $out" ;; *) ok "낱말이 다른 문단에 흩어진 페이지는 붙이지 않는다" ;; esac
+# --- 작업 폴더를 주면 다른 프로젝트의 주제는 붙이지 않는다. 이름을 말하거나 공용 주제면 붙인다
+mkdir -p "$TMP/proj/alpha/wiki" "$TMP/proj/beta/wiki" "$TMP/proj/gamma/wiki"
+printf '# 배포 순서\n\nCI 가 끝난 뒤에 설치한다.\n' > "$TMP/proj/alpha/wiki/release.md"
+printf '# 배포 순서\n\nCI 가 끝난 뒤에 설치한다.\n' > "$TMP/proj/beta/wiki/release.md"
+printf '# 날씨\n\n오늘은 맑다.\n' > "$TMP/proj/gamma/wiki/weather.md"
+find_in() { "$PY" "$RECALL" "$1" --root "$TMP/proj" --mode rag --min-coverage 0.4 --cwd "$2" --shared-topics "${3-}" 2>&1; }
+out="$(find_in "배포 순서 CI 설치" /work/Alpha/app)"
+case "$out" in *alpha/wiki*) case "$out" in *beta/wiki*) bad "다른 프로젝트 주제까지 붙였다: $out" ;; *) ok "작업 폴더의 프로젝트 주제만 붙인다 (대소문자·하위 폴더 무관)" ;; esac ;; *) bad "같은 프로젝트 주제를 못 붙였다: $out" ;; esac
+out="$(find_in "배포 순서 CI 설치" /work/delta)"
+[ -z "$out" ] && ok "어느 주제의 프로젝트도 아니면 붙이지 않는다" || bad "다른 프로젝트 주제를 붙였다: $out"
+out="$(find_in "beta 배포 순서 CI 설치" /work/delta)"
+case "$out" in *beta/wiki*) ok "메시지가 주제 이름을 말하면 그 주제는 붙인다" ;; *) bad "이름을 말했는데 못 붙였다: $out" ;; esac
+out="$(find_in "배포 순서 CI 설치" /work/delta "gamma, beta")"
+case "$out" in *beta/wiki*) ok "공용 주제(--shared-topics)는 늘 붙인다" ;; *) bad "공용 주제를 못 붙였다: $out" ;; esac
+# --- 핵심 낱말이 하나뿐이면 기본 기준(낱말 2개)에는 안 걸리고, 낮춘 기준(--min-shared 1)에는 걸린다
+out="$("$PY" "$RECALL" "배포" --root "$TMP/proj" --mode rag --min-coverage 0.4 --cwd /work/alpha 2>&1)"
+[ -z "$out" ] && ok "낱말 하나는 기본 기준에 걸리지 않는다" || bad "낱말 하나가 기본 기준에 걸렸다: $out"
+out="$("$PY" "$RECALL" "배포" --root "$TMP/proj" --mode rag --min-coverage 0.2 --min-shared 1 --cwd /work/alpha 2>&1)"
+case "$out" in *alpha/wiki/release.md*) ok "낮춘 기준(0.2·1)이면 낱말 하나로도 찾는다" ;; *) bad "낮춘 기준인데 못 찾았다: $out" ;; esac
+# --- 깊게 찾기의 발췌 모드(스킬 설명의 명령): 문구마다 그 낱말이 모두 든 덩어리를 모두 찍는다.
+#     덩어리 12개 중 10개에 든 '공통'은 9% 를 넘어 흔한 문구로 빠진다
+mkdir -p "$TMP/excerpt/farm/wiki"
+{
+  printf '# 농장 기록\n\n딸기 수확 시기는 봄이다.\n\n수박 수확은 여름이다.\n'
+  for note_number in 1 2 3 4 5 6 7 8 9 10; do printf '\n공통 메모 %s 번째.\n' "$note_number"; done
+} > "$TMP/excerpt/farm/wiki/notes.md"
+excerpt() { printf "$1" | "$PY" "$RECALL" --excerpt --root "$TMP/excerpt" --cwd "$2" 2>&1; }
+out="$(excerpt '딸기\n딸기 수확\n수박\n공통\n포도\n' /work/farm)"
+case "$out" in *"[딸기, 딸기 수확] 딸기 수확 시기는 봄이다."*) ok "발췌: 여러 문구에 걸린 덩어리는 한 번만, 걸린 문구를 함께 적는다" ;; *) bad "발췌가 겹치거나 문구가 빠졌다: $out" ;; esac
+case "$out" in *"[수박] 수박 수확은 여름이다."*) ok "발췌: 문구마다 따로 찾아 다른 주제의 덩어리도 모은다" ;; *) bad "두 번째 주제를 못 모았다: $out" ;; esac
+case "$out" in *"흔해서 뺀 문구: 공통(덩어리 10개)"*) case "$out" in *"공통 메모"*) bad "흔한 문구의 덩어리를 찍었다: $out" ;; *) ok "발췌: 흔한 문구는 알리고 뺀다" ;; esac ;; *) bad "흔한 문구를 알리지 않았다: $out" ;; esac
+case "$out" in *"찾지 못한 문구: 포도"*) ok "발췌: 못 찾은 문구를 알린다" ;; *) bad "못 찾은 문구를 알리지 않았다: $out" ;; esac
+case "$out" in *"== $TMP/excerpt/farm/wiki/notes.md"*) ok "발췌: 출처 페이지를 적는다" ;; *) bad "출처가 없다: $out" ;; esac
+out="$(excerpt '딸기\n' /work/other)"; code=$?
+[ -z "$out" ] && [ "$code" -ne 0 ] && ok "발췌: 다른 프로젝트 주제는 찾지 않는다" || bad "발췌가 다른 프로젝트 주제를 찾았다: $out"
+out="$(prompt_hook '{"prompt":"플러그인을 업데이트했는데 훅이 그대로야, 왜 그래?","cwd":"/work/other-project"}')"
+[ -z "$out" ] && ok "훅은 작업 폴더를 넘겨 다른 프로젝트 위키를 붙이지 않는다" || bad "훅이 다른 프로젝트 위키를 붙였다: $out"
 printf 'not json' | sh "$REPO/hooks/run.sh" wiki-recall >/dev/null 2>&1 \
   && ok "깨진 입력에도 0으로 끝난다" || bad "깨진 입력에 터졌다"
 

@@ -122,7 +122,7 @@
             "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" wiki-recall",
             "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\run.ps1\" wiki-recall",
             "timeout": 20,
-            "description": "Every message: search the wiki and attach the paths and key lines of clearly related pages (at least two shared words and 40% weighted coverage). Silent when nothing is clearly related.",
+            "description": "Every message: search the wiki and attach the paths and key lines of clearly related pages (at least two shared words and 40% weighted coverage, both inside one paragraph or table row; pages of another project's topic only when the message names it). Silent when nothing is clearly related.",
             "id": "prompt:wiki-recall"
           },
           {
