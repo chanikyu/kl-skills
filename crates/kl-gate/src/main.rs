@@ -592,10 +592,15 @@ mod tests {
                      *** Update File: wiki/old.md\n*** Move to: wiki/moved.md\n*** End Patch";
         let event = serde_json::json!({"tool_name": "apply_patch", "cwd": "/w/a",
                                    "tool_input": {"command": patch}});
-        assert_eq!(
-            edited_paths(&event),
-            vec!["/w/a/wiki/a.md", "/w/b/wiki/new.md", "/w/a/wiki/old.md", "/w/a/wiki/moved.md"]
-        );
+        // Compared as paths, not strings: Windows joins with '\', and Path equality goes by
+        // components, which is also how wiki_page matches the result against the wiki root.
+        let found: Vec<PathBuf> = edited_paths(&event).iter().map(PathBuf::from).collect();
+        let expected: Vec<PathBuf> =
+            ["/w/a/wiki/a.md", "/w/b/wiki/new.md", "/w/a/wiki/old.md", "/w/a/wiki/moved.md"]
+                .iter()
+                .map(PathBuf::from)
+                .collect();
+        assert_eq!(found, expected);
     }
 
     #[test]
