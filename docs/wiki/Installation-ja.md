@@ -52,6 +52,21 @@ claude plugin uninstall kl-skills@kl-skills
 
 残るもの: `~/llm-wiki-docs/` にある wiki とそのグラフ、計画、`~/.claude/checklists/` にあるチェックリスト。これらはプラグインのものではなく、あなたのものである。
 
+## Codex で使う
+
+Codex CLI 0.163 で確認した。ターミナルで入力する。
+
+```sh
+codex plugin marketplace add chanikyu/kl-skills
+codex plugin add kl-skills@kl-skills
+```
+
+- ゲートは承認するまで動かない。Codex はフックごとに承認を求める。Codex を開いて `/hooks` と入力し、
+  `kl-skills` のフックを承認する(デスクトップアプリは Settings → Hooks)。更新でフックが変わったら承認し直す。
+- スキルは `$kl-skills:wiki-recall` のようにプラグイン名を付けて呼ぶ。スキルが多いと、Codex はモデルに
+  見せる一覧から一部を外す。その場合も名前で呼べば使える。
+- 更新: `codex plugin marketplace upgrade kl-skills`。アンインストール: `codex plugin remove kl-skills@kl-skills`。
+
 ---
 
 [kl-skills](../../README.md) · MIT ライセンス · [Claude Code](https://claude.com/claude-code) 向けに作成

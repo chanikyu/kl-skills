@@ -51,7 +51,7 @@ KL-SKILLS GATES v<version> — loaded, 12 rules enforced
 > [!NOTE]
 > ゲートのメッセージと文章のルールは韓国語が基準。日本語の文章は、定義のない略語と長すぎる文だけが検査される。
 
-必要なもの、更新、アンインストール: [インストール](https://github.com/chanikyu/kl-skills/wiki/Installation-ja)。
+必要なもの、更新、アンインストール、Codex で使う: [インストール](https://github.com/chanikyu/kl-skills/wiki/Installation-ja)。
 
 <br />
 

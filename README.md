@@ -51,7 +51,7 @@ KL-SKILLS GATES v<version> — loaded, 12 rules enforced
 > [!NOTE]
 > The gates' messages and the writing rules are Korean-first. English text is checked for undefined acronyms and long sentences only.
 
-Requirements, update and uninstall: [Installation](https://github.com/chanikyu/kl-skills/wiki/Installation).
+Requirements, update, uninstall and use in Codex: [Installation](https://github.com/chanikyu/kl-skills/wiki/Installation).
 
 <br />
 

@@ -57,6 +57,21 @@ claude plugin uninstall kl-skills@kl-skills
 지워도 남는 것이 있다. `~/llm-wiki-docs/` 에 있는 위키와 그 그래프, 계획서, `~/.claude/checklists/` 에 있는 체크리스트다.
 이것들은 플러그인의 것이 아니라 사용자의 것이다.
 
+## 코덱스(Codex)에서 쓰기
+
+코덱스 CLI 0.163 에서 확인했다. 터미널에서 입력한다.
+
+```sh
+codex plugin marketplace add chanikyu/kl-skills
+codex plugin add kl-skills@kl-skills
+```
+
+- 게이트는 승인하기 전에는 돌지 않는다. 코덱스는 훅마다 승인을 받는다. 코덱스를 켜고 `/hooks` 를 입력해
+  `kl-skills` 훅을 승인한다(데스크톱 앱은 설정 → Hooks). 업데이트로 훅이 바뀌면 다시 승인한다.
+- 스킬은 `$kl-skills:wiki-recall` 처럼 플러그인 이름을 붙여 부른다. 깔린 스킬이 많으면 코덱스가 모델에게
+  보여 주는 목록에서 일부를 뺀다. 그때도 이름으로 부르면 쓸 수 있다.
+- 업데이트: `codex plugin marketplace upgrade kl-skills`. 지우기: `codex plugin remove kl-skills@kl-skills`.
+
 ---
 
 [kl-skills](../../README.md) · MIT 라이선스 · [Claude Code](https://claude.com/claude-code) 용으로 만듦

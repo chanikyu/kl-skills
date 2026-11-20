@@ -48,7 +48,7 @@ KL-SKILLS GATES v<버전> — loaded, 12 rules enforced
 > [!IMPORTANT]
 > 게이트 대부분이 Python 이다. `python3` 가 없으면 그 게이트들은 조용히 건너뛴다.
 
-필요한 것, 업데이트, 지우기: [설치](https://github.com/chanikyu/kl-skills/wiki/Installation-ko).
+필요한 것, 업데이트, 지우기, 코덱스에서 쓰기: [설치](https://github.com/chanikyu/kl-skills/wiki/Installation-ko).
 
 <br />
 

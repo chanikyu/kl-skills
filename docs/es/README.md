@@ -51,7 +51,7 @@ KL-SKILLS GATES v<version> — loaded, 12 rules enforced
 > [!NOTE]
 > Los mensajes de los gates y las reglas de escritura están pensados primero para el coreano. En español solo se revisan siglas sin definir y frases demasiado largas.
 
-Requisitos, actualizar y desinstalar: [Instalación](https://github.com/chanikyu/kl-skills/wiki/Installation-es).
+Requisitos, actualizar, desinstalar y usarlo en Codex: [Instalación](https://github.com/chanikyu/kl-skills/wiki/Installation-es).
 
 <br />
 

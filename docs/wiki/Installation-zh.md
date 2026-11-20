@@ -54,6 +54,21 @@ claude plugin uninstall kl-skills@kl-skills
 会保留下来的：`~/llm-wiki-docs/` 里的 wiki 及其图、你的计划，以及 `~/.claude/checklists/` 里的清单。
 它们属于你，而不属于插件。
 
+## 在 Codex 中使用
+
+已在 Codex CLI 0.163 上确认。在终端中输入：
+
+```sh
+codex plugin marketplace add chanikyu/kl-skills
+codex plugin add kl-skills@kl-skills
+```
+
+- 批准之前，门禁不会运行。Codex 会逐个钩子请求批准：打开 Codex，输入 `/hooks`，信任 `kl-skills` 的钩子
+  （桌面应用：Settings → Hooks）。更新改动了钩子后需要重新批准。
+- 调用技能时在前面加上插件名，例如 `$kl-skills:wiki-recall`。技能装得太多时，Codex 会把一部分从模型看到的
+  列表中去掉；按名字调用仍然可用。
+- 更新：`codex plugin marketplace upgrade kl-skills`。卸载：`codex plugin remove kl-skills@kl-skills`。
+
 ---
 
 [kl-skills](../../README.md) · MIT 许可证 · 为 [Claude Code](https://claude.com/claude-code) 打造

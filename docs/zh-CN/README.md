@@ -51,7 +51,7 @@ KL-SKILLS GATES v<version> — loaded, 12 rules enforced
 > [!NOTE]
 > 检查的提示信息和写作规则以韩语为准。中文文本只检查未定义的缩写和过长的句子。
 
-环境要求、更新和卸载：[安装](https://github.com/chanikyu/kl-skills/wiki/Installation-zh)。
+环境要求、更新、卸载以及在 Codex 中使用：[安装](https://github.com/chanikyu/kl-skills/wiki/Installation-zh)。
 
 <br />
 

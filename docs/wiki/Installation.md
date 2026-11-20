@@ -54,6 +54,22 @@ claude plugin uninstall kl-skills@kl-skills
 What stays: your wiki in `~/llm-wiki-docs/` with its graph, your plans, and the checklists in
 `~/.claude/checklists/`. They are yours, not the plugin's.
 
+## Use it in Codex
+
+Checked with Codex CLI 0.163. Run in a terminal:
+
+```sh
+codex plugin marketplace add chanikyu/kl-skills
+codex plugin add kl-skills@kl-skills
+```
+
+- The gates do not run until you approve them. Codex asks for approval per hook: open Codex, type
+  `/hooks` and trust the `kl-skills` hooks (desktop app: Settings → Hooks). Approve again after an
+  update that changes them.
+- Call a skill with the plugin name in front, such as `$kl-skills:wiki-recall`. With many skills
+  installed, Codex may leave some out of the list the model sees; calling them by name still works.
+- Update: `codex plugin marketplace upgrade kl-skills`. Uninstall: `codex plugin remove kl-skills@kl-skills`.
+
 ---
 
 [kl-skills](../../README.md) · MIT licensed · made for [Claude Code](https://claude.com/claude-code)
