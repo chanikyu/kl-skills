@@ -82,6 +82,14 @@ REPO="$(dirname "$(dirname "$RUN")")"
 python_cmd=""
 for candidate in python3 python; do command -v "$candidate" >/dev/null 2>&1 && { python_cmd="$candidate"; break; }; done
 
+# 코덱스는 플러그인의 hooks.json 맨 위에 description·hooks 말고 다른 칸이 있으면 파일을 통째로 버린다
+# (2026-11-20 codex 0.163: "unknown field `$schema`, expected `description` or `hooks`"). 그러면 훅이 하나도 안 돈다.
+if [ -n "$python_cmd" ]; then
+  extra_keys="$("$python_cmd" -c 'import json,sys; print(sorted(set(json.load(open(sys.argv[1]))) - {"description", "hooks"}))' "$REPO/hooks/hooks.json")"
+  [ "$extra_keys" = "[]" ] && ok "hooks.json has only the top-level fields Codex accepts" \
+    || bad "hooks.json has fields Codex rejects, so Codex would run none of the gates: $extra_keys"
+fi
+
 # 3.6 은 로케일이 UTF-8 이 아니면(LANG 이 비었거나 C) 표준 입출력을 ascii 로 쓴다. 그러면 한글을 내보내는
 # 게이트가 UnicodeEncodeError 로 죽는다(2026-11-19 재현). 3.7 부터는 파이썬이 스스로 UTF-8 로 바꾸므로,
 # 그 전환을 끈 C 로케일로 3.6 을 흉내 낸다. 흉내가 안 되는 python3 면(그래도 한글이 써지면) 건너뛴다.

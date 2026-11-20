@@ -127,8 +127,11 @@ out="$(check)"
 
 # --- 한 번 돌려보낸 뒤에는 막지 않는다 (무한 반복 방지)
 printf -- '- [ ] 커밋하기\n' > "$LIST"
+# 알림은 표준 오류로 간다. Stop 에서 0으로 끝나며 그냥 글을 찍으면 코덱스가 잘못된 출력으로 띄운다.
 out="$(check ',"stop_hook_active":true')"
-case "$out" in *'"decision"'*) bad "두 번째에도 막았다" ;; *"막지 않음"*) ok "두 번째에는 남은 항목을 알리기만 한다" ;; *) bad "예상 밖 출력: $out" ;; esac
+told="$(printf '{"session_id":"s1","stop_hook_active":true}' | sh "$REPO/hooks/run.sh" checklist-check 2>&1 >/dev/null)"
+case "$out$told" in *'"decision"'*) bad "두 번째에도 막았다" ;; *"막지 않음"*) ok "두 번째에는 남은 항목을 알리기만 한다" ;; *) bad "예상 밖 출력: $out$told" ;; esac
+[ -z "$out" ] && ok "두 번째 알림은 표준 출력에 찍지 않는다(코덱스 Stop 규칙)" || bad "Stop 표준 출력에 그냥 글을 찍었다: $out"
 
 # --- 다른 세션의 목록은 보지 않는다
 out="$(printf '{"session_id":"other"}' | sh "$REPO/hooks/run.sh" checklist-check 2>/dev/null)"

@@ -252,6 +252,15 @@ printf '%s' "$out" | "$PY" -c "import json,sys; d=json.load(sys.stdin); assert d
   && ok "출력이 모델에게 닿는 모양(additionalContext JSON)이다" \
   || bad "출력이 JSON 이 아니다 — 기록에만 남고 모델은 못 받는다: $out"
 
+# 코덱스는 경로 대신 패치 글(apply_patch)을 넘긴다. 경로는 작업 폴더 기준이다.
+out="$(hook "$("$PY" "$REPO/tests/fixtures/codex_patch_event.py" "$TMP/wiki-root" topic-a/wiki/page.md topic-a/wiki/clean.md)")"
+case "$out" in
+  *natural-answering*"page.md"*|*"page.md"*natural-answering*) ok "코덱스 패치로 고친 위키 페이지도 검사한다" ;;
+  *) bad "코덱스 패치로 고친 페이지를 못 봤다: $out" ;;
+esac
+[ "$(printf '%s' "$out" | grep -c '"hookSpecificOutput"')" -eq 1 ] && ok "패치 하나에 여러 파일이어도 알림은 JSON 한 덩어리다" \
+  || bad "알림이 JSON 한 덩어리가 아니다: $out"
+
 out="$(hook "$(payload "$TMP/wiki-root/topic-a/wiki/clean.md")")"
 [ -z "$out" ] && ok "잘 쓴 페이지에는 조용하다" || bad "잘 쓴 페이지에 말을 했다: $out"
 

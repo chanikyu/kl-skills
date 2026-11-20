@@ -13,8 +13,14 @@ PostToolUse 와 Stop 훅이 그냥 글로 찍은 것은 Claude Code 의 디버�
 
 import json
 import os
+import re
 import sys
 
+# 코덱스는 파일을 고칠 때 경로 대신 패치 글을 넘긴다: tool_name 이 "apply_patch", tool_input 이
+# {"command": "*** Begin Patch\n*** Update File: a.py\n..."} 다. 파일마다 머리 줄이 하나씩이고 경로는
+# 작업 폴더 기준이다(openai/codex codex-rs/core/src/tools/handlers/apply_patch.rs, 2026-11-20 확인).
+# 지운 파일(Delete File)은 검사할 글이 없어서 뺀다.
+PATCH_FILE_LINE = re.compile(r"^\*\*\* (?:Add File|Update File|Move to): (.+?)\s*$", re.MULTILINE)
 # 사람이 쓴 지시가 아닌데 UserPromptSubmit 로 들어오는 글(작업 끝 알림 등)의 첫머리 목록
 MACHINE_PROMPT_STARTS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                                      "data", "machine-prompt-starts.txt")
@@ -27,6 +33,31 @@ def read_payload():
     게이트가 죽으면 그 이벤트가 걸린 세션 전체가 흔들리므로, 읽기에서부터 막는다.
     """
     return sys.stdin.buffer.read().decode("utf-8", "replace")
+
+
+def edited_paths(event):
+    """도구가 쓴 파일 경로 목록. Claude Code 는 tool_input.file_path 하나, 코덱스는 패치 글의 파일 줄들이다."""
+    tool_input = event.get("tool_input") if isinstance(event, dict) else None
+    if not isinstance(tool_input, dict):
+        return []
+    path = tool_input.get("file_path") or tool_input.get("notebook_path")
+    if isinstance(path, str) and path:
+        return [path]
+    patch = tool_input.get("command")
+    if event.get("tool_name") != "apply_patch" or not isinstance(patch, str):
+        return []
+    cwd = event.get("cwd") if isinstance(event.get("cwd"), str) else ""
+    return [os.path.normpath(os.path.join(cwd, found)) for found in PATCH_FILE_LINE.findall(patch)]
+
+
+def report_quietly(text):
+    """막지 않는 알림을 Stop 훅에서 남긴다. 표준 오류로 보낸다.
+
+    코덱스는 Stop 훅이 0으로 끝나며 JSON 이 아닌 글을 찍으면 매번 '잘못된 출력' 오류로 띄운다
+    (openai/codex codex-rs/hooks/src/events/stop.rs). Claude Code 도 Stop 의 그냥 글은 자세히 보기에만
+    남겨 모델에게 닿지 않으므로, 표준 오류로 옮겨도 모델이 받는 것은 그대로다.
+    """
+    sys.stderr.write(text.rstrip("\n") + "\n")
 
 
 def is_machine_prompt(prompt):

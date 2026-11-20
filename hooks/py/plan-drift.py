@@ -21,7 +21,7 @@ import re
 import subprocess
 import sys
 
-from _hook_output import read_payload, tell_model
+from _hook_output import edited_paths, read_payload, tell_model
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SCRIPTS = os.path.join(PLUGIN_ROOT, "skills", "planner", "scripts")
@@ -99,14 +99,14 @@ def main():
         return 0
 
     reports = []
-    file_path = (event.get("tool_input") or {}).get("file_path") or ""
-    if file_path and is_plan(file_path):
+    plans = [path for path in edited_paths(event) if is_plan(path)]
+    for file_path in plans:
         # 계획서를 쓴 순간: 틀이 지켜졌는지와 일이 따라가는지를 같이 본다.
         for name, extra in (("check_plan.py", []), ("check_drift.py", [])):
             code, output = run_script(name, extra + [file_path])
             if code:
                 reports.append(output)
-    elif plain:
+    if not plans and plain:
         # 커밋한 순간: 저장소의 계획서마다, 방금 커밋까지 포함해 이탈을 본다.
         for plan in plans_in_repo(commit_folder(event)):
             code, output = run_script("check_drift.py", ["--latest-commit", plan])

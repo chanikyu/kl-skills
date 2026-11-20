@@ -13,7 +13,7 @@ import json
 import sys
 
 from _checklist import OPEN_ITEM, carry_path, checklist_path, item_name, item_names, read_items, read_text
-from _hook_output import read_payload
+from _hook_output import read_payload, report_quietly
 
 MAX_ITEMS_SHOWN = 10   # 돌려보낼 때 보여 줄 미완료 항목 수. 더 많으면 개수만 덧붙인다
 
@@ -63,7 +63,7 @@ def main():
     reason = "\n".join(reasons)
     # 이미 한 번 돌려보냈으면 다시 막지 않는다. 남은 것은 알리기만 한다 — 반복은 세션을 멈춘다.
     if event.get("stop_hook_active"):
-        print(reason.replace("checklist:", "checklist (막지 않음):", 1))
+        report_quietly(reason.replace("checklist:", "checklist (막지 않음):", 1))
         return 0
     print(json.dumps({"decision": "block", "reason": reason}, ensure_ascii=False))
     return 0

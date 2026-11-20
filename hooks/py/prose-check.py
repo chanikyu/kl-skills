@@ -17,7 +17,7 @@ import os
 import subprocess
 import sys
 
-from _hook_output import read_payload, tell_model
+from _hook_output import edited_paths, read_payload, tell_model
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CHECKER = os.path.join(PLUGIN_ROOT, "skills", "natural-answering", "scripts", "check_prose.py")
@@ -47,16 +47,15 @@ def main():
     except ValueError:
         return 0
 
-    tool_input = event.get("tool_input") or {}
-    path = tool_input.get("file_path") or tool_input.get("notebook_path") or ""
     root = os.environ.get("LLM_WIKI_ROOT") or os.path.join(os.path.expanduser("~"), "llm-wiki-docs")
-
-    if not wiki_page(path, root) or not os.path.isfile(CHECKER) or not os.path.isfile(path):
+    # 코덱스는 패치 하나로 여러 파일을 고친다. 알림은 한 번에 모아 보낸다 — 출력은 JSON 한 덩어리여야 한다.
+    paths = [path for path in edited_paths(event) if wiki_page(path, root) and os.path.isfile(path)]
+    if not paths or not os.path.isfile(CHECKER):
         return 0
 
     try:
         out = subprocess.run(
-            [sys.executable, CHECKER, "--exit-zero", "--limit", LIMIT, path],
+            [sys.executable, CHECKER, "--exit-zero", "--limit", LIMIT] + paths,
             stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, timeout=30,
         )
     except (OSError, subprocess.SubprocessError):

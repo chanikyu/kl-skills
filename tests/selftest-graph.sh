@@ -124,6 +124,15 @@ out="$(hook '{"tool_name":"Write","tool_input":{"file_path":"/tmp/elsewhere.md"}
 [ -f "$G" ] && bad "rebuilt for a file outside the wiki root" || ok "ignored a file outside the root"
 [ -z "$out" ] && ok "stayed silent for unrelated edits" || bad "printed for an unrelated edit: '$out'"
 
+# --- Codex sends a patch (apply_patch) instead of a path, relative to its working folder
+rm -f "$G"
+hook "$("$PY" "$REPO/tests/fixtures/codex_patch_event.py" "$TMP/topic-a" wiki/a-one.md)" >/dev/null
+[ -f "$G" ] && ok "hook rebuilt the graph for a wiki page edited by a Codex patch" \
+  || bad "hook missed a wiki page edited by a Codex patch"
+rm -f "$G"
+hook "$("$PY" "$REPO/tests/fixtures/codex_patch_event.py" "$TMP/topic-a" raw/source.md)" >/dev/null
+[ -f "$G" ] && bad "rebuilt for a raw/ file in a Codex patch" || ok "ignored a raw/ file in a Codex patch"
+
 # --- a hook must never break a session, whatever arrives on stdin
 hook 'not json at all' >/dev/null 2>&1 && ok "survived malformed payload" || bad "malformed payload exited non-zero"
 hook '' >/dev/null 2>&1 && ok "survived empty payload" || bad "empty payload exited non-zero"

@@ -174,6 +174,12 @@ printf '%s' "$out" | "$PY" -c "import json,sys; d=json.load(sys.stdin)['hookSpec
   && ok "계획서를 쓰면 이탈을 모델에게 닿는 모양으로 알린다" \
   || bad "계획서를 썼는데 이탈 알림이 없거나 JSON 이 아니다: $out"
 
+# 코덱스는 경로 대신 패치 글(apply_patch)을 넘긴다. 경로는 작업 폴더 기준이다.
+out="$("$PY" "$REPO/tests/fixtures/codex_patch_event.py" "$PROJ" plan.md | sh "$REPO/hooks/run.sh" plan-drift 2>/dev/null)"
+printf '%s' "$out" | "$PY" -c "import json,sys; d=json.load(sys.stdin)['hookSpecificOutput']; assert 'off-plan-work' in d['additionalContext']" 2>/dev/null \
+  && ok "코덱스 패치로 계획서를 고쳐도 이탈을 알린다" \
+  || bad "코덱스 패치로 계획서를 고쳤는데 이탈 알림이 없다: $out"
+
 out="$(printf '{"tool_name":"Write","tool_input":{"file_path":"%s"}}' "$TMP/good.md" \
        | sh "$REPO/hooks/run.sh" plan-drift 2>/dev/null)"
 [ -z "$out" ] && ok "깨끗한 계획서에는 조용하다" || bad "깨끗한 계획서에 말했다: $out"

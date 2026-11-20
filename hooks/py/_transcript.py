@@ -1,4 +1,4 @@
-"""Read a Claude Code transcript (JSONL) and tell the person's messages from machine text.
+"""Read a Claude Code or Codex transcript (JSONL) and tell the person's messages from machine text.
 
 Shared by the answer-check gate and the hook-replay skill, so both decide "who wrote
 this line" the same way. Two copies of this rule would drift apart, and the replay
@@ -6,6 +6,54 @@ would stop showing what the gate really does.
 """
 
 import json
+
+# 코덱스 기록(rollout JSONL)은 끝난 일을 event_msg → item_completed → item 으로 정리해 남긴다.
+# 사람 메시지(UserMessage), 답(AgentMessage), 명령(CommandExecution), 파일 변경(FileChange)이 다 있다.
+# 코덱스 공식 문서는 기록 형식이 바뀔 수 있다고 한다 — 모양이 다르면 아무것도 읽지 않고 통과시킨다.
+CODEX_TEXT_ITEMS = {"UserMessage": "user", "AgentMessage": "assistant"}
+
+
+def codex_item(entry):
+    """코덱스 기록 한 줄이 끝난 일(item_completed)이면 그 item. 아니면 None."""
+    payload = entry.get("payload") if entry.get("type") == "event_msg" else None
+    if not isinstance(payload, dict) or payload.get("type") != "item_completed":
+        return None
+    item = payload.get("item")
+    return item if isinstance(item, dict) else None
+
+
+def codex_turn(item):
+    """코덱스의 사람 메시지·답 item → (역할, 글). 글이 없으면 None."""
+    role = CODEX_TEXT_ITEMS.get(item.get("type"))
+    content = item.get("content")
+    if not role or not isinstance(content, list):
+        return None
+    text = "\n".join(block.get("text", "") for block in content
+                     if isinstance(block, dict) and isinstance(block.get("text"), str))
+    return (role, text) if text.strip() else None
+
+
+def codex_tool_calls(item):
+    """코덱스의 명령·파일 변경 item 을 Claude Code 도구 호출 모양 [(이름, 입력)] 으로 바꾼다.
+
+    answer-check 는 Claude Code 이름(Bash, Edit)으로 이번 턴에 한 일을 판단한다. 같은 판단을 두 벌
+    두지 않으려고, 코덱스 기록을 그 모양으로 옮겨 준다. 지운 파일은 남은 결과물이 없어서 뺀다.
+    """
+    if item.get("type") == "CommandExecution":
+        command = item.get("command")
+        # ["/bin/zsh", "-lc", "실제 명령"] 처럼 셸을 거친 꼴이면 마지막 칸이 실제 명령이다.
+        text = command[-1] if isinstance(command, list) and command else command
+        return [("Bash", {"command": text})] if isinstance(text, str) else []
+    if item.get("type") == "FileChange" and isinstance(item.get("changes"), dict):
+        calls = []
+        for path, change in item["changes"].items():
+            change = change if isinstance(change, dict) else {}
+            if change.get("type") == "delete":
+                continue
+            moved = change.get("move_path")
+            calls.append(("Edit", {"file_path": moved if isinstance(moved, str) and moved else path}))
+        return calls
+    return []
 
 
 def typed_by_person(entry, content, text):
@@ -39,7 +87,12 @@ def classify_line(line):
     except ValueError:
         return None
     # 줄이 JSON 이어도 객체가 아닐 수 있다(null, 목록). 그런 줄은 사건이 아니라 건너뛴다.
-    if not isinstance(entry, dict) or not isinstance(entry.get("message"), dict):
+    if not isinstance(entry, dict):
+        return None
+    item = codex_item(entry)
+    if item is not None:
+        return codex_turn(item)
+    if not isinstance(entry.get("message"), dict):
         return None
     message = entry["message"]
     role = message.get("role")
@@ -91,6 +144,10 @@ def tool_calls_since_last_human(transcript_path):
                 try:
                     entry = json.loads(line)
                 except ValueError:
+                    continue
+                item = codex_item(entry) if isinstance(entry, dict) else None
+                if item is not None:
+                    calls.extend(codex_tool_calls(item))
                     continue
                 message = entry.get("message") if isinstance(entry, dict) else None
                 if not isinstance(message, dict) or message.get("role") != "assistant":

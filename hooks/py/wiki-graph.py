@@ -18,7 +18,7 @@ import os
 import subprocess
 import sys
 
-from _hook_output import read_payload
+from _hook_output import edited_paths, read_payload
 
 # hooks/py/wiki-graph.py -> hooks/py -> hooks -> the plugin root. Three levels:
 # one short and the builder path lands in hooks/skills/, which does not exist.
@@ -47,11 +47,9 @@ def main():
         return 0
 
     # Bash 로 쓴 경우는 여기 안 걸린다(경로가 payload 에 없다). 그쪽은 wiki-touch 가 본다.
-    tool_input = event.get("tool_input") or {}
-    path = tool_input.get("file_path") or tool_input.get("notebook_path") or ""
     root = os.environ.get("LLM_WIKI_ROOT") or os.path.join(os.path.expanduser("~"), "llm-wiki-docs")
 
-    if not wiki_page(path, root):
+    if not any(wiki_page(path, root) for path in edited_paths(event)):
         return 0
     if not os.path.isfile(BUILDER):
         return 0

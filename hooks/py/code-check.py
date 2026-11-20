@@ -20,7 +20,7 @@ import os
 import subprocess
 import sys
 
-from _hook_output import read_payload, tell_model
+from _hook_output import edited_paths, read_payload, tell_model
 from _work_files import is_not_own_code, is_skipped
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -80,20 +80,19 @@ def main():
     except ValueError:
         return 0
 
-    tool_input = event.get("tool_input") or {}
-    file_path = tool_input.get("file_path") or tool_input.get("notebook_path") or ""
-    if not own_code_file(file_path) or not os.path.isfile(file_path):
-        return 0
-
     parts = []
-    names = run_checker(CHECKER, file_path)
-    if names:
-        parts.append(names + "\n(readable-code: 이름과 설명을 다시 볼 자리다. 막지는 않는다."
-                             " 손대지 않은 줄은 고치지 말고 알리기만 한다)")
-    values = run_checker(HARDCODING, file_path) if file_path.endswith(".py") else ""
-    if values:
-        parts.append(values + "\n(no-hardcoding: 값을 코드 밖으로 뺄 자리다. 막지는 않는다."
-                              " 손대지 않은 줄은 고치지 말고 알리기만 한다)")
+    # 코덱스는 패치 하나로 여러 파일을 고친다. 알림은 모아서 JSON 한 덩어리로 보낸다.
+    for file_path in edited_paths(event):
+        if not own_code_file(file_path) or not os.path.isfile(file_path):
+            continue
+        names = run_checker(CHECKER, file_path)
+        if names:
+            parts.append(names + "\n(readable-code: 이름과 설명을 다시 볼 자리다. 막지는 않는다."
+                                 " 손대지 않은 줄은 고치지 말고 알리기만 한다)")
+        values = run_checker(HARDCODING, file_path) if file_path.endswith(".py") else ""
+        if values:
+            parts.append(values + "\n(no-hardcoding: 값을 코드 밖으로 뺄 자리다. 막지는 않는다."
+                                  " 손대지 않은 줄은 고치지 말고 알리기만 한다)")
     if parts:
         tell_model("PostToolUse", "\n\n".join(parts))
     return 0

@@ -33,7 +33,7 @@ import tempfile
 
 # 사람 메시지와 기계 글을 가르는 규칙은 hook-replay 스킬과 같이 쓴다.
 from _checklist import checklist_dir
-from _hook_output import read_payload
+from _hook_output import read_payload, report_quietly
 from _transcript import read_turns, tool_calls_since_last_human
 from _work_files import is_work_file
 
@@ -288,17 +288,20 @@ def main():
         event = json.loads(raw_payload) if raw_payload.strip() else {}
     except ValueError:
         return 0
-    # Claude Code 는 늘 객체와 문자열 경로를 넘기지만, 모양이 틀린 입력에도 세션을 깨지 않는다.
-    if not isinstance(event, dict) or not isinstance(event.get("transcript_path"), str):
+    # Claude Code 는 늘 객체와 문자열 경로를 넘긴다. 코덱스는 기록 경로가 null 일 수 있다(스키마의
+    # NullableString). 모양이 틀린 입력에도 세션을 깨지 않는다.
+    if not isinstance(event, dict):
         return 0
+    transcript = event.get("transcript_path") if isinstance(event.get("transcript_path"), str) else ""
 
-    turns = read_turns(event["transcript_path"])
-    if not turns:
-        return 0
+    turns = read_turns(transcript) if transcript else []
     answers = [text for role, text in turns if role == "assistant"]
-    if not answers:
+    # 코덱스는 마지막 답을 last_assistant_message 로 넘긴다. Stop 이 불릴 때 그 답이 기록에 아직
+    # 안 적혔을 수 있어서, 넘어온 답이 있으면 그것을 검사한다(openai/codex stop.command.input 스키마).
+    final = event.get("last_assistant_message")
+    answer_text = final if isinstance(final, str) and final.strip() else (answers[-1] if answers else "")
+    if not answer_text:
         return 0
-    answer_text = answers[-1]
 
     problems = []
     asked_again = repeated_question(turns)
@@ -311,7 +314,7 @@ def main():
             % (times_asked, reason))
 
     # 코드를 고친 턴은 작업 보고로 끝낸다. 무엇이 됐고, 무엇을 바꿨고, 확인했고, 무엇이 남았나.
-    tool_calls = tool_calls_since_last_human(event["transcript_path"])
+    tool_calls = tool_calls_since_last_human(transcript) if transcript else []
     if turn_changed_work(tool_calls):
         steps, outcomes = work_report_steps()
         gaps = work_report_gaps(answer_text, steps, outcomes) if steps else []
@@ -348,7 +351,7 @@ def main():
                          for number, text in enumerate(problems, 1))
     # 이미 한 번 막았으면 다시 막지 않는다. 고칠 기회는 한 번이면 되고, 두 번이면 반복이 된다.
     if event.get("stop_hook_active"):
-        print("natural-answering: 남은 지적 (막지 않음)\n" + listed)
+        report_quietly("natural-answering: 남은 지적 (막지 않음)\n" + listed)
         return 0
     # ensure_ascii=False: 막는 이유를 사람과 모델이 다 읽는다. \uXXXX 로 쓰면 둘 다 못 읽는다.
     print(json.dumps({"decision": "block", "reason":

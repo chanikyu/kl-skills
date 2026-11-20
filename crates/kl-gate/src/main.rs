@@ -115,30 +115,81 @@ fn tell_model(text: &str) {
 fn wiki_index_check(payload: &str) {
     let Some(root) = wiki_root() else { return };
     let Ok(v) = serde_json::from_str::<serde_json::Value>(payload) else { return };
-    let Some(file_path) = v["tool_input"]["file_path"].as_str() else { return };
-    let Some((topic, page)) = wiki_page(file_path, &root) else { return };
+    // Codex patches several files at once; the notes go out as one JSON object, because
+    // a second object on stdout would make the whole output unreadable.
+    let notes: Vec<String> = edited_paths(&v)
+        .iter()
+        .filter_map(|file_path| index_note(file_path, &root))
+        .collect();
+    if !notes.is_empty() {
+        tell_model(&notes.join("\n"));
+    }
+}
 
+/// What to tell the model about one written file, if it is a wiki page the index
+/// does not list (or its topic has no index at all).
+fn index_note(file_path: &str, root: &Path) -> Option<String> {
+    let (topic, page) = wiki_page(file_path, root)?;
     let index = root.join(&topic).join("wiki").join("index.md");
     // No index at all is a different problem, and new-topic.sh is the fix for it.
     let Ok(text) = std::fs::read_to_string(&index) else {
-        tell_model(&format!(
+        return Some(format!(
             "! {topic}/wiki/index.md is missing, so nothing written here can be found.\n  \
              refill it:  sh \"{}\" {topic}",
             script("new-topic.sh")
         ));
-        return;
     };
-
     if indexed(&text, &page) {
-        return;
+        return None;
     }
-
-    tell_model(&format!(
+    Some(format!(
         "! {page} is not listed in {topic}/wiki/index.md — a page missing from the \
          index is a page nobody finds.\n  add it:  python3 \"{}\" {topic} {page} \
          <category> \"one line on what it holds\"",
         script("index-add.py")
-    ));
+    ))
+}
+
+/// Header lines Codex writes once per file in an apply_patch edit. A deleted file
+/// has nothing left to index, so "*** Delete File:" is left out.
+const PATCH_FILE_MARKERS: [&str; 3] = ["*** Add File: ", "*** Update File: ", "*** Move to: "];
+
+/// Files a tool wrote. Claude Code names one in tool_input.file_path. Codex sends an
+/// apply_patch edit as the raw patch text in tool_input.command, with one header line
+/// per file and paths relative to cwd (openai/codex
+/// codex-rs/core/src/tools/handlers/apply_patch.rs, checked 2026-11-20).
+fn edited_paths(v: &serde_json::Value) -> Vec<String> {
+    if let Some(path) = v["tool_input"]["file_path"].as_str() {
+        return vec![path.to_string()];
+    }
+    if v["tool_name"].as_str() != Some("apply_patch") {
+        return Vec::new();
+    }
+    let Some(patch) = v["tool_input"]["command"].as_str() else { return Vec::new() };
+    let cwd = Path::new(v["cwd"].as_str().unwrap_or(""));
+    patch
+        .lines()
+        .filter_map(|line| PATCH_FILE_MARKERS.iter().find_map(|marker| line.strip_prefix(marker)))
+        .filter_map(|relative| lexically_normal(&cwd.join(relative.trim())).to_str().map(str::to_string))
+        .collect()
+}
+
+/// `a/./b/../c` → `a/c` without touching the disk, the way Python's os.path.normpath
+/// does. wiki_page compares paths by prefix, and Codex patches say "../page.md".
+fn lexically_normal(path: &Path) -> PathBuf {
+    let mut out = PathBuf::new();
+    for part in path.components() {
+        match part {
+            std::path::Component::CurDir => {}
+            std::path::Component::ParentDir => {
+                if !out.pop() {
+                    out.push("..");
+                }
+            }
+            other => out.push(other.as_os_str()),
+        }
+    }
+    out
 }
 
 /// Path to one of the skill's scripts, taken from the environment rather than
@@ -523,5 +574,34 @@ mod tests {
         let idx = "- [deep](sub/deep.md) — nested\n";
         assert!(indexed(idx, "sub/deep.md"));
         assert!(!indexed(idx, "deep.md"));
+    }
+
+    #[test]
+    fn claude_code_edits_name_their_file_directly() {
+        let event = serde_json::json!({"tool_name": "Write", "tool_input": {"file_path": "/w/a/wiki/p.md"}});
+        assert_eq!(edited_paths(&event), vec!["/w/a/wiki/p.md".to_string()]);
+    }
+
+    /// Every header kind Codex writes: update, add (with ../), delete (skipped), move.
+    /// Shape from openai/codex codex-rs/core/tests/suite/hooks.rs (apply_patch hook input).
+    #[test]
+    fn codex_patches_name_every_file_relative_to_cwd() {
+        let patch = "*** Begin Patch\n*** Update File: wiki/a.md\n@@\n-x\n+y\n\
+                     *** Add File: ../b/wiki/new.md\n+hello\n\
+                     *** Delete File: wiki/gone.md\n\
+                     *** Update File: wiki/old.md\n*** Move to: wiki/moved.md\n*** End Patch";
+        let event = serde_json::json!({"tool_name": "apply_patch", "cwd": "/w/a",
+                                   "tool_input": {"command": patch}});
+        assert_eq!(
+            edited_paths(&event),
+            vec!["/w/a/wiki/a.md", "/w/b/wiki/new.md", "/w/a/wiki/old.md", "/w/a/wiki/moved.md"]
+        );
+    }
+
+    #[test]
+    fn a_shell_command_is_not_read_as_a_patch() {
+        let event = serde_json::json!({"tool_name": "Bash", "cwd": "/w",
+                                   "tool_input": {"command": "*** Add File: x.md"}});
+        assert!(edited_paths(&event).is_empty());
     }
 }

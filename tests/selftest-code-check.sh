@@ -43,6 +43,14 @@ case "$out" in
   *vague-name*) ok "나쁜 이름을 그 자리에서 알려 준다" ;;
   *)            bad "아무 말도 하지 않았다: $out" ;;
 esac
+# 코덱스는 경로 대신 패치 글(apply_patch)을 넘긴다. 남의 코드(.venv)는 패치 안에 있어도 건너뛴다.
+codex_out="$("$PY" "$REPO/tests/fixtures/codex_patch_event.py" "$TMP" bad.py .venv/lib/site-packages/vendored.py \
+             | sh "$REPO/hooks/run.sh" code-check 2>/dev/null)"
+case "$codex_out" in
+  *vendored.py*) bad "코덱스 패치 속 남의 코드까지 검사했다: $codex_out" ;;
+  *vague-name*)  ok "코덱스 패치로 고친 파일도 그 자리에서 알려 준다" ;;
+  *)             bad "코덱스 패치로 고친 파일에 아무 말도 하지 않았다: $codex_out" ;;
+esac
 case "$out" in
   *"막지는 않는다"*) ok "막지 않는다고 분명히 밝힌다" ;;
   *)                 bad "막지 않는다는 말이 없다" ;;

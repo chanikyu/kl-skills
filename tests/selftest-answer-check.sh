@@ -379,11 +379,15 @@ grep -q "작업 요약" "$REPO/hooks/py/answer-check.py" && bad "단계 이름�
 unset LLM_WIKI_ROOT
 
 # --- 한 번 막은 뒤에는 다시 막지 않는다. 이게 없으면 턴이 끝나지 않는다
+# 알림은 표준 오류로 간다. Stop 에서 0으로 끝나며 그냥 글을 찍으면 코덱스가 잘못된 출력으로 띄운다.
 out="$(gate "$TMP/again.jsonl" ',"stop_hook_active":true')"
-case "$out" in
+told="$(printf '{"transcript_path":"%s","stop_hook_active":true}' "$TMP/again.jsonl" \
+        | sh "$REPO/hooks/run.sh" answer-check 2>&1 >/dev/null)"
+[ -z "$out" ] && ok "두 번째 알림은 표준 출력에 찍지 않는다(코덱스 Stop 규칙)" || bad "Stop 표준 출력에 그냥 글을 찍었다: $out"
+case "$out$told" in
   *'"decision"'*) bad "두 번째에도 막았다 — 무한 반복이 된다" ;;
   *"막지 않음"*)  ok "한 번 막은 뒤에는 알리고 넘긴다" ;;
-  *)              bad "예상 밖 출력: $out" ;;
+  *)              bad "예상 밖 출력: $out$told" ;;
 esac
 
 # --- 되묻지 않고 짧게 답했으면 조용해야 한다
@@ -412,6 +416,47 @@ for payload in '[]' '"x"' '{"transcript_path":null}' '{"transcript_path":123}'; 
 done
 printf 'null\n[1]\n{"message":null}\n{"message":"x"}\n' > "$TMP/odd-lines.jsonl"
 gate "$TMP/odd-lines.jsonl" >/dev/null && ok "객체가 아닌 기록 줄은 건너뛴다" || bad "객체가 아닌 기록 줄에 터졌다"
+
+# --- 코덱스: 기록은 event_msg → item_completed 로 남고, 마지막 답은 last_assistant_message 로 온다.
+#     모양은 실제 코덱스 0.163 기록(~/.codex/sessions)과 openai/codex 의 stop.command.input 스키마를 따랐다.
+codex_stop() {  # $1 기록 경로, $2 고친 파일(없으면 빈 글), $3 마지막 답, $4 덧붙일 JSON 조각
+  "$PY" - "$1" "$2" "$3" "${4:-}" <<'PYEOF'
+import json, sys
+path, edited, answer, extra = sys.argv[1:5]
+def done(item):
+    return json.dumps({"type": "event_msg", "payload": {"type": "item_completed", "turn_id": "t1", "item": item}},
+                      ensure_ascii=False)
+lines = [done({"type": "UserMessage", "content": [{"type": "text", "text": "검사를 더해줘"}]}),
+         done({"type": "CommandExecution", "command": ["/bin/zsh", "-lc", "ls"], "status": "completed"})]
+if edited:
+    lines.append(done({"type": "FileChange", "changes": {edited: {"type": "update", "move_path": None}},
+                       "status": "completed"}))
+with open(path, "w", encoding="utf-8") as handle:
+    handle.write("\n".join(lines) + "\n")
+event = {"hook_event_name": "Stop", "transcript_path": path, "last_assistant_message": answer,
+         "stop_hook_active": False, "session_id": "codex-test", "turn_id": "t1"}
+event.update(json.loads("{" + extra + "}"))
+print(json.dumps(event, ensure_ascii=False))
+PYEOF
+}
+export LLM_WIKI_ROOT="$TMP/wiki-root"
+out="$(codex_stop "$TMP/codex-edit.jsonl" "$TMP/repo/hooks/a.py" "고쳤습니다. 테스트도 통과했습니다." \
+       | sh "$REPO/hooks/run.sh" answer-check 2>/dev/null)"
+case "$out" in
+  *'"decision": "block"'*"작업 보고"*) ok "코덱스에서 파일을 고친 턴도 작업 보고를 요구한다" ;;
+  *) bad "코덱스에서 파일을 고친 턴을 못 알아봤다: $out" ;;
+esac
+out="$(codex_stop "$TMP/codex-good.jsonl" "$TMP/repo/hooks/a.py" "$GOOD_REPORT" \
+       | sh "$REPO/hooks/run.sh" answer-check 2>/dev/null)"
+case "$out" in *"작업 보고"*) bad "코덱스에서 6단계를 갖춘 보고를 막았다: $out" ;; *) ok "코덱스에서 6단계를 갖춘 보고는 통과한다" ;; esac
+LONG_ANSWER="네, 맞습니다. 이번 변경은 설정 파일과 훅과 시험과 문서와 배포 순서와 서버 설정까지 한꺼번에 묶어서 한 번에 처리하고 그 결과를 정리해 두었다는 뜻이고 다음 세션에서 그대로 이어서 쓸 수 있게 했습니다."
+out="$(codex_stop "$TMP/codex-null.jsonl" "" "$LONG_ANSWER" '"transcript_path": null' \
+       | sh "$REPO/hooks/run.sh" answer-check 2>/dev/null)"
+case "$out" in
+  *'"decision": "block"'*long-sentence*) ok "코덱스가 기록 경로를 null 로 줘도 넘어온 답을 검사한다" ;;
+  *) bad "기록 경로가 null 일 때 답을 검사하지 않았다: $out" ;;
+esac
+unset LLM_WIKI_ROOT
 
 echo
 if [ "$fails" -eq 0 ]; then

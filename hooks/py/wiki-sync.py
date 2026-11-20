@@ -30,7 +30,7 @@ from pathlib import Path
 # 3.8 이하는 함수를 만들 때 멈추고, 3.7·3.8 의 해법인 from __future__ import annotations 는 3.6 에서 문법 오류다.
 from typing import List
 
-from _hook_output import read_payload
+from _hook_output import read_payload, report_quietly
 
 PLUGIN_ROOT = Path(__file__).resolve().parents[2]
 BUILDER = PLUGIN_ROOT / "skills" / "graph-doc-memory" / "scripts" / "build_graph.py"
@@ -80,7 +80,14 @@ def run(cmd: List[str]) -> str:
 
 def main() -> int:
     """세션 끝에 한 번: 바뀐 페이지를 찾아 그래프를 맞추고 글을 검사한다."""
-    read_payload()          # 파이프를 비운다. 안 읽으면 호출한 쪽이 깨진 파이프를 본다
+    raw = read_payload()    # 파이프를 비운다. 안 읽으면 호출한 쪽이 깨진 파이프를 본다
+    # Stop 훅으로 불리면 사건이 들어온다. after-bash 가 부를 때는 빈 입력이고, 표준 출력을 받아 모델에게
+    # 넘긴다. Stop 에서는 그냥 글을 찍으면 코덱스가 잘못된 출력으로 띄우므로 조용히 남긴다.
+    try:
+        event = json.loads(raw) if raw.strip() else {}
+    except ValueError:
+        event = {}
+    on_stop = isinstance(event, dict) and event.get("hook_event_name") == "Stop"
     root = wiki_root()
     if not root.is_dir():
         return 0
@@ -115,9 +122,12 @@ def main() -> int:
             lines.append(found)
 
     if lines:
-        print("wiki-sync: 이 세션에서 위키 페이지 %d개가 바뀌었다 "
-              "(Write/Edit 이 아닌 경로로 바뀐 것도 포함)." % len(changed))
-        print("\n".join(lines))
+        report = ("wiki-sync: 이 세션에서 위키 페이지 %d개가 바뀌었다 "
+                  "(Write/Edit 이 아닌 경로로 바뀐 것도 포함).\n" % len(changed) + "\n".join(lines))
+        if on_stop:
+            report_quietly(report)
+        else:
+            print(report)
     return 0
 
 
