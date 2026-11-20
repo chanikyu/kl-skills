@@ -324,7 +324,7 @@ out="$(report_case term-file "[\"tool\", \"Write\", {\"file_path\": \"$TMP/repo/
 case "$out" in *"분야 용어"*"slides.py"*"taxonomic resolution"*) ok "이번 턴에 쓴 파일 속 틀린 용어를 짚는다" ;; *) bad "파일 속 용어를 놓쳤다: $out" ;; esac
 "$PY" -c 'import sys, zipfile
 z = zipfile.ZipFile(sys.argv[1], "w")
-z.writestr("ppt/slides/slide1.xml", "<p:sld><a:p><a:r><a:t>stringent quality MAGs</a:t></a:r></a:p></p:sld>")
+z.writestr("ppt/slides/slide1.xml", "<p:sld><a:p><a:r><a:t>stringent quality MAGs</a:t></a:r></a:p></p:sld>")  # term-check: ok
 z.close()' "$TMP/deck.pptx"   # term-check: ok
 out="$(report_case term-deck '' "슬라이드를 만들었습니다: $TMP/deck.pptx")"
 case "$out" in *"분야 용어"*"slide 1"*"high quality"*) ok "답이 가리킨 .pptx 의 슬라이드 글까지 본다" ;; *) bad "결과물 pptx 를 안 봤다: $out" ;; esac
