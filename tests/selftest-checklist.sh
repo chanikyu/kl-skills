@@ -137,6 +137,23 @@ case "$out$told" in *'"decision"'*) bad "두 번째에도 막았다" ;; *"막지
 out="$(printf '{"session_id":"other"}' | sh "$REPO/hooks/run.sh" checklist-check 2>/dev/null)"
 case "$out" in *"other.md"*) ok "세션마다 자기 목록만 본다" ;; *) bad "다른 세션 목록을 봤다: $out" ;; esac
 
+# --- 2026-11-20 코덱스: 모델이 쓸 수 있는 자리는 작업 폴더·/tmp·$TMPDIR 뿐이라 ~/.claude 에 못 쓰고, 끝낼 때마다
+#     막혔다. 코덱스(플러그인 훅에 PLUGIN_ROOT 를 넘긴다)에서는 $TMPDIR 아래에 둔다. Claude Code 는 그대로다.
+CODEX_TMP="$TMP/codex-tmp"; mkdir -p "$CODEX_TMP" "$TMP/home"
+codex_gate() { printf '%s' "$2" | env -u KL_CHECKLIST_DIR PLUGIN_ROOT="$REPO" TMPDIR="$CODEX_TMP" HOME="$TMP/home" \
+                 sh "$REPO/hooks/run.sh" "$1" 2>/dev/null; }
+out="$(codex_gate checklist-start '{"session_id":"cx1","prompt":"README 고쳐줘"}')"
+case "$out" in *"$CODEX_TMP/kl-skills/checklists/cx1.md"*) ok "코덱스에서는 체크리스트를 \$TMPDIR 아래에 두라고 알린다" ;;
+  *) bad "코덱스에서 쓸 수 없는 자리를 알렸다: $out" ;; esac
+[ -d "$CODEX_TMP/kl-skills/checklists" ] && ok "코덱스용 체크리스트 폴더는 훅이 미리 만든다" || bad "코덱스용 체크리스트 폴더가 없다"
+printf -- '- [ ] 커밋하기\n' > "$CODEX_TMP/kl-skills/checklists/cx1.md"
+out="$(codex_gate checklist-check '{"session_id":"cx1"}')"
+case "$out" in *'"decision": "block"'*"커밋하기"*) ok "코덱스에서도 같은 자리의 목록을 읽어 막는다" ;; *) bad "코덱스 자리의 목록을 못 읽었다: $out" ;; esac
+out="$(printf '{"session_id":"cl1","prompt":"README 고쳐줘"}' | env -u KL_CHECKLIST_DIR -u PLUGIN_ROOT HOME="$TMP/home" \
+       sh "$REPO/hooks/run.sh" checklist-start 2>/dev/null)"
+case "$out" in *"$TMP/home/.claude/checklists/cl1.md"*) ok "Claude Code 에서는 그대로 ~/.claude/checklists 에 둔다" ;;
+  *) bad "Claude Code 의 체크리스트 자리가 바뀌었다: $out" ;; esac
+
 # --- 입력이 깨져도 세션을 깨지 않는다
 for gate in checklist-start checklist-check; do
   printf 'not json' | sh "$REPO/hooks/run.sh" "$gate" >/dev/null 2>&1 && ok "$gate: 깨진 입력에도 0으로 끝난다" || bad "$gate: 깨진 입력에 터졌다"

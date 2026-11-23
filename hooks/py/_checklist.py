@@ -11,8 +11,12 @@ Item marks, one item per line:
 
 import os
 import re
+import tempfile
 
 CHECKLIST_DIR_ENV = "KL_CHECKLIST_DIR"
+# 코덱스는 플러그인 훅에 PLUGIN_ROOT 를 넘기고(openai/codex codex-rs/hooks/src/engine/discovery.rs),
+# Claude Code 는 CLAUDE_PLUGIN_ROOT 만 넘긴다. 그래서 이 변수로 '코덱스에서 도는가' 를 가린다.
+CODEX_MARKER_ENV = "PLUGIN_ROOT"
 # 줄 안의 빈칸만 본다([ \t]): \s 는 줄바꿈까지 먹어서, 내용 없는 '- [ ]' 가 다음 줄과 붙거나 아예 안 잡혔다.
 OPEN_ITEM = re.compile(r"^[ \t]*[-*][ \t]*\[ \][ \t]*(.*?)[ \t]*$", re.MULTILINE)
 ANY_ITEM = re.compile(r"^[ \t]*[-*][ \t]*\[[ xX~]\]", re.MULTILINE)
@@ -24,8 +28,19 @@ ITEM_NAME_END = re.compile(r"[ \t]+[→—][ \t]")
 
 
 def checklist_dir():
-    """체크리스트를 두는 폴더. 프로젝트 안에 두면 git 에 섞이므로 사용자 폴더에 둔다."""
-    return os.environ.get(CHECKLIST_DIR_ENV) or os.path.join(os.path.expanduser("~"), ".claude", "checklists")
+    """체크리스트를 두는 폴더. 프로젝트 안에 두면 git 에 섞이므로 사용자 폴더에 둔다.
+
+    코덱스에서는 임시 폴더($TMPDIR, 없으면 /tmp) 아래에 둔다. 코덱스 모델이 쓸 수 있는 자리는
+    작업 폴더·/tmp·$TMPDIR·설정한 writable_roots 뿐이라(openai/codex protocol/src/protocol.rs
+    get_writable_roots_with_cwd), ~/.claude 에 두면 모델이 목록을 못 만들고 checklist-check 가
+    끝낼 때마다 막았다(2026-11-20 Capitis 세션, 코덱스 0.171). 훅은 코덱스 환경을 물려받아 같은 $TMPDIR 를 본다.
+    """
+    configured = os.environ.get(CHECKLIST_DIR_ENV)
+    if configured:
+        return configured
+    if os.environ.get(CODEX_MARKER_ENV):
+        return os.path.join(tempfile.gettempdir(), "kl-skills", "checklists")
+    return os.path.join(os.path.expanduser("~"), ".claude", "checklists")
 
 
 def checklist_path(session_id):
